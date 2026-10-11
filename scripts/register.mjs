@@ -1,3 +1,4 @@
+import { decodeRecipeInput } from "../web/recipe-interchange.js";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
@@ -61,8 +62,13 @@ for (const key of parameters.mode === "manual" ? manual : automatic)
   if (Object.hasOwn(options, key))
     parameters[key.replaceAll("-", "_")] =
       key === "interpolation" ? options[key] : Number(options[key]);
-const fixedRecipe = JSON.parse(await readFile(options["fixed-recipe"], "utf8")),
-  movingRecipe = JSON.parse(await readFile(options["moving-recipe"], "utf8"));
+const { recipe: fixedRecipe, document: fixedDocument } =
+    await decodeRecipeInput(
+      JSON.parse(await readFile(options["fixed-recipe"], "utf8")),
+    ),
+  { recipe: movingRecipe, document: movingDocument } = await decodeRecipeInput(
+    JSON.parse(await readFile(options["moving-recipe"], "utf8")),
+  );
 const fixed = await loadSource(options.fixed),
   moving = await loadSource(options.moving);
 const fixedReference = options["fixed-reference"]
@@ -97,6 +103,18 @@ const result = await registrationRecipe(
 const out = resolve(options.out);
 await mkdir(out);
 const entries = {
+  ...(fixedDocument
+    ? {
+        "fixed-input-recipe-document.json":
+          JSON.stringify(fixedDocument, null, 2) + "\n",
+      }
+    : {}),
+  ...(movingDocument
+    ? {
+        "moving-input-recipe-document.json":
+          JSON.stringify(movingDocument, null, 2) + "\n",
+      }
+    : {}),
   "report.json": JSON.stringify(result.report, null, 2) + "\n",
   "fixed-recipe.json": JSON.stringify(fixedRecipe, null, 2) + "\n",
   "moving-recipe.json": JSON.stringify(movingRecipe, null, 2) + "\n",

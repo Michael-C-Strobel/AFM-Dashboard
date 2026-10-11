@@ -7,6 +7,11 @@ import {
   AUTOMATIC_PRESET,
   CHEMIST_PRESET,
 } from "../web/service.js";
+import {
+  decodeRecipeInput,
+  replayRecipeInput,
+  canonicalRecipeJSON,
+} from "../web/recipe-interchange.js";
 import { sha256 } from "../web/engine.js";
 import { loadSource, engineIdentity, saveResult, sourcePath } from "./io.mjs";
 import { makeBatchRequest } from "../web/batch.js";
@@ -110,14 +115,25 @@ try {
     );
   } else if (command === "replay") {
     if (pos.length !== 1 || !opts.out) throw new Error(usage);
-    const recipe = JSON.parse(await readFile(pos[0], "utf8")),
+    const input = JSON.parse(await readFile(pos[0], "utf8")),
+      { recipe, document } = await decodeRecipeInput(input),
       dir = opts["data-dir"] ?? "data",
       source = await loadSource(sourcePath(dir, recipe.source.file)),
       reference = recipe.reference
         ? await loadSource(sourcePath(dir, recipe.reference.file))
         : null;
-    const result = await replay(recipe, source, reference, identityFor(source));
+    const result = await replayRecipeInput(
+      input,
+      source,
+      reference,
+      identityFor(source),
+    );
     await saveResult(result, opts.out);
+    if (document)
+      await writeFile(
+        resolve(opts.out, "input-recipe-document.json"),
+        JSON.stringify(document, null, 2) + "\n",
+      );
     for (const warning of result.warnings ?? [])
       console.error("Warning: " + warning);
     console.log(
@@ -126,7 +142,9 @@ try {
     );
   } else if (command === "batch") {
     if (pos.length < 2 || !opts.out) throw new Error(usage);
-    const recipe = JSON.parse(await readFile(pos[0], "utf8"));
+    const { recipe, document } = await decodeRecipeInput(
+      JSON.parse(await readFile(pos[0], "utf8")),
+    );
     if (!Object.values(identities).includes(recipe.engine?.sha256))
       throw new Error(
         "Batch template uses a different engine. Regenerate it first.",
@@ -136,6 +154,11 @@ try {
         "Batch templates must not contain a reference comparison. Disable comparison and save a new template.",
       );
     await mkdir(opts.out, { recursive: true });
+    if (document)
+      await writeFile(
+        resolve(opts.out, "input-recipe-document.json"),
+        JSON.stringify(document, null, 2) + "\n",
+      );
     const checkpoint = resolve(opts.out, "batch.json");
     let previous = {};
     if (opts.resume) {
@@ -186,8 +209,8 @@ try {
               "plateaus",
             ]) {
               if (
-                JSON.stringify(saved[key] ?? null) !==
-                JSON.stringify(recipe[key] ?? null)
+                canonicalRecipeJSON(saved[key] ?? null) !==
+                canonicalRecipeJSON(recipe[key] ?? null)
               )
                 throw new Error("Saved batch recipe differs from template.");
             }

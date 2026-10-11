@@ -1,3 +1,4 @@
+import { decodeRecipeInput } from "../web/recipe-interchange.js";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
@@ -32,7 +33,9 @@ if (!["recipe", "input", "out"].every((key) => Object.hasOwn(options, key)))
 const parameters = {};
 for (const key of ["detrend", "window"])
   if (options[key] !== undefined) parameters[key] = options[key];
-const recipe = JSON.parse(await readFile(options.recipe, "utf8")),
+const { recipe, document } = await decodeRecipeInput(
+    JSON.parse(await readFile(options.recipe, "utf8")),
+  ),
   source = await loadSource(options.input),
   reference = options.reference ? await loadSource(options.reference) : null;
 const names = ["fft.js", "texture.js", "texture-service.js", "engine.js"];
@@ -56,6 +59,9 @@ const result = await textureRecipe(
 const out = resolve(options.out);
 await mkdir(out);
 const entries = {
+  ...(document
+    ? { "input-recipe-document.json": JSON.stringify(document, null, 2) + "\n" }
+    : {}),
   "report.json": JSON.stringify(result.report, null, 2) + "\n",
   "input-recipe.json":
     JSON.stringify(result.report.input_recipe, null, 2) + "\n",

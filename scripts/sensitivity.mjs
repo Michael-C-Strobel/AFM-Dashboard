@@ -1,3 +1,4 @@
+import { decodeRecipeInput } from "../web/recipe-interchange.js";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
@@ -48,12 +49,21 @@ const code = {
 const input = JSON.parse(
   await readFile(options.request ?? options.report, "utf8"),
 );
+let document = null;
+if (options.request) {
+  const decoded = await decodeRecipeInput(input.baseline_recipe);
+  input.baseline_recipe = decoded.recipe;
+  document = decoded.document;
+}
 const report = await (
   options.request ? sensitivityReport : verifySensitivityReport
 )(input, source, reference, await engineIdentity(source.format), code);
 const out = resolve(options.out);
 await mkdir(out);
 const entries = {
+  ...(document
+    ? { "input-recipe-document.json": JSON.stringify(document, null, 2) + "\n" }
+    : {}),
   ...sensitivityEntries(report),
   "sensitivity.tar": sensitivityBundle(report),
 };

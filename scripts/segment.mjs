@@ -1,3 +1,4 @@
+import { decodeRecipeInput } from "../web/recipe-interchange.js";
 /** Strict recipe replay followed by deterministic threshold-region measurement. */
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -47,7 +48,9 @@ if (options.connectivity !== undefined)
   parameters.connectivity = Number(options.connectivity);
 if (options["min-pixels"] !== undefined)
   parameters.min_pixels = Number(options["min-pixels"]);
-const recipe = JSON.parse(await readFile(options.recipe, "utf8"));
+const { recipe, document } = await decodeRecipeInput(
+  JSON.parse(await readFile(options.recipe, "utf8")),
+);
 const source = await loadSource(options.input);
 const reference = options.reference
   ? await loadSource(options.reference)
@@ -74,6 +77,12 @@ const result = await segmentRecipe(
 // including symlinks, before any report file can be overwritten.
 const out = resolve(options.out);
 await mkdir(out);
+if (document)
+  await writeFile(
+    resolve(out, "input-recipe-document.json"),
+    JSON.stringify(document, null, 2) + "\n",
+    { flag: "wx" },
+  );
 await writeFile(
   resolve(out, "report.json"),
   JSON.stringify(result, null, 2) + "\n",
