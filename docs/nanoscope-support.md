@@ -9,7 +9,7 @@ The browser and Node CLI detect file contents, including numbered extensions suc
 - Grouped Z-scale values with explicit supported units and unambiguous named sensitivities. Stored 32-bit samples with declared 16-bit resolution are accepted for NanoScope 9.x.
 - Valid-data rectangles become exclusion masks. Unsupported calibration or image encodings skip that channel with a reason; corrupt payload boundaries or overlapping blocks reject the file.
 
-ASCII, force curves, floating-point/compressed rasters, unknown units, and other acquisition layouts are unsupported. The external real fixture covers one square, full-frame 9.x acquisition; synthetic tests cover rectangular grids and invalid rectangles.
+ASCII, force curves, floating-point/compressed rasters, unsupported explicit calibration units, and other acquisition layouts are unsupported. Missing sensitivity units can instead retain declared electrical/arbitrary units with a warning, as described below. The external real fixture covers one square, full-frame 9.x acquisition; synthetic tests cover rectangular grids and invalid rectangles.
 
 ## Calibration and orientation
 

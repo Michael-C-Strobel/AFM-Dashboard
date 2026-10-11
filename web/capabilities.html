@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AFM capabilities and evidence</title>
+    <style>
+      body {
+        margin: 0 auto;
+        max-width: 1180px;
+        padding: 24px;
+        color: #20323c;
+        background: #f7faf8;
+        font:
+          15px/1.55 system-ui,
+          sans-serif;
+      }
+      a {
+        color: #075f75;
+      }
+      h1 {
+        margin-bottom: 6px;
+      }
+      h2 {
+        border-top: 3px solid #2b7879;
+        padding-top: 18px;
+        margin-top: 32px;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .version {
+        color: #50636b;
+      }
+      .table-scroll {
+        overflow-x: auto;
+        border: 1px solid #bacac6;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 740px;
+      }
+      th,
+      td {
+        text-align: left;
+        vertical-align: top;
+        border: 1px solid #cad6d2;
+        padding: 12px;
+      }
+      th {
+        background: #e0ebe6;
+      }
+      td {
+        min-width: 140px;
+      }
+      code {
+        overflow-wrap: anywhere;
+        font-size: 0.87em;
+      }
+      .note {
+        border-left: 4px solid #b18021;
+        padding: 12px;
+        background: #fff7e5;
+      }
+      li {
+        margin: 8px 0;
+      }
+      caption {
+        text-align: left;
+        padding: 12px;
+        font-weight: 650;
+      }
+      @media (max-width: 600px) {
+        body {
+          padding: 14px;
+        }
+        h1 {
+          font-size: 26px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav aria-label="Documentation">
+      <a href="help.html">Documentation guide</a><a href="./">AFM Dashboard</a
+      ><a href="#formats">Image formats</a
+      ><a href="#analysis">Analysis coverage</a
+      ><a href="#next">Next coverage work</a>
+    </nav>
+    <h1>Capabilities and validation evidence</h1>
+    <p class="version">
+      Matrix version 0.1.0 · reviewed 2026-10-11 · roadmap card A05
+    </p>
+    <p>
+      Use this matrix to decide whether the workbench can read and analyze a
+      measurement. Byte signatures select readers; filenames and successful
+      decoding do not establish calibrated instrument compatibility. The import
+      panel, channel warnings and exports retain configuration and unit
+      limitations.
+    </p>
+    <ul>
+      <li>
+        <strong>Implemented / tested:</strong> code and known-input tests
+        support the stated subset.
+      </li>
+      <li>
+        <strong>Independently checked:</strong> recorded values match a separate
+        reader or calculation for named fixtures. This does not certify an
+        instrument, a physical quantity or every readable variant.
+      </li>
+      <li>
+        <strong>Readable / unverified:</strong> supported structure with a
+        different acquisition configuration. The workbench keeps a warning
+        visible.
+      </li>
+      <li>
+        <strong>Unsupported:</strong> no interpretation is guessed. A file is
+        rejected, or a soundly bounded unsupported channel is omitted with an
+        explicit reason.
+      </li>
+    </ul>
+    <p class="note">
+      Evidence paths below refer to the development repository. A local preview
+      includes this matrix and the runtime gates, but excludes
+      laboratory/reference binaries and development reference arrays. Preserve
+      exact original bytes, recipe and application version for replay.
+    </p>
+    <h2 id="formats">Image formats, objects and configurations</h2>
+    <div
+      class="table-scroll"
+      tabindex="0"
+      role="region"
+      aria-label="Image capability matrix, scroll horizontally on small screens"
+    >
+      <table>
+        <caption>
+          Image-reader coverage
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Capability / card</th>
+            <th scope="col">Implemented objects and encoding</th>
+            <th scope="col">Configuration and calibration boundary</th>
+            <th scope="col">Fixture and verification evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Native Gwyddion GWYP</strong><br />A03 / A04</td>
+            <td>
+              <code>GWYP</code> root <code>GwyContainer</code>; numbered
+              <code>GwyDataField</code> image channels, <code>GwySIUnit</code>,
+              string metadata/logs, same-shape masks and stored selection
+              components. Unconsumed root objects are reported, not treated as
+              measurements. Unknown value encodings reject.
+            </td>
+            <td>
+              Supported native image container using stored extents, offsets and
+              units. Nonzero masks exclude pixels. Missing units remain unknown.
+              Native-container “validated” status does not identify or certify
+              the acquisition instrument. Graphs, spectroscopy and other decoded
+              objects are not independent measurement modes.
+            </td>
+            <td>
+              Supplied raw/worked pair
+              <code>sample-input{,_worked}.gwy</code>; native public
+              <code>gwyddion-samples.gwy</code> imports BIPM/Chip/ZnTe. Import
+              success alone is not independent array validation.<br /><code
+                >tests/gwy.test.mjs</code
+              >: non-square orientation/offsets, masks/selections, unknown
+              units, nonfinite pixels and malformed structures.
+              <code>docs/three-point-validation.json</code> records UI
+              equivalence to the existing chemist recipe, not an independent
+              estimator.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>NanoScope binary images</strong><br />X01a</td>
+            <td>
+              <code>\*File list</code> signature, terminated bounded header,
+              <code>Ciao image list</code> blocks; signed little-endian
+              16/32-bit samples. Version 9.x declared16/stored32 layout
+              supported. Valid-data rectangles become masks.
+            </td>
+            <td>
+              Checked gate: version <code>0x09300201</code>, scanner
+              <code>Dim 4000</code>, mode <code>Image</code>, microscope
+              includes quoted <code>PeakForce QNM</code>. Other readable
+              configurations warn. Scale uses declared resolution and explicit
+              sensitivity; one Y reversal. No inferred modulus/energy from
+              arbitrary or log channels. Missing sensitivity units can retain
+              electrical/arbitrary units with warnings.
+            </td>
+            <td>
+              <code>afmreader-sample_0.spm</code>: eight 1024² channels;
+              8,388,608 values checked against pinned pySPM. Six exact; height
+              roundoff &lt;5.3e-23 m after unit/orientation normalization.<br /><code
+                >docs/nanoscope-validation.json</code
+              >, <code>scripts/validate-nanoscope.mjs</code>,
+              <code>tests/nanoscope.test.mjs</code>,
+              <code>tests/support.test.mjs</code>. Synthetic cases cover
+              rectangular masks, sensitivities, overlap and truncation.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Igor Binary Wave v5</strong><br />X01b</td>
+            <td>
+              Version bytes <code>05 00</code> or <code>00 05</code>; 2D images
+              / 3D channel stacks; both endian orders, float32/64 and
+              signed/unsigned 8/16/32-bit integers. Checksums and declared
+              sections validated.
+            </td>
+            <td>
+              Checked gate: trailing <code>MFP3D</code> footer, little-endian
+              float32 channel stack. No firmware/scan-size restriction is tested
+              by that gate. Other calibrated v5 images warn. Extent is pixel
+              count × spacing; Y reversed once. Disclosed MFP3D Height
+              convention; ZSensor units unknown, UserIn voltage units retained.
+            </td>
+            <td>
+              <code>afmreader-sample_0.ibw</code>: eight 512² channels;
+              2,097,152 values exactly match igor2 after documented
+              orientation.<br /><code>docs/ibw-validation.json</code>,
+              <code>scripts/validate-ibw.mjs</code>,
+              <code>tests/ibw.test.mjs</code>. Synthetic checks cover
+              endian/type variants, checksums, labels, nonfinite samples,
+              spacing and missing units. Synthetic coverage does not validate a
+              new instrument configuration.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>JPK classic TIFF images</strong><br />X01c</td>
+            <td>
+              Classic TIFF plus JPK metadata; uncompressed signed/unsigned
+              16/32-bit strips, both endian orders. Thumbnail omitted;
+              measurement directories use explicit default-slot calibration.
+              Ordinary TIFF is not a calibrated import route.
+            </td>
+            <td>
+              Checked gate: big-endian signed32 retained channels, software
+              <code>6.0.41</code>, tag <code>0x8001=2</code>,
+              <code>ac-ultra-speed-direct-drive</code>, internal tip XY/internal
+              Z settings, bottom-up/non-reflected grid. One Y reversal; default
+              multiplier/offset applied once. Unknown units warn. Validated
+              retained channels can coexist with separately warned omitted
+              channels.
+            </td>
+            <td>
+              <code>afmreader-sample_0.jpk</code>: ten 256² channels; 655,360
+              calibrated m/deg/V values exactly match pinned AFMReader/tifffile
+              arrays.<br /><code>docs/jpk-validation.json</code>,
+              <code>scripts/validate-jpk.mjs</code>,
+              <code>tests/jpk.test.mjs</code>. Synthetic cases cover
+              endian/types, strips, default slots, cycles/overlaps, missing
+              units and unknown configurations.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      All public fixture paths and exact hashes are recorded in
+      <code>data/external/manifest.json</code>; binaries live under ignored
+      <code>data/external/reference-only/</code>. Reader definitions are in
+      <code>web/gwy.js</code>, <code>web/nanoscope.js</code>,
+      <code>web/ibw.js</code>, <code>web/jpk.js</code>; configuration gates are
+      in <code>web/support.js</code> and the IBW/JPK parsers.
+    </p>
+    <h3>Explicit import gaps</h3>
+    <p>
+      Legacy GWYO/IBW, text or complex waves, 1D/4D IBW, generic TIFF/BigTIFF,
+      compressed/tiled JPK or unsupported orientation/calibration, NanoScope
+      ASCII/floating/compressed image encodings, unidentified vendors and force
+      curves are unsupported. Formulas are retained as metadata, never executed.
+      Importing an image from a force-capable instrument does not enable force
+      spectroscopy. Stage rotation/origin metadata does not establish registered
+      laboratory coordinates.
+    </p>
+    <h2 id="analysis">Analysis coverage and reference scope</h2>
+    <div
+      class="table-scroll"
+      tabindex="0"
+      role="region"
+      aria-label="Analysis coverage matrix, scroll horizontally on small screens"
+    >
+      <table>
+        <caption>
+          Current workflows and the limits of their evidence
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Capability / cards</th>
+            <th scope="col">Delivered and tested</th>
+            <th scope="col">Evidence / remaining scope</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Preparation<br />P01/P02/P09</td>
+            <td>
+              Explicit plane, robust/quadratic and three-point leveling, row
+              correction, crop and existing smoothing; numbered point
+              preview/apply and recipe replay.
+            </td>
+            <td>
+              Known-input engine tests and supplied chemist-point replay.
+              <code>tests/engine.test.mjs</code>,
+              <code>tests/browser-three-point.mjs</code>. P06–P08 track richer
+              background/line fitting, repair and spectral filters. A visually
+              flat surface does not establish feature preservation.
+            </td>
+          </tr>
+          <tr>
+            <td>Measurements<br />M01/M02/M05</td>
+            <td>
+              Selected roughness/statistics, calibrated bilinear profiles,
+              two-plateau difference and hover/keyboard readouts.
+            </td>
+            <td>
+              <code>tests/engine.test.mjs</code>,
+              <code>tests/browser-measurement-readout.mjs</code>. M06/M07 track
+              fitted steps, averaged/multiple profiles and additional metrology.
+              Plateau spread is not calibrated uncertainty.
+            </td>
+          </tr>
+          <tr>
+            <td>Features and texture<br />M03/M04/V04</td>
+            <td>
+              Threshold regions; two-sided PSD and linear ACF on a complete
+              valid rectangle; explicit domain capture and hashed numerical
+              exports.
+            </td>
+            <td>
+              <code>tests/segmentation.test.mjs</code>,
+              <code>tests/texture.test.mjs</code>,
+              <code>tests/texture-service.test.mjs</code>,
+              <code>tests/browser-texture-domain.mjs</code>. Internal holes
+              reject. M08–M10 track fitted texture descriptors, richer
+              segmentation and grain geometry.
+            </td>
+          </tr>
+          <tr>
+            <td>Comparison and reproducibility<br />C01/R03/R04/B01</td>
+            <td>
+              Translation registration, processing alternatives, batch
+              execution, saved recipes and strict source/output replay.
+            </td>
+            <td>
+              <code>tests/registration.test.mjs</code>,
+              <code>tests/sensitivity.test.mjs</code>,
+              <code>tests/recipe-interchange.test.mjs</code>. No inferred
+              rotation/deformation, persistent project recovery or native GWYP
+              export; C03–C05/R05/E02 track extensions.
+            </td>
+          </tr>
+          <tr>
+            <td>Agents and SOPs<br />G02/G04/G06</td>
+            <td>
+              Typed local tools, reviewed or bounded autonomous execution,
+              verified observations, separate help agent and pilot SOP record
+              checks.
+            </td>
+            <td>
+              <code>tests/autonomous-agent.test.mjs</code>,
+              <code>tests/sop-conformance.test.mjs</code>, mocked browser
+              provider workflows. Completed records do not certify scientific
+              adequacy. Live providers and scientific SOP promotion require
+              further evidence.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      The Q02 reference program compares precisely matched methods and settings,
+      including known mathematical inputs and Gwyddion-native examples. Import
+      compatibility, numerical agreement and scientific adequacy are separate
+      questions. The public workflow benchmark records a step-fitting gap,
+      missing row-polynomial/Fourier methods and a half-pixel crop-origin
+      convention difference; it does not establish general Gwyddion parity.
+      Consult <code>docs/workflow-benchmark.md</code> and its recorded results
+      in the development checkout for case-specific scope and reproducibility.
+    </p>
+    <h2 id="next">Next coverage work</h2>
+    <ol>
+      <li>
+        <strong>Prioritize the demonstrated lab workflow:</strong> raw/worked
+        GWYP processing and Q02 background/step/roughness gaps. Keep manual
+        fit-point choices explicit.
+      </li>
+      <li>
+        <strong
+          >Extend an existing readable instrument configuration only with
+          evidence:</strong
+        >
+        X03 needs a representative source, units/orientation/masks, an
+        independent reference and malformed-input checks. Current fixtures
+        justify maintaining the four readers, not ranking an unseen vendor above
+        another.
+      </li>
+      <li>
+        <strong>Native image interchange and reusable workspaces:</strong>
+        E02/R05 require numerical/mask round trips and source-hash verification.
+        General lossless Gwyddion project round trips are not implemented.
+      </li>
+      <li>
+        <strong>Force and multidimensional modes:</strong> X02/X05–X08 remain
+        dependent on representative data, calibration and explicit physical
+        models. An image fixture is insufficient evidence.
+      </li>
+    </ol>
+    <h2>Maintaining this matrix</h2>
+    <p>
+      Update the matrix version, evidence paths and Kanban card when a gate or
+      capability changes. A new fixture download alone cannot promote a
+      configuration to validated. Preserve warnings for unknown units and
+      omitted objects. Re-run the relevant reader/core tests and independent
+      validator, then verify browser import/export/replay. Source identity and
+      calibration assumptions must survive the workflow.
+    </p>
+  </body>
+</html>

@@ -10,7 +10,7 @@ Files are in `data/external/reference-only/`, excluded by `data/external/.gitign
 | --- | --- | ---: | --- |
 | `gwyddion-samples.gwy` | Gwyddion GWYP | 4,720,871 | Three surfaces: BIPM, Chip, ZnTe; no channel metadata or mask key markers found. |
 | `afmreader-sample_0.spm` | Bruker Nanoscope | 33,635,392 | 1024 × 1024 multichannel file with height, error, modulus, adhesion and deformation header labels. |
-| `afmreader-sample_0.ibw` | Igor Binary Wave v5 | 8,533,952 | Little-endian format; height trace/retrace labels. Acquisition vendor unverified. |
+| `afmreader-sample_0.ibw` | Igor Binary Wave v5 | 8,533,952 | MFP3D-footer, little-endian float32 stack; eight trace/retrace channels independently checked. ZSensor units remain unknown. |
 | `afmreader-sample_0.jpk` | JPK TIFF | 2,646,744 | Big-endian TIFF signature; Ten signed32 channels; default-slot calibration and orientation independently checked. |
 
 ## Sources and licensing

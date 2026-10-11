@@ -1,5 +1,7 @@
 # Supported inputs and configuration warnings
 
+The versioned [capability and evidence matrix](../web/capabilities.html) links implemented subsets to configuration gates, fixtures, tests and remaining roadmap work.
+
 Import detection uses bytes rather than extensions. Successful decoding is separate from validation of an instrument/configuration. The viewer keeps a support panel visible through analysis and recipe replay; channel unit warnings also remain visible. CLI analysis and exported records include warnings and support metadata.
 
 | File type / configuration | Status and behavior |
@@ -13,6 +15,8 @@ Import detection uses bytes rather than extensions. Successful decoding is separ
 | Other structurally readable JPK image configurations | Persistent **Unverified configuration** warning. Unsupported compression, orientation or calibration is not guessed. |
 | Ordinary TIFF, BigTIFF, older GWYO/IBW, force spectroscopy, unidentified formats | Rejected with an unsupported-format/configuration message. No guessed image is produced. |
 | Corrupt/truncated headers, impossible dimensions or ambiguous required calibration | Rejected; unsupported individual channels may be omitted only when their boundaries are sound and the omission is reported. |
+
+For JPK, file-level validated status describes the retained image channels. Other unsupported channels can still have been omitted with explicit reasons; always review the omission warnings.
 
 “Validated” refers to the documented import subset and numerical evidence, not every model, firmware release, acquisition mode, or physical quantity. A channel with missing units is visibly unverified even when its file configuration is recognized. Structurally readable but unverified inputs may be inspected with warnings; measurements retain their stored/unknown units.
 

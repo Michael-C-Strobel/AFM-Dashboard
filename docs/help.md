@@ -4,7 +4,7 @@ Open **Documentation** in the main toolbar for the [in-app guide](../web/help.ht
 
 ## General
 
-Start with **Import local files**, then select a source and channel. Read **Import support**, warnings and channel metadata before measuring. The [supported-input matrix](supported-inputs.md) describes specific image subsets, not blanket instrument compatibility. Check lateral and vertical units; unknown units remain unknown, and an electrical channel is not a height measurement.
+Start with **Import local files**, then select a source and channel. Read **Import support**, warnings and channel metadata before measuring. The [capability and evidence matrix](../web/capabilities.html) and [supported-input matrix](supported-inputs.md) describes specific image subsets, not blanket instrument compatibility. Check lateral and vertical units; unknown units remain unknown, and an electrical channel is not a height measurement.
 
 Processing preserves original measurements. Choose an **Operation**, then **Add operation & apply**; review History, **Undo**, or **Reset pipeline**. Select an ROI, line profile or exclusion polygon with **Selection tool**. In **Measurements**, **Enter exact selection coordinates** provides a keyboard alternative in source base units. Use **Recalculate** in the inspection toolbar after selection edits; it remains available in expanded inspection. Imported masks and nonfinite pixels are excluded from measurements.
 

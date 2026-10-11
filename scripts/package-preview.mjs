@@ -163,7 +163,9 @@ export async function packagePreview(out) {
       /^See \[NanoScope limitations\].*$/m,
       "Detailed importer evidence remains in the development repository. This preview includes the same explicit format/configuration gates; the synthetic example does not independently validate an instrument.",
     );
-  entries["SUPPORTED_INPUTS.md"] = Buffer.from(supported);
+  entries["SUPPORTED_INPUTS.md"] = Buffer.from(
+    supported.replace("../web/capabilities.html", "web/capabilities.html"),
+  );
   entries["RELEASE_NOTES.md"] = Buffer.from(
     `# ${version} local preview\n\nBuildless HTML/JavaScript viewer with calibrated image imports, explicit processing, derived measurements, strict replay and portable recipes. Includes explicit reviewed multi-source planning, separately authorized bounded autonomous goals, and tool-free interface help. Autonomous next rounds receive verified compact surface claims and quality/segmentation/texture/sensitivity observations; reviewed evidence remains opt-in. Raw arrays, full recipes, profiles and region tables stay local. Provider keys are session-only and omitted from audits; provider tests use mocks, not certified live-provider behavior.\n\nThis package adds a generated example, deterministic archive, file/engine manifest and read-only clean-install verification. Application engine source is copied byte-for-byte. No raw laboratory/external measurements, credentials, node_modules or developer caches are included.\n\nPublic release is pending project licensing and hosted CI. Manual assistive-technology review and documented large-image responsiveness limitations remain open. No scientific accuracy or blanket instrument-compatibility certification is implied.\n`,
   );

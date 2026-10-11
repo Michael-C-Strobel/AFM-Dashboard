@@ -41,7 +41,7 @@ export const helpTopics = Object.freeze(
       id: "import-support",
       title: "Import files and check support",
       target: "import-trigger",
-      text: "Choose Import local files, then select a source file and channel. Supported image subsets are native GWYP, NanoScope binary images, Igor IBW v5 and JPK TIFF images. Read Import support and channel warnings: readable unverified configurations are warned, while unsupported encodings are rejected. File extension alone does not establish compatibility.",
+      text: "Documentation links the versioned capability and evidence matrix, which distinguishes readable subsets from independently checked configurations and lists unsupported cases. JPK validated status applies to retained channels; omitted channels still require reviewing their warnings. Choose Import local files, then select a source file and channel. Supported image subsets are native GWYP, NanoScope binary images, Igor IBW v5 and JPK TIFF images. Read Import support and channel warnings: readable unverified configurations are warned, while unsupported encodings are rejected. File extension alone does not establish compatibility.",
     },
     {
       id: "units-calibration",
