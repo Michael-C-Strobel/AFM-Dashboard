@@ -8,6 +8,10 @@ Start with **Import local files**, then select a source and channel. Read **Impo
 
 Processing preserves original measurements. Choose an **Operation**, then **Add operation & apply**; review History, **Undo**, or **Reset pipeline**. Select an ROI, line profile or exclusion polygon with **Selection tool**. In **Measurements**, **Enter exact selection coordinates** provides a keyboard alternative in source base units. Use **Recalculate** after selection edits. Imported masks and nonfinite pixels are excluded from measurements.
 
+![Synthetic training example: importing a measurement and choosing its source/channel.](../web/help-import.png)
+
+_Import and channel selection in a synthetic training example, not an experimental result._
+
 Use Left/Right and Home/End to navigate inspection tabs. **Expand inspection** opens a larger modal; Escape returns to the viewer. On narrow screens, **Data & processing** reveals source and pipeline controls.
 
 **Save recipe** retains the legacy format; **Save portable recipe** verifies a captured analysis and adds reorder-safe checksums. **Load recipe** accepts either format and requires the matching inputs and code for strict replay. **Export analysis TAR** contains results and provenance, not the original measurement bytes. Keep the raw files separately and download work before reloading: imports and unfinished work are session-only. See [recipe guidance](recipe-interchange.md).
@@ -31,6 +35,10 @@ Optional [pilot SOPs](workflow-sops.md) guide a goal. Read the chosen version an
 3. Draw a rectangular ROI on the reference surface. Select **Use current ROI as plateau A**.
 4. Draw a non-overlapping ROI on the feature's plateau. Select **Use current ROI as plateau B**, then **Recalculate**.
 5. Read **Two-plateau step height**: **mean B minus mean A**, in the stored vertical unit. Review both means, standard deviations and valid pixel counts. Plateau rectangles are independent of the global ROI; imported masks, nonfinite values and exclusion polygons still apply. Within-region spread is not measurement uncertainty. Save the recipe and results.
+
+![Synthetic training example: locating ROI, profile and plateau controls.](../web/help-measurements.png)
+
+_ROI, profile and plateau controls on synthetic training data, not an experimental result._
 
 For connected regions rather than two plateaus, open **Features**, capture processed analysis and review an explicit threshold before segmentation. Its excursion is relative to that threshold, not automatically relative to the surrounding substrate. Region area is projected pixel area; labels do not establish particle or defect identity. See [feature workflow](segmentation-workflows.md) and [measurement definitions](segmentation.md).
 
