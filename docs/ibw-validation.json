@@ -1,0 +1,100 @@
+{
+  "fixture_sha256": "5dddfebc5ba226c5e8cb4aaa93d985b5067b747e9b8b0ace068bc1d4a5583b97",
+  "engine_sha256": "001c92861fb946d184daaf4798e732c4117f5957e4638ce9c9d8e2beea32aa08",
+  "reference_reader": {
+    "name": "igor2",
+    "version": "0.5.12",
+    "wheel_sha256": "1d99b30a3b82710578aafb21fbe02572c59f77ad4daba6d13a952115d200bac6",
+    "binarywave.py_sha256": "26edce79f3acc46592607cf53095240e0bb0bdcb23dd1588f25b64103ab9fde4",
+    "url": "https://pypi.org/project/igor2/0.5.12/"
+  },
+  "support": {
+    "status": "validated",
+    "format": "IGOR_IBW",
+    "configuration": "Asylum MFP-3D / IBW v5 image stack",
+    "message": "Supported Asylum MFP-3D float32 image subset. Channel-specific unit warnings still apply."
+  },
+  "transformation": "Reference arrays already transpose+reverse Y; no value scaling applied for this fixture. Physical units checked separately, ZSensor retained as unknown.",
+  "channels": [
+    {
+      "id": "0",
+      "title": "HeightTrace",
+      "pixels": 262144,
+      "unit": "m",
+      "pitch_m": 1.5655577299412918e-9,
+      "max_absolute_error": 0,
+      "reference_array_sha256": "b867b5e9a31a1c12887a8a31025b8cfa74ac5500ee2fd9650bae7af57214edb6",
+      "passed": true
+    },
+    {
+      "id": "1",
+      "title": "HeightRetrace",
+      "pixels": 262144,
+      "unit": "m",
+      "pitch_m": 1.5655577299412918e-9,
+      "max_absolute_error": 0,
+      "reference_array_sha256": "c9775826699b8e0d1e16e17b92d95ac9ac7418d070c733447edc2302b933425e",
+      "passed": true
+    },
+    {
+      "id": "2",
+      "title": "ZSensorTrace",
+      "pixels": 262144,
+      "unit": null,
+      "pitch_m": 1.5655577299412918e-9,
+      "max_absolute_error": 0,
+      "reference_array_sha256": "305baa335b014e66adf49dd6778a27daa628294a3fba0044b1aed9b348d6177d",
+      "passed": true
+    },
+    {
+      "id": "3",
+      "title": "ZSensorRetrace",
+      "pixels": 262144,
+      "unit": null,
+      "pitch_m": 1.5655577299412918e-9,
+      "max_absolute_error": 0,
+      "reference_array_sha256": "826064be68b31fa20077c017ec800c03b398cd39a6a02b873b2f0ce7b232a98d",
+      "passed": true
+    },
+    {
+      "id": "4",
+      "title": "UserIn0Trace",
+      "pixels": 262144,
+      "unit": "V",
+      "pitch_m": 1.5655577299412918e-9,
+      "max_absolute_error": 0,
+      "reference_array_sha256": "e8b56903891efbc57d0c2e32f7e92159f9fe6ec01be8ddd3003fc741761f8f0d",
+      "passed": true
+    },
+    {
+      "id": "5",
+      "title": "UserIn0Retrace",
+      "pixels": 262144,
+      "unit": "V",
+      "pitch_m": 1.5655577299412918e-9,
+      "max_absolute_error": 0,
+      "reference_array_sha256": "0c282f6f6e10c2f927879475fc98c908bee439b46a78cd42aeaad62ab41a101e",
+      "passed": true
+    },
+    {
+      "id": "6",
+      "title": "UserIn1Trace",
+      "pixels": 262144,
+      "unit": "V",
+      "pitch_m": 1.5655577299412918e-9,
+      "max_absolute_error": 0,
+      "reference_array_sha256": "0e8011746a068a6eb704de30f812314e2b786a36537e1698bbb4a8d8ce98be43",
+      "passed": true
+    },
+    {
+      "id": "7",
+      "title": "UserIn1Retrace",
+      "pixels": 262144,
+      "unit": "V",
+      "pitch_m": 1.5655577299412918e-9,
+      "max_absolute_error": 0,
+      "reference_array_sha256": "2e870ea3419040852e0ad203ed6a0d35901c065a0844caf97a7c15154dd8e2ae",
+      "passed": true
+    }
+  ]
+}

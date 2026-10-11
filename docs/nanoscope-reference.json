@@ -1,0 +1,1244 @@
+{
+  "fixture": "data/external/reference-only/afmreader-sample_0.spm",
+  "fixture_sha256": "71a535e577285b6d43c1cbad134b69ab9f472806661a231f981a2c96b2d3972d",
+  "reader": {
+    "name": "pySPM",
+    "version": "0.6.3",
+    "commit": "20a05dbae154bc1e8c87f64f8c094f251d0da830",
+    "Bruker.py_sha256": "c544e5c1279b461ea94981bfe44747e52da2b22f52800e9388b5178f81c670e5",
+    "source_url": "https://github.com/scholi/pySPM/blob/20a05dbae154bc1e8c87f64f8c094f251d0da830/pySPM/Bruker.py"
+  },
+  "environment": {
+    "python": "3.11.15",
+    "numpy": "2.4.6"
+  },
+  "point_convention": "Zero-based raw stored [row,column]; corners, centre floor(N/2), then 10 LCG indices seeded17: state=(1664525*state+1013904223) mod2^32, index=state mod pixel_count.",
+  "orientation": "pySPM output has raw file row/column order; no flip, transpose, rotation, line retrace correction or frame direction correction. AFMReader load_spm at caeecf32ac5900f99c0dfee4b49d27ba4ca0fd77 flips rows once after pySPM.",
+  "limits": "Reference-reader output is not independently established physical calibration. Unitless sensitivities give misleading V labels in pySPM. Log domain semantics unresolved; no exponentiation applied. Only this square full-frame fixture verified.",
+  "images": [
+    {
+      "index": 0,
+      "title": "Height Sensor",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
+      "byte_offset": 80960,
+      "data_length": 4194304,
+      "declared_bytes_per_pixel": 4,
+      "actual_storage_bytes_per_pixel": 4,
+      "storage": "signed little-endian int32",
+      "frame_direction": "Up",
+      "line_direction": "Retrace",
+      "header_z_scale": "V [Sens. ZsensSens] (0.00000000572205 V/LSB) 24.57600 V",
+      "header_z_offset": "V [Sens. ZsensSens] (0.00000000572205 V/LSB) -0.2197993 V",
+      "header_sensitivity_key": "Sens. ZsensSens",
+      "header_sensitivity": "V 57.39005 nm/V",
+      "conversion_factor": 3.283885002136231e-07,
+      "observed_nonzero_ratio": 3.283885002136231e-07,
+      "ratio_probe": {
+        "row": 0,
+        "column": 0,
+        "raw_count": 404502639,
+        "reader_value": 132.8340149536626
+      },
+      "decoded_array_path": "/tmp/afm-nanoscope-reference/channel-0.f64",
+      "decoded_array_format": "little-endian float64, C row-major, raw stored orientation",
+      "reader_output_unit": "nm",
+      "header_hard_unit": "V",
+      "alternative_hardscale_times_sensitivity": 3.283887356025e-07,
+      "alternative_to_reader_factor_ratio": 1.0000007167999998,
+      "offset_applied": false,
+      "raw_statistics": {
+        "min": 402345377.0,
+        "max": 463160619.0,
+        "mean": 434985216.05225945
+      },
+      "decoded_statistics": {
+        "min": 132.12559492091475,
+        "max": 152.0966210314233,
+        "mean": 142.84414271450026
+      },
+      "extent": {
+        "pixels": {
+          "x": 1024,
+          "y": 1024
+        },
+        "real": {
+          "x": 505.859,
+          "y": 505.859,
+          "unit": "nm"
+        }
+      },
+      "pixel_pitch": {
+        "x": 0.4940029296875,
+        "y": 0.4940029296875,
+        "unit": "nm"
+      },
+      "points": [
+        {
+          "row": 0,
+          "column": 0,
+          "raw_count": 404502639,
+          "reader_value": 132.8340149536626
+        },
+        {
+          "row": 0,
+          "column": 1023,
+          "raw_count": 413621697,
+          "reader_value": 135.82860873364365
+        },
+        {
+          "row": 1023,
+          "column": 0,
+          "raw_count": 447083383,
+          "reader_value": 146.81704161380281
+        },
+        {
+          "row": 1023,
+          "column": 1023,
+          "raw_count": 452745475,
+          "reader_value": 148.67640751375438
+        },
+        {
+          "row": 512,
+          "column": 512,
+          "raw_count": 434439420,
+          "reader_value": 142.6649095674763
+        },
+        {
+          "row": 942,
+          "column": 572,
+          "raw_count": 449386559,
+          "reader_value": 147.57337812617084
+        },
+        {
+          "row": 916,
+          "column": 107,
+          "raw_count": 451118638,
+          "reader_value": 148.14217295123237
+        },
+        {
+          "row": 426,
+          "column": 718,
+          "raw_count": 434193779,
+          "reader_value": 142.5842438878953
+        },
+        {
+          "row": 108,
+          "column": 981,
+          "raw_count": 420480027,
+          "reader_value": 138.08080543631374
+        },
+        {
+          "row": 572,
+          "column": 816,
+          "raw_count": 443202699,
+          "reader_value": 145.54266961523982
+        },
+        {
+          "row": 539,
+          "column": 207,
+          "raw_count": 432430977,
+          "reader_value": 142.00535998294174
+        },
+        {
+          "row": 892,
+          "column": 994,
+          "raw_count": 455534645,
+          "reader_value": 149.5923388668952
+        },
+        {
+          "row": 152,
+          "column": 473,
+          "raw_count": 417682995,
+          "reader_value": 137.16229229278423
+        },
+        {
+          "row": 728,
+          "column": 356,
+          "raw_count": 446883180,
+          "reader_value": 146.75129725089457
+        },
+        {
+          "row": 303,
+          "column": 371,
+          "raw_count": 424528571,
+          "reader_value": 139.4103007285226
+        }
+      ],
+      "scaling_limit": "Numeric reader agreement only; header units and physical calibration must be reviewed separately."
+    },
+    {
+      "index": 1,
+      "title": "Peak Force Error",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
+      "byte_offset": 4275264,
+      "data_length": 4194304,
+      "declared_bytes_per_pixel": 2,
+      "actual_storage_bytes_per_pixel": 4,
+      "storage": "signed little-endian int32",
+      "frame_direction": "Up",
+      "line_direction": "Retrace",
+      "header_z_scale": "V [Sens. ForceDeflSens] (0.00006250000 V/LSB) 4.096000 V",
+      "header_z_offset": "V [Sens. ForceDeflSens] (0.00006250000 V/LSB) -0.00006250000 V",
+      "header_sensitivity_key": "Sens. ForceDeflSens",
+      "header_sensitivity": "V 1.000000",
+      "conversion_factor": 6.25e-05,
+      "observed_nonzero_ratio": 6.25e-05,
+      "ratio_probe": {
+        "row": 0,
+        "column": 0,
+        "raw_count": 4,
+        "reader_value": 0.00025
+      },
+      "decoded_array_path": "/tmp/afm-nanoscope-reference/channel-1.f64",
+      "decoded_array_format": "little-endian float64, C row-major, raw stored orientation",
+      "reader_output_unit": "V",
+      "header_hard_unit": "V",
+      "alternative_hardscale_times_sensitivity": 6.25e-05,
+      "alternative_to_reader_factor_ratio": 1.0,
+      "offset_applied": false,
+      "raw_statistics": {
+        "min": -372.0,
+        "max": 860.0,
+        "mean": -0.5626802444458008
+      },
+      "decoded_statistics": {
+        "min": -0.02325,
+        "max": 0.05375,
+        "mean": -3.5167515277862544e-05
+      },
+      "extent": {
+        "pixels": {
+          "x": 1024,
+          "y": 1024
+        },
+        "real": {
+          "x": 505.859,
+          "y": 505.859,
+          "unit": "nm"
+        }
+      },
+      "pixel_pitch": {
+        "x": 0.4940029296875,
+        "y": 0.4940029296875,
+        "unit": "nm"
+      },
+      "points": [
+        {
+          "row": 0,
+          "column": 0,
+          "raw_count": 4,
+          "reader_value": 0.00025
+        },
+        {
+          "row": 0,
+          "column": 1023,
+          "raw_count": -54,
+          "reader_value": -0.003375
+        },
+        {
+          "row": 1023,
+          "column": 0,
+          "raw_count": -27,
+          "reader_value": -0.0016875
+        },
+        {
+          "row": 1023,
+          "column": 1023,
+          "raw_count": 62,
+          "reader_value": 0.003875
+        },
+        {
+          "row": 512,
+          "column": 512,
+          "raw_count": -42,
+          "reader_value": -0.002625
+        },
+        {
+          "row": 942,
+          "column": 572,
+          "raw_count": 76,
+          "reader_value": 0.00475
+        },
+        {
+          "row": 916,
+          "column": 107,
+          "raw_count": 88,
+          "reader_value": 0.0055
+        },
+        {
+          "row": 426,
+          "column": 718,
+          "raw_count": -19,
+          "reader_value": -0.0011875
+        },
+        {
+          "row": 108,
+          "column": 981,
+          "raw_count": 31,
+          "reader_value": 0.0019375
+        },
+        {
+          "row": 572,
+          "column": 816,
+          "raw_count": 0,
+          "reader_value": 0.0
+        },
+        {
+          "row": 539,
+          "column": 207,
+          "raw_count": 16,
+          "reader_value": 0.001
+        },
+        {
+          "row": 892,
+          "column": 994,
+          "raw_count": 48,
+          "reader_value": 0.003
+        },
+        {
+          "row": 152,
+          "column": 473,
+          "raw_count": 19,
+          "reader_value": 0.0011875
+        },
+        {
+          "row": 728,
+          "column": 356,
+          "raw_count": -86,
+          "reader_value": -0.0053750000000000004
+        },
+        {
+          "row": 303,
+          "column": 371,
+          "raw_count": 19,
+          "reader_value": 0.0011875
+        }
+      ],
+      "scaling_limit": "Numeric reader agreement only; header units and physical calibration must be reviewed separately."
+    },
+    {
+      "index": 2,
+      "title": "DMTModulus",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
+      "byte_offset": 8469568,
+      "data_length": 4194304,
+      "declared_bytes_per_pixel": 4,
+      "actual_storage_bytes_per_pixel": 4,
+      "storage": "signed little-endian int32",
+      "frame_direction": "Up",
+      "line_direction": "Retrace",
+      "header_z_scale": "V [Sens. StiffnessSens] (0.0000009536743 Arb/LSB) 4096.000 Arb",
+      "header_z_offset": "V [Sens. StiffnessSens] (0.0000009536743 Arb/LSB) 3.500000 Arb",
+      "header_sensitivity_key": "Sens. StiffnessSens",
+      "header_sensitivity": "V 1.000000",
+      "conversion_factor": 9.5367431640625e-07,
+      "observed_nonzero_ratio": 9.5367431640625e-07,
+      "ratio_probe": {
+        "row": 0,
+        "column": 0,
+        "raw_count": 712450,
+        "reader_value": 0.6794452667236328
+      },
+      "decoded_array_path": "/tmp/afm-nanoscope-reference/channel-2.f64",
+      "decoded_array_format": "little-endian float64, C row-major, raw stored orientation",
+      "reader_output_unit": "V",
+      "header_hard_unit": "Arb",
+      "alternative_hardscale_times_sensitivity": 9.536743e-07,
+      "alternative_to_reader_factor_ratio": 0.9999999827968,
+      "offset_applied": false,
+      "raw_statistics": {
+        "min": 0.0,
+        "max": 2147483647.0,
+        "mean": 3569600.7182836533
+      },
+      "decoded_statistics": {
+        "min": 0.0,
+        "max": 2047.9999990463257,
+        "mean": 3.404236524852422
+      },
+      "extent": {
+        "pixels": {
+          "x": 1024,
+          "y": 1024
+        },
+        "real": {
+          "x": 505.859,
+          "y": 505.859,
+          "unit": "nm"
+        }
+      },
+      "pixel_pitch": {
+        "x": 0.4940029296875,
+        "y": 0.4940029296875,
+        "unit": "nm"
+      },
+      "points": [
+        {
+          "row": 0,
+          "column": 0,
+          "raw_count": 712450,
+          "reader_value": 0.6794452667236328
+        },
+        {
+          "row": 0,
+          "column": 1023,
+          "raw_count": 2021509,
+          "reader_value": 1.927861213684082
+        },
+        {
+          "row": 1023,
+          "column": 0,
+          "raw_count": 91131,
+          "reader_value": 0.08690929412841797
+        },
+        {
+          "row": 1023,
+          "column": 1023,
+          "raw_count": 4547222,
+          "reader_value": 4.336568832397461
+        },
+        {
+          "row": 512,
+          "column": 512,
+          "raw_count": 9879,
+          "reader_value": 0.009421348571777344
+        },
+        {
+          "row": 942,
+          "column": 572,
+          "raw_count": 258309,
+          "reader_value": 0.24634265899658203
+        },
+        {
+          "row": 916,
+          "column": 107,
+          "raw_count": 51066,
+          "reader_value": 0.04870033264160156
+        },
+        {
+          "row": 426,
+          "column": 718,
+          "raw_count": 146414,
+          "reader_value": 0.1396312713623047
+        },
+        {
+          "row": 108,
+          "column": 981,
+          "raw_count": 20607,
+          "reader_value": 0.019652366638183594
+        },
+        {
+          "row": 572,
+          "column": 816,
+          "raw_count": 32114,
+          "reader_value": 0.030626296997070312
+        },
+        {
+          "row": 539,
+          "column": 207,
+          "raw_count": 73947,
+          "reader_value": 0.07052135467529297
+        },
+        {
+          "row": 892,
+          "column": 994,
+          "raw_count": 412,
+          "reader_value": 0.000392913818359375
+        },
+        {
+          "row": 152,
+          "column": 473,
+          "raw_count": 110056,
+          "reader_value": 0.10495758056640625
+        },
+        {
+          "row": 728,
+          "column": 356,
+          "raw_count": 137943,
+          "reader_value": 0.13155269622802734
+        },
+        {
+          "row": 303,
+          "column": 371,
+          "raw_count": 198935,
+          "reader_value": 0.18971920013427734
+        }
+      ],
+      "scaling_limit": "Numeric reader agreement only; header units and physical calibration must be reviewed separately."
+    },
+    {
+      "index": 3,
+      "title": "LogDMTModulus",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
+      "byte_offset": 12663872,
+      "data_length": 4194304,
+      "declared_bytes_per_pixel": 4,
+      "actual_storage_bytes_per_pixel": 4,
+      "storage": "signed little-endian int32",
+      "frame_direction": "Up",
+      "line_direction": "Retrace",
+      "header_z_scale": "V [Sens. LogStiffnessSens] (0.00000000745058 log(Arb)/LSB) 32.00000 log(Arb)",
+      "header_z_offset": "V [Sens. LogStiffnessSens] (0.00000000745058 log(Arb)/LSB) -1.375652 log(Arb)",
+      "header_sensitivity_key": "Sens. LogStiffnessSens",
+      "header_sensitivity": "V 1.000000",
+      "conversion_factor": 7.450580596923828e-09,
+      "observed_nonzero_ratio": 7.450580596923828e-09,
+      "ratio_probe": {
+        "row": 0,
+        "column": 0,
+        "raw_count": -184142080,
+        "reader_value": -1.3719654083251953
+      },
+      "decoded_array_path": "/tmp/afm-nanoscope-reference/channel-3.f64",
+      "decoded_array_format": "little-endian float64, C row-major, raw stored orientation",
+      "reader_output_unit": "V",
+      "header_hard_unit": "log(Arb)",
+      "alternative_hardscale_times_sensitivity": 7.45058e-09,
+      "alternative_to_reader_factor_ratio": 0.99999991988224,
+      "offset_applied": false,
+      "raw_statistics": {
+        "min": -1662441216.0,
+        "max": -12195500.0,
+        "mean": -198370473.4555006
+      },
+      "decoded_statistics": {
+        "min": -12.386152267456055,
+        "max": -0.09086355566978455,
+        "mean": -1.477975200530146
+      },
+      "extent": {
+        "pixels": {
+          "x": 1024,
+          "y": 1024
+        },
+        "real": {
+          "x": 505.859,
+          "y": 505.859,
+          "unit": "nm"
+        }
+      },
+      "pixel_pitch": {
+        "x": 0.4940029296875,
+        "y": 0.4940029296875,
+        "unit": "nm"
+      },
+      "points": [
+        {
+          "row": 0,
+          "column": 0,
+          "raw_count": -184142080,
+          "reader_value": -1.3719654083251953
+        },
+        {
+          "row": 0,
+          "column": 1023,
+          "raw_count": -123352016,
+          "reader_value": -0.9190441370010376
+        },
+        {
+          "row": 1023,
+          "column": 0,
+          "raw_count": -142395584,
+          "reader_value": -1.060929775238037
+        },
+        {
+          "row": 1023,
+          "column": 1023,
+          "raw_count": -237712176,
+          "reader_value": -1.771093726158142
+        },
+        {
+          "row": 512,
+          "column": 512,
+          "raw_count": -271908288,
+          "reader_value": -2.025874614715576
+        },
+        {
+          "row": 942,
+          "column": 572,
+          "raw_count": -243280384,
+          "reader_value": -1.8125801086425781
+        },
+        {
+          "row": 916,
+          "column": 107,
+          "raw_count": -176155440,
+          "reader_value": -1.3124603033065796
+        },
+        {
+          "row": 426,
+          "column": 718,
+          "raw_count": -114758304,
+          "reader_value": -0.8550159931182861
+        },
+        {
+          "row": 108,
+          "column": 981,
+          "raw_count": -229053760,
+          "reader_value": -1.7065834999084473
+        },
+        {
+          "row": 572,
+          "column": 816,
+          "raw_count": -203192160,
+          "reader_value": -1.513899564743042
+        },
+        {
+          "row": 539,
+          "column": 207,
+          "raw_count": -154575184,
+          "reader_value": -1.1516748666763306
+        },
+        {
+          "row": 892,
+          "column": 994,
+          "raw_count": -457050560,
+          "reader_value": -3.40529203414917
+        },
+        {
+          "row": 152,
+          "column": 473,
+          "raw_count": -131396880,
+          "reader_value": -0.9789830446243286
+        },
+        {
+          "row": 728,
+          "column": 356,
+          "raw_count": -118232336,
+          "reader_value": -0.8808995485305786
+        },
+        {
+          "row": 303,
+          "column": 371,
+          "raw_count": -96890032,
+          "reader_value": -0.7218869924545288
+        }
+      ],
+      "scaling_limit": "Logarithm base and physical modulus conversion unresolved; pySPM only scales counts linearly."
+    },
+    {
+      "index": 4,
+      "title": "Adhesion",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
+      "byte_offset": 16858176,
+      "data_length": 4194304,
+      "declared_bytes_per_pixel": 4,
+      "actual_storage_bytes_per_pixel": 4,
+      "storage": "signed little-endian int32",
+      "frame_direction": "Up",
+      "line_direction": "Retrace",
+      "header_z_scale": "V [Sens. ForceSens] (0.0000009536743 Arb/LSB) 4096.000 Arb",
+      "header_z_offset": "V [Sens. ForceSens] (0.0000009536743 Arb/LSB) 0.6019173 Arb",
+      "header_sensitivity_key": "Sens. ForceSens",
+      "header_sensitivity": "V 0.006000000 V/Arb",
+      "conversion_factor": 5.7220458984375e-09,
+      "observed_nonzero_ratio": 5.7220458984375e-09,
+      "ratio_probe": {
+        "row": 0,
+        "column": 0,
+        "raw_count": 44653,
+        "reader_value": 0.0002555065155029297
+      },
+      "decoded_array_path": "/tmp/afm-nanoscope-reference/channel-4.f64",
+      "decoded_array_format": "little-endian float64, C row-major, raw stored orientation",
+      "reader_output_unit": "V/Arb",
+      "header_hard_unit": "Arb",
+      "alternative_hardscale_times_sensitivity": 5.7220458000000004e-09,
+      "alternative_to_reader_factor_ratio": 0.9999999827968,
+      "offset_applied": false,
+      "raw_statistics": {
+        "min": -1779752.0,
+        "max": 9252141.0,
+        "mean": 294603.6563196182
+      },
+      "decoded_statistics": {
+        "min": -0.010183822631835938,
+        "max": 0.05294117546081543,
+        "mean": 0.0016857356433083624
+      },
+      "extent": {
+        "pixels": {
+          "x": 1024,
+          "y": 1024
+        },
+        "real": {
+          "x": 505.859,
+          "y": 505.859,
+          "unit": "nm"
+        }
+      },
+      "pixel_pitch": {
+        "x": 0.4940029296875,
+        "y": 0.4940029296875,
+        "unit": "nm"
+      },
+      "points": [
+        {
+          "row": 0,
+          "column": 0,
+          "raw_count": 44653,
+          "reader_value": 0.0002555065155029297
+        },
+        {
+          "row": 0,
+          "column": 1023,
+          "raw_count": 200462,
+          "reader_value": 0.001147052764892578
+        },
+        {
+          "row": 1023,
+          "column": 0,
+          "raw_count": -648292,
+          "reader_value": -0.0037095565795898437
+        },
+        {
+          "row": 1023,
+          "column": 1023,
+          "raw_count": -269533,
+          "reader_value": -0.0015422801971435548
+        },
+        {
+          "row": 512,
+          "column": 512,
+          "raw_count": 461964,
+          "reader_value": 0.0026433792114257814
+        },
+        {
+          "row": 942,
+          "column": 572,
+          "raw_count": -780328,
+          "reader_value": -0.004465072631835937
+        },
+        {
+          "row": 916,
+          "column": 107,
+          "raw_count": -36302,
+          "reader_value": -0.00020772171020507814
+        },
+        {
+          "row": 426,
+          "column": 718,
+          "raw_count": 871565,
+          "reader_value": 0.00498713493347168
+        },
+        {
+          "row": 108,
+          "column": 981,
+          "raw_count": 124967,
+          "reader_value": 0.0007150669097900391
+        },
+        {
+          "row": 572,
+          "column": 816,
+          "raw_count": -334427,
+          "reader_value": -0.001913606643676758
+        },
+        {
+          "row": 539,
+          "column": 207,
+          "raw_count": 478669,
+          "reader_value": 0.00273896598815918
+        },
+        {
+          "row": 892,
+          "column": 994,
+          "raw_count": 1004242,
+          "reader_value": 0.005746318817138672
+        },
+        {
+          "row": 152,
+          "column": 473,
+          "raw_count": 39192,
+          "reader_value": 0.00022425842285156251
+        },
+        {
+          "row": 728,
+          "column": 356,
+          "raw_count": 731496,
+          "reader_value": 0.004185653686523437
+        },
+        {
+          "row": 303,
+          "column": 371,
+          "raw_count": -107620,
+          "reader_value": -0.0006158065795898438
+        }
+      ],
+      "scaling_limit": "Numeric reader agreement only; header units and physical calibration must be reviewed separately."
+    },
+    {
+      "index": 5,
+      "title": "Deformation",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
+      "byte_offset": 21052480,
+      "data_length": 4194304,
+      "declared_bytes_per_pixel": 4,
+      "actual_storage_bytes_per_pixel": 4,
+      "storage": "signed little-endian int32",
+      "frame_direction": "Up",
+      "line_direction": "Retrace",
+      "header_z_scale": "V [Sens. DeformationSens] (0.00000000093132 V/LSB) 4.000000 V",
+      "header_z_offset": "V [Sens. DeformationSens] (0.00000000093132 V/LSB) 0.003959656 V",
+      "header_sensitivity_key": "Sens. DeformationSens",
+      "header_sensitivity": "V 1.000000",
+      "conversion_factor": 9.313225746154785e-10,
+      "observed_nonzero_ratio": 9.313225746154785e-10,
+      "ratio_probe": {
+        "row": 0,
+        "column": 0,
+        "raw_count": 12156353,
+        "reader_value": 0.011321485973894596
+      },
+      "decoded_array_path": "/tmp/afm-nanoscope-reference/channel-5.f64",
+      "decoded_array_format": "little-endian float64, C row-major, raw stored orientation",
+      "reader_output_unit": "V",
+      "header_hard_unit": "V",
+      "alternative_hardscale_times_sensitivity": 9.3132e-10,
+      "alternative_to_reader_factor_ratio": 0.99999723552768,
+      "offset_applied": false,
+      "raw_statistics": {
+        "min": 0.0,
+        "max": 24173042.0,
+        "mean": 3268392.029022217
+      },
+      "decoded_statistics": {
+        "min": 0.0,
+        "max": 0.022512899711728096,
+        "mean": 0.0030439272793216787
+      },
+      "extent": {
+        "pixels": {
+          "x": 1024,
+          "y": 1024
+        },
+        "real": {
+          "x": 505.859,
+          "y": 505.859,
+          "unit": "nm"
+        }
+      },
+      "pixel_pitch": {
+        "x": 0.4940029296875,
+        "y": 0.4940029296875,
+        "unit": "nm"
+      },
+      "points": [
+        {
+          "row": 0,
+          "column": 0,
+          "raw_count": 12156353,
+          "reader_value": 0.011321485973894596
+        },
+        {
+          "row": 0,
+          "column": 1023,
+          "raw_count": 1517492,
+          "reader_value": 0.0014132745563983917
+        },
+        {
+          "row": 1023,
+          "column": 0,
+          "raw_count": 3915758,
+          "reader_value": 0.003646833822131157
+        },
+        {
+          "row": 1023,
+          "column": 1023,
+          "raw_count": 1342239,
+          "reader_value": 0.0012500574812293053
+        },
+        {
+          "row": 512,
+          "column": 512,
+          "raw_count": 2682501,
+          "reader_value": 0.0024982737377285957
+        },
+        {
+          "row": 942,
+          "column": 572,
+          "raw_count": 1463158,
+          "reader_value": 0.0013626720756292343
+        },
+        {
+          "row": 916,
+          "column": 107,
+          "raw_count": 5481267,
+          "reader_value": 0.00510482769459486
+        },
+        {
+          "row": 426,
+          "column": 718,
+          "raw_count": 1019267,
+          "reader_value": 0.0009492663666605949
+        },
+        {
+          "row": 108,
+          "column": 981,
+          "raw_count": 914368,
+          "reader_value": 0.0008515715599060059
+        },
+        {
+          "row": 572,
+          "column": 816,
+          "raw_count": 4092580,
+          "reader_value": 0.003811512142419815
+        },
+        {
+          "row": 539,
+          "column": 207,
+          "raw_count": 2949274,
+          "reader_value": 0.002746725454926491
+        },
+        {
+          "row": 892,
+          "column": 994,
+          "raw_count": 1128591,
+          "reader_value": 0.0010510822758078575
+        },
+        {
+          "row": 152,
+          "column": 473,
+          "raw_count": 3678841,
+          "reader_value": 0.0034261876717209816
+        },
+        {
+          "row": 728,
+          "column": 356,
+          "raw_count": 1239589,
+          "reader_value": 0.0011544572189450264
+        },
+        {
+          "row": 303,
+          "column": 371,
+          "raw_count": 1179243,
+          "reader_value": 0.0010982556268572807
+        }
+      ],
+      "scaling_limit": "Numeric reader agreement only; header units and physical calibration must be reviewed separately."
+    },
+    {
+      "index": 6,
+      "title": "Dissipation",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
+      "byte_offset": 25246784,
+      "data_length": 4194304,
+      "declared_bytes_per_pixel": 4,
+      "actual_storage_bytes_per_pixel": 4,
+      "storage": "signed little-endian int32",
+      "frame_direction": "Up",
+      "line_direction": "Retrace",
+      "header_z_scale": "V [Sens. DissipationSens] (0.0000009536743 Arb/LSB) 4096.000 Arb",
+      "header_z_offset": "V [Sens. DissipationSens] (0.0000009536743 Arb/LSB) 0.0008668900 Arb",
+      "header_sensitivity_key": "Sens. DissipationSens",
+      "header_sensitivity": "V 1.000000",
+      "conversion_factor": 9.5367431640625e-07,
+      "observed_nonzero_ratio": 9.5367431640625e-07,
+      "ratio_probe": {
+        "row": 0,
+        "column": 0,
+        "raw_count": -6695,
+        "reader_value": -0.006384849548339844
+      },
+      "decoded_array_path": "/tmp/afm-nanoscope-reference/channel-6.f64",
+      "decoded_array_format": "little-endian float64, C row-major, raw stored orientation",
+      "reader_output_unit": "V",
+      "header_hard_unit": "Arb",
+      "alternative_hardscale_times_sensitivity": 9.536743e-07,
+      "alternative_to_reader_factor_ratio": 0.9999999827968,
+      "offset_applied": false,
+      "raw_statistics": {
+        "min": -37358.0,
+        "max": 57815.0,
+        "mean": -4437.284929275513
+      },
+      "decoded_statistics": {
+        "min": -0.03562736511230469,
+        "max": 0.055136680603027344,
+        "mean": -0.00423172467162658
+      },
+      "extent": {
+        "pixels": {
+          "x": 1024,
+          "y": 1024
+        },
+        "real": {
+          "x": 505.859,
+          "y": 505.859,
+          "unit": "nm"
+        }
+      },
+      "pixel_pitch": {
+        "x": 0.4940029296875,
+        "y": 0.4940029296875,
+        "unit": "nm"
+      },
+      "points": [
+        {
+          "row": 0,
+          "column": 0,
+          "raw_count": -6695,
+          "reader_value": -0.006384849548339844
+        },
+        {
+          "row": 0,
+          "column": 1023,
+          "raw_count": -2541,
+          "reader_value": -0.0024232864379882812
+        },
+        {
+          "row": 1023,
+          "column": 0,
+          "raw_count": -24227,
+          "reader_value": -0.02310466766357422
+        },
+        {
+          "row": 1023,
+          "column": 1023,
+          "raw_count": -15993,
+          "reader_value": -0.015252113342285156
+        },
+        {
+          "row": 512,
+          "column": 512,
+          "raw_count": 3779,
+          "reader_value": 0.0036039352416992188
+        },
+        {
+          "row": 942,
+          "column": 572,
+          "raw_count": -7571,
+          "reader_value": -0.007220268249511719
+        },
+        {
+          "row": 916,
+          "column": 107,
+          "raw_count": -4957,
+          "reader_value": -0.004727363586425781
+        },
+        {
+          "row": 426,
+          "column": 718,
+          "raw_count": -10846,
+          "reader_value": -0.010343551635742188
+        },
+        {
+          "row": 108,
+          "column": 981,
+          "raw_count": -11327,
+          "reader_value": -0.010802268981933594
+        },
+        {
+          "row": 572,
+          "column": 816,
+          "raw_count": -9696,
+          "reader_value": -0.009246826171875
+        },
+        {
+          "row": 539,
+          "column": 207,
+          "raw_count": -3207,
+          "reader_value": -0.0030584335327148438
+        },
+        {
+          "row": 892,
+          "column": 994,
+          "raw_count": 4547,
+          "reader_value": 0.004336357116699219
+        },
+        {
+          "row": 152,
+          "column": 473,
+          "raw_count": -12073,
+          "reader_value": -0.011513710021972656
+        },
+        {
+          "row": 728,
+          "column": 356,
+          "raw_count": -1626,
+          "reader_value": -0.0015506744384765625
+        },
+        {
+          "row": 303,
+          "column": 371,
+          "raw_count": -23826,
+          "reader_value": -0.022722244262695312
+        }
+      ],
+      "scaling_limit": "Numeric reader agreement only; header units and physical calibration must be reviewed separately."
+    },
+    {
+      "index": 7,
+      "title": "Height",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
+      "byte_offset": 29441088,
+      "data_length": 4194304,
+      "declared_bytes_per_pixel": 2,
+      "actual_storage_bytes_per_pixel": 4,
+      "storage": "signed little-endian int32",
+      "frame_direction": "Up",
+      "line_direction": "Trace",
+      "header_z_scale": "V [Sens. Zsens] (0.001952197 V/LSB) 127.9392 V",
+      "header_z_offset": "V [Sens. Zsens] (0.001952197 V/LSB)       0 V",
+      "header_sensitivity_key": "Sens. Zsens",
+      "header_sensitivity": "V 4.273442 nm/V",
+      "conversion_factor": 0.008342601787207032,
+      "observed_nonzero_ratio": 0.008342601787207032,
+      "ratio_probe": {
+        "row": 0,
+        "column": 0,
+        "raw_count": 2630,
+        "reader_value": 21.941042700354494
+      },
+      "decoded_array_path": "/tmp/afm-nanoscope-reference/channel-7.f64",
+      "decoded_array_format": "little-endian float64, C row-major, raw stored orientation",
+      "reader_output_unit": "nm",
+      "header_hard_unit": "V",
+      "alternative_hardscale_times_sensitivity": 0.008342600652074,
+      "alternative_to_reader_factor_ratio": 0.9999998639353691,
+      "offset_applied": false,
+      "raw_statistics": {
+        "min": 2543.0,
+        "max": 4450.0,
+        "mean": 3508.903573989868
+      },
+      "decoded_statistics": {
+        "min": 21.21523634486748,
+        "max": 37.12457795307129,
+        "mean": 29.273385227505013
+      },
+      "extent": {
+        "pixels": {
+          "x": 1024,
+          "y": 1024
+        },
+        "real": {
+          "x": 505.859,
+          "y": 505.859,
+          "unit": "nm"
+        }
+      },
+      "pixel_pitch": {
+        "x": 0.4940029296875,
+        "y": 0.4940029296875,
+        "unit": "nm"
+      },
+      "points": [
+        {
+          "row": 0,
+          "column": 0,
+          "raw_count": 2630,
+          "reader_value": 21.941042700354494
+        },
+        {
+          "row": 0,
+          "column": 1023,
+          "raw_count": 3054,
+          "reader_value": 25.478305858130273
+        },
+        {
+          "row": 1023,
+          "column": 0,
+          "raw_count": 3689,
+          "reader_value": 30.775857993006742
+        },
+        {
+          "row": 1023,
+          "column": 1023,
+          "raw_count": 3979,
+          "reader_value": 33.19521251129678
+        },
+        {
+          "row": 512,
+          "column": 512,
+          "raw_count": 3417,
+          "reader_value": 28.506670306886427
+        },
+        {
+          "row": 942,
+          "column": 572,
+          "raw_count": 3774,
+          "reader_value": 31.48497914491934
+        },
+        {
+          "row": 916,
+          "column": 107,
+          "raw_count": 3818,
+          "reader_value": 31.852053623556447
+        },
+        {
+          "row": 426,
+          "column": 718,
+          "raw_count": 3518,
+          "reader_value": 29.349273087394337
+        },
+        {
+          "row": 108,
+          "column": 981,
+          "raw_count": 3318,
+          "reader_value": 27.68075272995293
+        },
+        {
+          "row": 572,
+          "column": 816,
+          "raw_count": 3737,
+          "reader_value": 31.176302878792676
+        },
+        {
+          "row": 539,
+          "column": 207,
+          "raw_count": 3367,
+          "reader_value": 28.089540217526075
+        },
+        {
+          "row": 892,
+          "column": 994,
+          "raw_count": 4059,
+          "reader_value": 33.86262065427334
+        },
+        {
+          "row": 152,
+          "column": 473,
+          "raw_count": 3164,
+          "reader_value": 26.39599205472305
+        },
+        {
+          "row": 728,
+          "column": 356,
+          "raw_count": 3696,
+          "reader_value": 30.83425620551719
+        },
+        {
+          "row": 303,
+          "column": 371,
+          "raw_count": 3260,
+          "reader_value": 27.196881826294923
+        }
+      ],
+      "scaling_limit": "Numeric reader agreement only; header units and physical calibration must be reviewed separately."
+    }
+  ]
+}

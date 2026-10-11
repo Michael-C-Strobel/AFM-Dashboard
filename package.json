@@ -1,0 +1,16 @@
+{
+  "name": "afm-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local browser-native AFM viewing and reproducible analysis",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "inventory": "node scripts/inventory.mjs",
+    "benchmark": "node scripts/benchmark.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

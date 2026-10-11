@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AFM Workbench</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23164c48%22%2F%3E%3Ctext%20x%3D%2212%22%20y%3D%2244%22%20font-family%3D%22sans-serif%22%20font-size%3D%2236%22%20fill%3D%22white%22%3EA%3C%2Ftext%3E%3C%2Fsvg%3E"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <span class="mark">A∿</span>
+        <div>
+          <strong>AFM Workbench</strong
+          ><small>Explore surfaces. Preserve the evidence.</small>
+        </div>
+      </div>
+      <span class="badge">LOCAL ANALYSIS · REPRODUCIBLE</span>
+    </header>
+    <div class="layout">
+      <aside>
+        <h2>Measurement</h2>
+        <p class="hint">
+          Supported subsets: Gwyddion GWYP, NanoScope raster, calibrated IBW v5
+          images, and JPK TIFF raster. Other instrument configurations are
+          unverified; ordinary TIFF images are unsupported. File contents
+          determine format; numeric filenames such as .001 are accepted.
+        </p>
+        <label class="button import-button" tabindex="0" role="button"
+          >Import local AFM files<input
+            id="import"
+            type="file"
+            multiple
+            hidden /></label
+        ><label>Source file<select id="file"></select></label
+        ><label>Channel<select id="channel"></select></label>
+        <p class="hint">
+          Original files stay unchanged. Every operation is recorded in a
+          replayable recipe.
+        </p>
+        <section
+          id="import-support"
+          class="import-support"
+          role="status"
+          aria-live="polite"
+          aria-labelledby="support-title"
+        >
+          <h2 id="support-title">Import support</h2>
+          <p id="support-message">
+            Load a measurement to inspect format and configuration support.
+          </p>
+        </section>
+        <h2>Processing</h2>
+        <label
+          >Operation<select id="operation">
+            <option value="robust_plane">Robust plane leveling</option>
+            <option value="plane">Plane leveling</option>
+            <option value="zero_min">Set minimum to zero</option>
+            <option value="mean">Subtract mean</option>
+            <option value="polynomial">Polynomial background (degree 2)</option>
+            <option value="line_match">Match adjacent lines</option>
+            <option value="line_median">Subtract line medians</option>
+            <option value="gaussian">Gaussian smoothing</option>
+            <option value="crop">Crop to ROI</option>
+          </select></label
+        >
+        <label
+          >Line direction<select id="axis">
+            <option value="rows">Rows</option>
+            <option value="columns">Columns</option>
+          </select></label
+        ><label
+          >Smoothing σ (pixels)<input
+            id="sigma"
+            type="number"
+            min="0.1"
+            max="20"
+            step="0.1"
+            value="1"
+        /></label>
+        <button id="add" class="primary">Add operation & apply</button>
+        <div class="button-row">
+          <button id="undo">Undo</button
+          ><button id="clear">Reset pipeline</button>
+        </div>
+        <button id="preset">Robust plane + zero minimum</button
+        ><button id="chemist" disabled>Replay chemist points</button>
+        <p class="hint">
+          Recorded manual three-point choices, available for the supplied raw
+          height channel only.
+        </p>
+        <p class="hint">
+          A deterministic starting point; not an assumed reproduction of the
+          chemist’s manual leveling.
+        </p>
+        <h2>Recipe history</h2>
+        <ol id="history"></ol>
+        <p class="hint">Click a step to branch from that result.</p>
+        <div class="button-row">
+          <button id="download">Save recipe</button
+          ><label class="button" tabindex="0" role="button"
+            >Load recipe<input
+              id="upload"
+              type="file"
+              accept="application/json,.json"
+              hidden
+          /></label>
+        </div>
+        <button id="export">Export analysis TAR</button>
+        <details>
+          <summary>Calibration & metadata</summary>
+          <pre id="metadata">Select a measurement.</pre>
+        </details>
+        <details>
+          <summary>Source processing log</summary>
+          <pre id="log"></pre>
+        </details>
+      </aside>
+      <main>
+        <div class="heading">
+          <div>
+            <p class="eyebrow">SURFACE ANALYSIS</p>
+            <h1 id="title">Your measurement, in context.</h1>
+          </div>
+          <button id="refresh">Recalculate</button>
+        </div>
+        <div id="status" role="status" aria-live="polite">
+          Loading measurements…
+        </div>
+        <section class="toolbar" aria-label="Display controls">
+          <label
+            >Right-hand view<select id="view">
+              <option value="processed">Processed</option>
+              <option value="reference">Reference</option>
+              <option value="difference">Processed − reference</option>
+            </select></label
+          ><label
+            >Palette<select id="palette">
+              <option value="viridis">Viridis</option>
+              <option value="inferno">Inferno</option>
+              <option value="grayscale">Grayscale</option>
+            </select></label
+          ><label class="check"
+            ><input id="shared" type="checkbox" /> Shared color scale</label
+          ><label
+            >Display minimum<input
+              id="display-min"
+              type="number"
+              step="any"
+              placeholder="Auto" /></label
+          ><label
+            >Display maximum<input
+              id="display-max"
+              type="number"
+              step="any"
+              placeholder="Auto" /></label
+          ><button id="reset-view">Reset zoom</button>
+        </section>
+        <p class="hint">
+          Each map is autoscaled independently unless Shared color scale is
+          enabled. Color limits use base units; they never change data. Scroll
+          to zoom; drag with Navigate to pan.
+        </p>
+        <section class="maps">
+          <article class="map-card">
+            <div class="map-heading">
+              <h2>Original</h2>
+              <span>IMMUTABLE SOURCE</span>
+            </div>
+            <div class="canvas-wrap">
+              <canvas
+                id="raw"
+                aria-label="Original calibrated AFM heatmap"
+              ></canvas>
+            </div>
+            <div class="scale" id="raw-scale"></div>
+          </article>
+          <article class="map-card">
+            <div class="map-heading">
+              <h2 id="result-title">Processed</h2>
+              <span id="result-badge">RECIPE OUTPUT</span>
+            </div>
+            <div class="canvas-wrap">
+              <canvas
+                id="result"
+                aria-label="Processed calibrated AFM heatmap"
+              ></canvas>
+            </div>
+            <div class="scale" id="result-scale"></div>
+          </article>
+        </section>
+        <p id="hover" class="readout">
+          Hover over either map for physical coordinates and height.
+        </p>
+        <section class="toolbar">
+          <label
+            >Selection tool<select id="tool">
+              <option value="navigate">Navigate</option>
+              <option value="roi">Rectangle ROI</option>
+              <option value="profile">Line profile</option>
+              <option value="polygon">Exclude polygon</option>
+            </select></label
+          ><button id="finish-polygon">Finish polygon</button
+          ><button id="reset-selection">Clear selections</button
+          ><label class="check"
+            ><input id="compare" type="checkbox" /> Compare to reference</label
+          ><label>Reference file<select id="reference-file"></select></label
+          ><label
+            >Reference channel<select id="reference-channel"></select
+          ></label>
+        </section>
+        <details class="coordinate-panel">
+          <summary>
+            Enter exact selection coordinates (keyboard alternative)
+          </summary>
+          <p class="hint" id="coordinate-units">
+            Coordinates use the source channel’s base units.
+          </p>
+          <div class="toolbar">
+            <label>x₀<input id="coord-x0" type="number" step="any" /></label
+            ><label>y₀<input id="coord-y0" type="number" step="any" /></label
+            ><label>x₁<input id="coord-x1" type="number" step="any" /></label
+            ><label>y₁<input id="coord-y1" type="number" step="any" /></label
+            ><button id="coordinate-roi">Set ROI</button
+            ><button id="coordinate-profile">Set profile</button>
+          </div>
+          <label
+            >Excluded polygon vertices as JSON, e.g.
+            [[0,0],[1e-6,0],[0,1e-6]]<textarea
+              id="coordinate-polygon"
+              rows="2"
+              placeholder="[[x,y],[x,y],[x,y]]"
+            ></textarea></label
+          ><button id="coordinate-exclude">Add excluded polygon</button>
+        </details>
+        <p class="hint" id="selection-info">
+          Draw a selection, then recalculate. Nonfinite pixels appear
+          checkerboard.
+        </p>
+        <section
+          class="toolbar plateau-controls"
+          aria-label="Step height regions"
+        >
+          <button id="plateau-a">Use current ROI as plateau A</button
+          ><button id="plateau-b">Use current ROI as plateau B</button
+          ><button id="clear-plateaus">Clear plateaus</button>
+        </section>
+        <p class="hint" id="plateau-info">
+          Step height: select two plateau regions using the ROI tool. Plateaus
+          are measured independently of the global ROI; exclusions still apply.
+        </p>
+        <section
+          id="statistics"
+          class="statistics"
+          aria-label="Surface statistics"
+        ></section>
+        <p class="hint">
+          Sa and Sq are relative to the selected mean. Statistics use the
+          analysis selection, excluding masks and nonfinite values.
+        </p>
+        <section class="lower">
+          <article>
+            <h2>Height distribution</h2>
+            <div id="histogram">
+              <p class="hint">Recalculate to view selected heights.</p>
+            </div>
+          </article>
+          <article>
+            <h2>Two-plateau step height</h2>
+            <div id="step">
+              <p class="hint">Set plateau A and plateau B, then recalculate.</p>
+            </div>
+            <p class="hint">
+              Step height is mean B minus mean A. Within-region standard
+              deviations describe spread, not measurement uncertainty.
+            </p>
+          </article>
+        </section>
+        <section class="lower">
+          <article>
+            <h2>Line profile</h2>
+            <div id="profile">
+              <p class="hint">Choose Line profile and drag across a surface.</p>
+            </div>
+          </article>
+          <article>
+            <h2>Validation & comparison</h2>
+            <div id="quality"></div>
+            <div id="comparison"></div>
+            <p class="hint">
+              Reference comparisons are numerical benchmarks. Agreement does not
+              establish the original processing procedure.
+            </p>
+          </article>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

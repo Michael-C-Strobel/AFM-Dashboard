@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.egg-info/
+build/
+dist/
+artifacts/
+.env
+node_modules/
+# Measurement binaries remain local; track provenance manifests, not measurements.
+data/*.gwy
+data/external/reference-only/

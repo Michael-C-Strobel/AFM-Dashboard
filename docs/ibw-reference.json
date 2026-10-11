@@ -1,0 +1,4821 @@
+{
+  "fixture": "data/external/reference-only/afmreader-sample_0.ibw",
+  "fixture_sha256": "5dddfebc5ba226c5e8cb4aaa93d985b5067b747e9b8b0ace068bc1d4a5583b97",
+  "file_bytes": 8533952,
+  "reader": {
+    "name": "igor2",
+    "version": "0.5.12",
+    "wheel_sha256": "1d99b30a3b82710578aafb21fbe02572c59f77ad4daba6d13a952115d200bac6",
+    "binarywave.py_sha256": "26edce79f3acc46592607cf53095240e0bb0bdcb23dd1588f25b64103ab9fde4",
+    "url": "https://pypi.org/project/igor2/0.5.12/"
+  },
+  "environment": {
+    "python": "3.11.15",
+    "numpy": "2.4.6"
+  },
+  "version": 5,
+  "storage_dtype": "<f4",
+  "data_offset": 384,
+  "data_bytes": 8388608,
+  "shape": [
+    512,
+    512,
+    8
+  ],
+  "storage_order": "Fortran: dimension0 fastest, then dimension1, then channel",
+  "header_checksum_uint16_sum_mod65536": 0,
+  "binary_header": {
+    "checksum": 22974,
+    "wfmSize": 8388928,
+    "formulaSize": 0,
+    "noteSize": 13257,
+    "dataEUnitsSize": 0,
+    "dimEUnitsSize": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "dimLabelsSize": [
+      0,
+      0,
+      288,
+      0
+    ],
+    "sIndicesSize": 0,
+    "optionsSize1": 0,
+    "optionsSize2": 0
+  },
+  "wave_header": {
+    "next": 60402952,
+    "creationDate": 3358961182,
+    "modDate": 3649175335,
+    "npnts": 2097152,
+    "type": 2,
+    "dLock": 0,
+    "whpad1": [
+      {
+        "latin1": "",
+        "hex": ""
+      },
+      {
+        "latin1": "",
+        "hex": ""
+      },
+      {
+        "latin1": "",
+        "hex": ""
+      },
+      {
+        "latin1": "",
+        "hex": ""
+      },
+      {
+        "latin1": "",
+        "hex": ""
+      },
+      {
+        "latin1": "",
+        "hex": ""
+      }
+    ],
+    "whVersion": 1,
+    "bname": {
+      "latin1": "dna1_pll0015",
+      "hex": "646e61315f706c6c30303135"
+    },
+    "whpad2": 0,
+    "dFolder": 54067168,
+    "nDim": [
+      512,
+      512,
+      8,
+      0
+    ],
+    "sfA": [
+      1.5655577299412918e-09,
+      1.5655577299412918e-09,
+      1.0,
+      1.0
+    ],
+    "sfB": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "dataUnits": [
+      {
+        "latin1": "",
+        "hex": ""
+      },
+      {
+        "latin1": "",
+        "hex": ""
+      },
+      {
+        "latin1": "",
+        "hex": ""
+      },
+      {
+        "latin1": "",
+        "hex": ""
+      }
+    ],
+    "dimUnits": [
+      [
+        {
+          "latin1": "m",
+          "hex": "6d"
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        }
+      ],
+      [
+        {
+          "latin1": "m",
+          "hex": "6d"
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        }
+      ],
+      [
+        {
+          "latin1": "",
+          "hex": ""
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        }
+      ],
+      [
+        {
+          "latin1": "",
+          "hex": ""
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        },
+        {
+          "latin1": "",
+          "hex": ""
+        }
+      ]
+    ],
+    "fsValid": 0,
+    "whpad3": 0,
+    "topFullScale": 0.0,
+    "botFullScale": 0.0,
+    "dataEUnits": 0,
+    "dimEUnits": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "dimLabels": [
+      0,
+      0,
+      60402808,
+      0
+    ],
+    "waveNoteH": 536251136,
+    "whUnused": [
+      2,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "aModified": 3,
+    "wModified": 1,
+    "swModified": 1,
+    "useBits": {
+      "latin1": "\u0000",
+      "hex": "00"
+    },
+    "kindBits": {
+      "latin1": "\u0000",
+      "hex": "00"
+    },
+    "formula": 0,
+    "depID": 426,
+    "whpad4": 1431,
+    "srcFldr": 0,
+    "fileName": 0,
+    "sIndices": 0
+  },
+  "igor2_labels": [
+    [],
+    [],
+    [
+      {
+        "latin1": "",
+        "hex": ""
+      },
+      {
+        "latin1": "HeightTracee",
+        "hex": "486569676874547261636565"
+      },
+      {
+        "latin1": "HeightRetrace",
+        "hex": "48656967687452657472616365"
+      },
+      {
+        "latin1": "ZSensorTrace",
+        "hex": "5a53656e736f725472616365"
+      },
+      {
+        "latin1": "ZSensorRetrace",
+        "hex": "5a53656e736f7252657472616365"
+      },
+      {
+        "latin1": "UserIn0Trace",
+        "hex": "55736572496e305472616365"
+      },
+      {
+        "latin1": "UserIn0Retrace",
+        "hex": "55736572496e3052657472616365"
+      },
+      {
+        "latin1": "UserIn1Trace",
+        "hex": "55736572496e315472616365"
+      },
+      {
+        "latin1": "UserIn1Retrace",
+        "hex": "55736572496e3152657472616365"
+      }
+    ],
+    []
+  ],
+  "labels_offset": 8402249,
+  "label_slots": [
+    {
+      "index": 0,
+      "hex": "0000000000000000000000000000000000000000000000000000000000000000",
+      "c_string": ""
+    },
+    {
+      "index": 1,
+      "hex": "4865696768745472616365006500000000000000000000000000000000000000",
+      "c_string": "HeightTrace"
+    },
+    {
+      "index": 2,
+      "hex": "4865696768745265747261636500000000000000000000000000000000000000",
+      "c_string": "HeightRetrace"
+    },
+    {
+      "index": 3,
+      "hex": "5a53656e736f7254726163650000000000000000000000000000000000000000",
+      "c_string": "ZSensorTrace"
+    },
+    {
+      "index": 4,
+      "hex": "5a53656e736f7252657472616365000000000000000000000000000000000000",
+      "c_string": "ZSensorRetrace"
+    },
+    {
+      "index": 5,
+      "hex": "55736572496e3054726163650000000000000000000000000000000000000000",
+      "c_string": "UserIn0Trace"
+    },
+    {
+      "index": 6,
+      "hex": "55736572496e3052657472616365000000000000000000000000000000000000",
+      "c_string": "UserIn0Retrace"
+    },
+    {
+      "index": 7,
+      "hex": "55736572496e3154726163650000000000000000000000000000000000000000",
+      "c_string": "UserIn1Trace"
+    },
+    {
+      "index": 8,
+      "hex": "55736572496e3152657472616365000000000000000000000000000000000000",
+      "c_string": "UserIn1Retrace"
+    }
+  ],
+  "note_latin1": "ScanSize: 8e-07\rFastScanSize: 8e-07\rSlowScanSize: 8e-07\rScanRate: 1.1161\rXOffset: 0\rYOffset: 0\rScanPoints: 512\rScanLines: 512\rScanAngle: 0\rImagingMode: 0\rInvOLS: 1e-07\rSpringConstant: 1e-06\rAmpInvOLS: 1\rFastRatio: 1\rSlowRatio: 1\rTopLine: 255\rBottomLine: 0\rScanMode: 2\rNapMode: 0\rFMapScanTime: 16.85\rFMapScanPoints: 10\rFMapScanLines: 10\rFMapXYVelocity: 8.0003e-07\rChannel1DataType: 1\rDataTypeSum: 113\rPhaseOffset: 130.7\rPhaseOffset1: 0\rNapPhaseOffset: 90\r\r32 bit channel: Height\rReal Parms: End\rInitial Parms: Start\rScanSize: 8e-07\rFastScanSize: 8e-07\rSlowScanSize: 8e-07\rScanRate: 1.1161\rScanSpeed: 2.2321e-06\rXOffset: 0\rYOffset: 0\rScanPoints: 512\rScanLines: 512\rRoundFactor: 0.04\rIntegralGain: 0.46909\rProportionalGain: 0\rScanAngle: 0\rScanAngleFactor: 1\rAmplitudeSetpointVolts: 0.8\rAmplitudeSetpointMeters: 1e-08\rDriveAmplitude: 0.18369\rDriveFrequency: 30000\rSweepWidth: 1e+05\rSlowScanEnabled: 1\rDeflectionSetpointVolts: 0.025\rDeflectionSetpointMeters: 0\rDeflectionSetpointNewtons: 5e-09\rImagingMode: 0\rMaxScanSize: 9e-05\rInvOLS: 1e-07\rSpringConstant: 1e-06\rDisplaySpringConstant: 1e-15\rScanStateChanged: 0\rScanDown: 1\rXLVDTSens: -1\rYLVDTSens: -1\rZLVDTSens: -1\rXLVDTOffset: 0.88\rYLVDTOffset: -0.07\rZLVDTOffset: 0\rYIgain: 8.9531\rYPgain: -inf\rXIgain: 8.9531\rXPgain: -inf\rLastScan: 0\rXPiezoSens: 8.68e-08\rYPiezoSens: 9.1e-08\rZPiezoSens: 1.28e-08\rXDriveOffset: 0\rYDriveOffset: 0\rSweepPoints: 480\rSecretGain: 0\rYSgain: 10.5\rXSgain: 11.1\rDIsplayLVDTTraces: 0\rPhaseOffset: 130.7\rBaseSuffix: 15\rSaveImage: 2\rParmChange: 2\rADCgain: 0\rOldADCgain: 12\rOldScanSize: 0\rOldYOffset: 0\rOldXOffset: 0\rZIgain: 10.3\rZPgain: -inf\rZSgain: 0\rAmpInvOLS: 1\rUpdateCounter: -1\rDoMunge: 0\rXMungeAlpha: 1\rYMungeAlpha: 1\rZMungeAlpha: 1\rProductionHead: 1\rStartHeadTemp: NaN\rStartScannerTemp: NaN\rHas1xACDeflGain: 0\rDontChangeXPT: 1\rLowNoise: 1\rScreenRatio: 0.75\rXDriftRate: 0\rYDriftRate: 0\rXDriftTotal: 0\rYDriftTotal: 0\rDriftBIts: 0\rDriftCount: 0\rSetpoint: 0.0008\rFastRatio: 1\rSlowRatio: 1\rTopLine: 255\rBottomLine: 0\rScanStatus: 1\rIs1DPlus: 0\rDelayUpdate: 0\rMarkerRatio: 0\rStartLineCount: 0\rOldAmplitudeSetpointVolts: 0.8\rOldDeflectionSetPointVolts: 0\rScanMode: 2\rInterpolate: -89600\rTipVoltage: 0\rStartBioHeaterTemp: 0\rBiasVoltage: 0\rFreqIgain: 10\rFreqPgain: 5\rFreqSgain: 0\rOrcaGain: NaN\rFreqGainOn: 0\rUserIn0Gain: 1\rUserIn1Gain: 1\rUserIn2Gain: 1\rLateralGain: 1\rIsBipolar: 1\rFrequencyHack: 0\rMagneticField: 0\rDriveGainOn: 0\rDriveIGain: 5\rDrivePGain: 1\rDriveSGain: 0\rUserIn0Offset: 0\rUserIn1Offset: 0\rUserIn2Offset: 0\rLateralOffset: 0\rLastImage: 0\rZoomSize: 0\rZoomXOffset: -9.4665e-08\rZoomYOffset: 1.1856e-07\rUser0Voltage: 0\rUser1Voltage: 0\rExtendedZ: 0\rDriveAmplitude1: 0.1\rDriveFrequency1: 4.464e+05\rSweepWidth1: 5000\rPhaseOffset1: 0\rAmp2InvOLS: 5e-07\rVoltageParm: 0\rControllerID: 3\rCapacitanceSens: 1\rCapacitanceOffset: 0\rOutAOffset: 0\rOutBOffset: 0\rOutCOffset: 0\rUseCantHolder: 0\rCurrentCantHolder: 2\rHasClickRing: 1\rXScanDirection: 1\rYScanDirection: 1\rSaveImageCount: 0\rSaveImageLines: 0\rOrcaGain2: NaN\rUpdateSlowWave: 0\r\rNapIntegralGain: 10\rNapProportionalGain: 5\rNapDeflectionSetpointVolts: 1\rNapAmplitudeSetpointVolts: 0.8\rNapDriveAmplitude: 1\rNapDriveFrequency: 84000\rNapPhaseOffset: 90\rNapTipVoltage: 3\rNapUser0Voltage: 0\rNapUser1Voltage: 0\rNapHeight: 5e-08\rNapStartHeight: 0\rNapTime: 0.10016\rNapMode: 0\rNapParms: 0\rPotentialIGain: 3\rPotentialPGain: 1\rPotentialGainOn: 0\rElectricTune: 0\r\rChannel1DataType: 1\rChannel2DataType: 6\rChannel3DataType: 7\rChannel4DataType: 5\rChannel5DataType: 0\rChannel6DataType: 0\rDataTypeSum: 113\rChannel1Show: 3\rChannel2Show: 0\rChannel3Show: 0\rChannel4Show: 0\rChannel5Show: 2\rChannel6Show: 1\rChannelShowSum: 5\rRealPlanefit: 2\rSavePlanefit: 0\rHeightCapture: 3\rHeight1DataScale: 3.2233e-09\rHeight1DataOffset: 1.1202e-09\rHeight1RealPlanefit: 3\rHeight1SavePlanefit: 0\rHeight1ColorMap: 45\rHeight2DataScale: 6.5708e-10\rHeight2DataOffset: 1.5481e-12\rHeight2RealPlanefit: 2\rHeight2SavePlanefit: 2\rHeight2ColorMap: 1\rDeflectionCapture: 2\rDeflection1DataScale: 1e-08\rDeflection1DataOffset: 0\rDeflection1RealPlanefit: 1\rDeflection1SavePlanefit: 0\rDeflection1ColorMap: 1\rDeflection2DataScale: 1e-08\rDeflection2DataOffset: 0\rDeflection2RealPlanefit: 2\rDeflection2SavePlanefit: 2\rDeflection2ColorMap: 1\rAmplitudeCapture: 3\rAmplitude1DataScale: 8.7904e-05\rAmplitude1DataOffset: 3.7318e-06\rAmplitude1RealPlanefit: 1\rAmplitude1SavePlanefit: 0\rAmplitude1ColorMap: 9\rAmplitude2DataScale: 0.025541\rAmplitude2DataOffset: 0.00091475\rAmplitude2RealPlanefit: 1\rAmplitude2SavePlanefit: 2\rAmplitude2ColorMap: 1\rZSensorCapture: 3\rZSensor1DataScale: 0.1094\rZSensor1DataOffset: 0.70458\rZSensor1RealPlanefit: 0\rZSensor1SavePlanefit: 0\rZSensor1ColorMap: 1\rZSensor2DataScale: 0\rZSensor2DataOffset: 0\rZSensor2RealPlanefit: 2\rZSensor2SavePlanefit: 2\rZSensor2ColorMap: 1\rPhaseCapture: 3\rPhase1DataScale: 60\rPhase1DataOffset: 90\rPhase1RealPlanefit: 2\rPhase1SavePlanefit: 0\rPhase1ColorMap: 9\rPhase2DataScale: 60\rPhase2DataOffset: 0\rPhase2RealPlanefit: 2\rPhase2SavePlanefit: 2\rPhase2ColorMap: 1\rOffCapture: 3\rOff1DataScale: 1\rOff1DataOffset: 0\rOff1RealPlanefit: 2\rOff1SavePlanefit: 2\rOff1ColorMap: 9\rOff2DataScale: 0\rOff2DataOffset: 0\rOff2ColorMap: 1\rUserIn1Capture: 3\rUserIn11DataScale: 0.0020926\rUserIn11DataOffset: -0.0023106\rUserIn11RealPlanefit: 0\rUserIn11SavePlanefit: 0\rUserIn11ColorMap: 1\rUserIn12DataScale: 1.2208\rUserIn12DataOffset: 6.5955\rUserIn12RealPlanefit: 2\rUserIn12SavePlanefit: 2\rUserIn12ColorMap: 1\rUserIn2Capture: 2\rUserIn21DataScale: 1\rUserIn21DataOffset: 0\rUserIn21RealPlanefit: 0\rUserIn21SavePlanefit: 0\rUserIn21ColorMap: 1\rUserIn22DataScale: 1\rUserIn22DataOffset: 0\rUserIn22RealPlanefit: 2\rUserIn22SavePlanefit: 2\rUserIn22ColorMap: 1\rUserIn0Capture: 3\rUserIn01DataScale: 0.0040686\rUserIn01DataOffset: 3.1379e-05\rUserIn01RealPlanefit: 0\rUserIn01SavePlanefit: 0\rUserIn01ColorMap: 1\rUserIn02DataScale: 1\rUserIn02DataOffset: 0\rUserIn02RealPlanefit: 2\rUserIn02SavePlanefit: 2\rUserIn02ColorMap: 1\rInputICapture: 2\rInputI1DataScale: 1\rInputI1DataOffset: 0\rInputI1RealPlanefit: 0\rInputI1SavePlanefit: 0\rInputI1ColorMap: 1\rInputI2DataScale: 1\rInputI2DataOffset: 0\rInputI2RealPlanefit: 2\rInputI2SavePlanefit: 2\rInputI2ColorMap: 1\rInputQCapture: 2\rInputQ1DataScale: 1\rInputQ1DataOffset: 0\rInputQ1RealPlanefit: 0\rInputQ1SavePlanefit: 0\rInputQ1ColorMap: 1\rInputQ2DataScale: 1\rInputQ2DataOffset: 0\rInputQ2RealPlanefit: 2\rInputQ2SavePlanefit: 2\rInputQ2ColorMap: 1\rLateralCapture: 2\rLateral1DataScale: 0.01\rLateral1DataOffset: 0\rLateral1RealPlanefit: 1\rLateral1SavePlanefit: 0\rLateral1ColorMap: 1\rLateral2DataScale: 1\rLateral2DataOffset: 0\rLateral2RealPlanefit: 2\rLateral2SavePlanefit: 2\rLateral2ColorMap: 1\rFrequencyCapture: 0\rFrequency1DataScale: 1\rFrequency1DataOffset: 0\rFrequency1RealPlanefit: 1\rFrequency1SavePlanefit: 0\rFrequency1ColorMap: 1\rFrequency2DataScale: 1\rFrequency2DataOffset: 0\rFrequency2RealPlanefit: 2\rFrequency2SavePlanefit: 2\rFrequency2ColorMap: 1\rCurrentCapture: 2\rCurrent1DataScale: 1e-09\rCurrent1DataOffset: 0\rCurrent1RealPlanefit: 0\rCurrent1SavePlanefit: 0\rCurrent1ColorMap: 1\rCurrent2DataScale: 1e-09\rCurrent2DataOffset: 0\rCurrent2RealPlanefit: 2\rCurrent2SavePlanefit: 2\rCurrentColorMap: 1\rCurrent2Capture: 2\rCurrent21DataScale: 1e-06\rCurrent21DataOffset: 0\rCurrent21RealPlanefit: 0\rCurrent21SavePlanefit: 0\rCurrent21ColorMap: 1\rCurrent22DataScale: 1e-06\rCurrent22DataOffset: 0\rCurrent22RealPlanefit: 0\rCurrent22SavePlanefit: 0\rCurrent22ColorMap: 1\rUserCalcCapture: 2\rUserCalc1DataScale: 1\rUserCalc1DataOffset: 0\rUserCalc1RealPlanefit: 2\rUserCalc1SavePlanefit: 2\rUserCalc1ColorMap: 1\rUserCalc2DataScale: 1\rUserCalc2DataOffset: 0\rUserCalc2RealPlanefit: 2\rUserCalc2SavePlanefit: 2\rUserCalc2ColorMap: 1\rCountCapture: 2\rCount1DataScale: 1\rCount1DataOffset: 0\rCount1RealPlanefit: 0\rCount1SavePlanefit: 0\rCount1ColorMap: 1\rCount2DataScale: 1\rCount2DataOffset: 0\rCount2RealPlanefit: 2\rCount2SavePlanefit: 2\rCount2ColorMap: 1\rPotentialCapture: 0\rPotential1DataScale: 1\rPotential1DataOffset: 0\rPotential1RealPlanefit: 0\rPotential1SavePlanefit: 0\rPotential1ColorMap: 1\rPotential2DataScale: 1\rPotential2DataOffset: 0\rPotential2RealPlanefit: 2\rPotential2SavePlanefit: 2\rPotential2ColorMap: 1\rAmplitude1Capture: 2\rAmplitude11DataScale: 2e-08\rAmplitude11DataOffset: 0\rAmplitude11RealPlanefit: 1\rAmplitude11SavePlanefit: 0\rAmplitude11ColorMap: 9\rAmplitude12DataScale: 2e-08\rAmplitude12DataOffset: 0\rAmplitude12RealPlanefit: 1\rAmplitude12SavePlanefit: 2\rAmplitude12ColorMap: 1\rAmplitude2Capture: 2\rAmplitude21DataScale: 2e-08\rAmplitude21DataOffset: 0\rAmplitude21RealPlanefit: 1\rAmplitude21SavePlanefit: 0\rAmplitude21ColorMap: 9\rAmplitude22DataScale: 2e-08\rAmplitude22DataOffset: 0\rAmplitude22RealPlanefit: 1\rAmplitude22SavePlanefit: 2\rAmplitude22ColorMap: 1\rPhase1Capture: 2\rPhase11DataScale: 60\rPhase11DataOffset: 90\rPhase11RealPlanefit: 0\rPhase11SavePlanefit: 0\rPhase11ColorMap: 9\rPhase12DataScale: 60\rPhase12DataOffset: 0\rPhase12RealPlanefit: 2\rPhase12SavePlanefit: 2\rPhase12ColorMap: 1\rPhase2Capture: 2\rPhase21DataScale: 60\rPhase21DataOffset: 90\rPhase21RealPlanefit: 0\rPhase21SavePlanefit: 0\rPhase21ColorMap: 9\rPhase22DataScale: 60\rPhase22DataOffset: 0\rPhase22RealPlanefit: 2\rPhase22SavePlanefit: 2\rPhase22ColorMap: 1\rChannel1Scope: 3\rChannel2Scope: 3\rChannel3Scope: 3\rChannel4Scope: 3\rChannel5Scope: 3\rChannel6Scope: 0\rChannel1Auto: 1\rChannel2Auto: 1\rChannel3Auto: 1\rChannel4Auto: 1\rChannel5Auto: 1\rChannel6Auto: 0\rChannel1AutoImg: 0\rChannel2AutoImg: 0\rChannel3AutoImg: 0\rChannel4AutoImg: 0\rChannel5AutoImg: 0\rUserCalcFunc: 1\rDissipationCapture: 2\rDissipation1DataScale: 0.022176\rDissipation1DataOffset: 8.3456e-05\rDissipation1RealPlanefit: 1\rDissipation1SavePlanefit: 0\rDissipation1ColorMap: 1\rDissipation2DataScale: 1\rDissipation2DataOffset: 0\rDissipation2RealPlanefit: 2\rDissipation2SavePlanefit: 2\rDissipation2ColorMap: 1\r\rInA: In0\rInB: In1\rInFast: In0\rInAOffset: Ground\rInBOffset: Ground\rInFastOffset: Ground\rOutXMod: Off\rOutYMod: Off\rOutZMod: Ground\rFilterIn: Ground\rOut0: Ground\rOut1: Ground\rOut2: Ground\rPogoOut: Ground\rChip: Ground\rShake: Ground\r\rFast_PassFilter: 1e+05\rZ_PassFilter: 1e+05\rX_PassFilter: 1e+05\rY_PassFilter: 1e+05\rR_PassFilter: 1e+05\rA_PassFilter: 1e+05\rB_PassFilter: 1e+05\rR1_PassFilter: 1e+05\r\rThermalDC: 7.2968e-06\rThermalQ: 4.1424\rThermalFrequency: 25224\rThermalWhiteNoise: 2.8601e-06\rScaleLog: 3\rFitWidth: 1e+05\rThermalSamples: 1000\rThermalCounter: 108\rSectionSamples: 10\rSectionCounter: 0\rDoThermal: 0\rThermalResolution: 4\rThermalZoom: 0\rDoCantTune: 0\rZoomCounter: 107\rAutoTuneLow: 2e+05\rAutoTuneHigh: 4e+05\rTargetVoltage: 1\rTargetPercent: 0\rCheckTuneTraces: 1\rButtonTime: 2.3363e+12\rShowThermalFit: 1\rAppendThermalBit: 8\rTuneQ: 100\rTuneGain: 0\rTunePeakResult: 1.0041\rTuneFreqResult: 3.1511e+05\rTuneQResult: 282.72\rThermalSamplesLimit: 0\rTuneFeedback: 0\rTuneDDSOutput: 0\rTipVoltCenter: 0\rTipVoltWidth: 10\rThermalFrequencyRange: 2\rAutoTuneLimit: 0\rAutoTuneLow1: 3e+05\rAutoTuneHigh1: 6e+05\rTargetVoltage1: 0.1\rTargetPercent1: 0\rDualACMode: 0\rWhichACMode: 0\rBackwardsTune: 0\rTuneCaptureRate: 500\rTuneTime: 0.96\rTuneFilter: 500\riDriveOn: 0\riDriveIsHere: 0\rFrequencyRatio: 14.88\rDFRTFrequencyCenter: 3.5e+05\rDFRTFrequencyWidth: 5000\rHVPFMHolder: 0\rDFRTOn: 0\r\rYourVariablesStartHere: 1\r\rLog File:Start\rLog File:Stop\r\rDate: 2019\u0094N8\u008c\u008e20\u0093\u00fa\rTime: 19:48:54\rSeconds: 3649175334\rUserCalcUnit: \u00b0\rUserIn0Unit: V\rUserIn1Unit: V\rUserIn2Unit: V\rLateralUnit: V\rARUserPanelName: \rUserIn0Name: \rUserIn1Name: \rUserIn2Name: \rUserCalcName: \rUserIn0Ab: \rUserIn1Ab: \rUserIn2Ab: \rUserCalcAb: \rUserIn0Force: \rUserIn1Force: \rUserIn2Force: \rUserCalcForce: \r\rVerDate: 80501\rVersion: 080501+1506\rXopVersion: 20081.28.3.1\rOSVersion: Windows XP Professional Service Pack 3 (Build 2600)\rIgorFileVersion: 6.0.5.0\rBaseName:dna1_pll\rImageNote: \rTipSerialNumber:\rPlanefit 0: None\rPlanefitOrder 0: -1\rFlattenOrder 0: -1\rPlanefit Offset 0: 0\rPlanefit X Slope 0: 0\rPlanefit Y Slope 0: 0\rDisplay Offset 0: -8.3195e-07\rDisplay Range 0: 3.2233e-09\rColorMap 0: NanonisB\rPlanefit 1: None\rPlanefitOrder 1: -1\rFlattenOrder 1: -1\rPlanefit Offset 1: 0\rPlanefit X Slope 1: 0\rPlanefit Y Slope 1: 0\rDisplay Offset 1: -8.32e-07\rDisplay Range 1: 3.2233e-09\rColorMap 1: NanonisB\rPlanefit 2: None\rPlanefitOrder 2: -1\rFlattenOrder 2: -1\rPlanefit Offset 2: 0\rPlanefit X Slope 2: 0\rPlanefit Y Slope 2: 0\rDisplay Offset 2: 0.98579\rDisplay Range 2: 0.1094\rColorMap 2: Grays256\rPlanefit 3: None\rPlanefitOrder 3: -1\rFlattenOrder 3: -1\rPlanefit Offset 3: 0\rPlanefit X Slope 3: 0\rPlanefit Y Slope 3: 0\rDisplay Offset 3: 0.98581\rDisplay Range 3: 0.1094\rColorMap 3: Grays256\rPlanefit 4: None\rPlanefitOrder 4: -1\rFlattenOrder 4: -1\rPlanefit Offset 4: 0\rPlanefit X Slope 4: 0\rPlanefit Y Slope 4: 0\rDisplay Offset 4: -0.036008\rDisplay Range 4: 0.0040686\rColorMap 4: Grays256\rPlanefit 5: None\rPlanefitOrder 5: -1\rFlattenOrder 5: -1\rPlanefit Offset 5: 0\rPlanefit X Slope 5: 0\rPlanefit Y Slope 5: 0\rDisplay Offset 5: 0.086792\rDisplay Range 5: 0.0040686\rColorMap 5: Grays256\rPlanefit 6: None\rPlanefitOrder 6: -1\rFlattenOrder 6: -1\rPlanefit Offset 6: 0\rPlanefit X Slope 6: 0\rPlanefit Y Slope 6: 0\rDisplay Offset 6: 6.7362\rDisplay Range 6: 0.0020926\rColorMap 6: Grays256\rPlanefit 7: None\rPlanefitOrder 7: -1\rFlattenOrder 7: -1\rPlanefit Offset 7: 0\rPlanefit X Slope 7: 0\rPlanefit Y Slope 7: 0\rDisplay Offset 7: 6.7674\rDisplay Range 7: 0.0020926\rColorMap 7: Grays256\rEndHeadTemp: *ERROR*\rEndScannerTemp: *ERROR*",
+  "note_sha256": "f5f2f596f6c22645bb4c549b13cc85c2298150b194c55bfa03e5c2abb661007a",
+  "note_fields_in_order": [
+    {
+      "key": "ScanSize",
+      "value": "8e-07",
+      "has_colon": true
+    },
+    {
+      "key": "FastScanSize",
+      "value": "8e-07",
+      "has_colon": true
+    },
+    {
+      "key": "SlowScanSize",
+      "value": "8e-07",
+      "has_colon": true
+    },
+    {
+      "key": "ScanRate",
+      "value": "1.1161",
+      "has_colon": true
+    },
+    {
+      "key": "XOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "YOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ScanPoints",
+      "value": "512",
+      "has_colon": true
+    },
+    {
+      "key": "ScanLines",
+      "value": "512",
+      "has_colon": true
+    },
+    {
+      "key": "ScanAngle",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ImagingMode",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "InvOLS",
+      "value": "1e-07",
+      "has_colon": true
+    },
+    {
+      "key": "SpringConstant",
+      "value": "1e-06",
+      "has_colon": true
+    },
+    {
+      "key": "AmpInvOLS",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "FastRatio",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "SlowRatio",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "TopLine",
+      "value": "255",
+      "has_colon": true
+    },
+    {
+      "key": "BottomLine",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ScanMode",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "NapMode",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "FMapScanTime",
+      "value": "16.85",
+      "has_colon": true
+    },
+    {
+      "key": "FMapScanPoints",
+      "value": "10",
+      "has_colon": true
+    },
+    {
+      "key": "FMapScanLines",
+      "value": "10",
+      "has_colon": true
+    },
+    {
+      "key": "FMapXYVelocity",
+      "value": "8.0003e-07",
+      "has_colon": true
+    },
+    {
+      "key": "Channel1DataType",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "DataTypeSum",
+      "value": "113",
+      "has_colon": true
+    },
+    {
+      "key": "PhaseOffset",
+      "value": "130.7",
+      "has_colon": true
+    },
+    {
+      "key": "PhaseOffset1",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "NapPhaseOffset",
+      "value": "90",
+      "has_colon": true
+    },
+    {
+      "key": "",
+      "value": "",
+      "has_colon": false
+    },
+    {
+      "key": "32 bit channel",
+      "value": "Height",
+      "has_colon": true
+    },
+    {
+      "key": "Real Parms",
+      "value": "End",
+      "has_colon": true
+    },
+    {
+      "key": "Initial Parms",
+      "value": "Start",
+      "has_colon": true
+    },
+    {
+      "key": "ScanSize",
+      "value": "8e-07",
+      "has_colon": true
+    },
+    {
+      "key": "FastScanSize",
+      "value": "8e-07",
+      "has_colon": true
+    },
+    {
+      "key": "SlowScanSize",
+      "value": "8e-07",
+      "has_colon": true
+    },
+    {
+      "key": "ScanRate",
+      "value": "1.1161",
+      "has_colon": true
+    },
+    {
+      "key": "ScanSpeed",
+      "value": "2.2321e-06",
+      "has_colon": true
+    },
+    {
+      "key": "XOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "YOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ScanPoints",
+      "value": "512",
+      "has_colon": true
+    },
+    {
+      "key": "ScanLines",
+      "value": "512",
+      "has_colon": true
+    },
+    {
+      "key": "RoundFactor",
+      "value": "0.04",
+      "has_colon": true
+    },
+    {
+      "key": "IntegralGain",
+      "value": "0.46909",
+      "has_colon": true
+    },
+    {
+      "key": "ProportionalGain",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ScanAngle",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ScanAngleFactor",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "AmplitudeSetpointVolts",
+      "value": "0.8",
+      "has_colon": true
+    },
+    {
+      "key": "AmplitudeSetpointMeters",
+      "value": "1e-08",
+      "has_colon": true
+    },
+    {
+      "key": "DriveAmplitude",
+      "value": "0.18369",
+      "has_colon": true
+    },
+    {
+      "key": "DriveFrequency",
+      "value": "30000",
+      "has_colon": true
+    },
+    {
+      "key": "SweepWidth",
+      "value": "1e+05",
+      "has_colon": true
+    },
+    {
+      "key": "SlowScanEnabled",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "DeflectionSetpointVolts",
+      "value": "0.025",
+      "has_colon": true
+    },
+    {
+      "key": "DeflectionSetpointMeters",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DeflectionSetpointNewtons",
+      "value": "5e-09",
+      "has_colon": true
+    },
+    {
+      "key": "ImagingMode",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "MaxScanSize",
+      "value": "9e-05",
+      "has_colon": true
+    },
+    {
+      "key": "InvOLS",
+      "value": "1e-07",
+      "has_colon": true
+    },
+    {
+      "key": "SpringConstant",
+      "value": "1e-06",
+      "has_colon": true
+    },
+    {
+      "key": "DisplaySpringConstant",
+      "value": "1e-15",
+      "has_colon": true
+    },
+    {
+      "key": "ScanStateChanged",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ScanDown",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "XLVDTSens",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "YLVDTSens",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "ZLVDTSens",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "XLVDTOffset",
+      "value": "0.88",
+      "has_colon": true
+    },
+    {
+      "key": "YLVDTOffset",
+      "value": "-0.07",
+      "has_colon": true
+    },
+    {
+      "key": "ZLVDTOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "YIgain",
+      "value": "8.9531",
+      "has_colon": true
+    },
+    {
+      "key": "YPgain",
+      "value": "-inf",
+      "has_colon": true
+    },
+    {
+      "key": "XIgain",
+      "value": "8.9531",
+      "has_colon": true
+    },
+    {
+      "key": "XPgain",
+      "value": "-inf",
+      "has_colon": true
+    },
+    {
+      "key": "LastScan",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "XPiezoSens",
+      "value": "8.68e-08",
+      "has_colon": true
+    },
+    {
+      "key": "YPiezoSens",
+      "value": "9.1e-08",
+      "has_colon": true
+    },
+    {
+      "key": "ZPiezoSens",
+      "value": "1.28e-08",
+      "has_colon": true
+    },
+    {
+      "key": "XDriveOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "YDriveOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "SweepPoints",
+      "value": "480",
+      "has_colon": true
+    },
+    {
+      "key": "SecretGain",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "YSgain",
+      "value": "10.5",
+      "has_colon": true
+    },
+    {
+      "key": "XSgain",
+      "value": "11.1",
+      "has_colon": true
+    },
+    {
+      "key": "DIsplayLVDTTraces",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "PhaseOffset",
+      "value": "130.7",
+      "has_colon": true
+    },
+    {
+      "key": "BaseSuffix",
+      "value": "15",
+      "has_colon": true
+    },
+    {
+      "key": "SaveImage",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "ParmChange",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "ADCgain",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "OldADCgain",
+      "value": "12",
+      "has_colon": true
+    },
+    {
+      "key": "OldScanSize",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "OldYOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "OldXOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ZIgain",
+      "value": "10.3",
+      "has_colon": true
+    },
+    {
+      "key": "ZPgain",
+      "value": "-inf",
+      "has_colon": true
+    },
+    {
+      "key": "ZSgain",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "AmpInvOLS",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UpdateCounter",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "DoMunge",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "XMungeAlpha",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "YMungeAlpha",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "ZMungeAlpha",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "ProductionHead",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "StartHeadTemp",
+      "value": "NaN",
+      "has_colon": true
+    },
+    {
+      "key": "StartScannerTemp",
+      "value": "NaN",
+      "has_colon": true
+    },
+    {
+      "key": "Has1xACDeflGain",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DontChangeXPT",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "LowNoise",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "ScreenRatio",
+      "value": "0.75",
+      "has_colon": true
+    },
+    {
+      "key": "XDriftRate",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "YDriftRate",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "XDriftTotal",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "YDriftTotal",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DriftBIts",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DriftCount",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Setpoint",
+      "value": "0.0008",
+      "has_colon": true
+    },
+    {
+      "key": "FastRatio",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "SlowRatio",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "TopLine",
+      "value": "255",
+      "has_colon": true
+    },
+    {
+      "key": "BottomLine",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ScanStatus",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Is1DPlus",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DelayUpdate",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "MarkerRatio",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "StartLineCount",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "OldAmplitudeSetpointVolts",
+      "value": "0.8",
+      "has_colon": true
+    },
+    {
+      "key": "OldDeflectionSetPointVolts",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ScanMode",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Interpolate",
+      "value": "-89600",
+      "has_colon": true
+    },
+    {
+      "key": "TipVoltage",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "StartBioHeaterTemp",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "BiasVoltage",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "FreqIgain",
+      "value": "10",
+      "has_colon": true
+    },
+    {
+      "key": "FreqPgain",
+      "value": "5",
+      "has_colon": true
+    },
+    {
+      "key": "FreqSgain",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "OrcaGain",
+      "value": "NaN",
+      "has_colon": true
+    },
+    {
+      "key": "FreqGainOn",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn0Gain",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn1Gain",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn2Gain",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "LateralGain",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "IsBipolar",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "FrequencyHack",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "MagneticField",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DriveGainOn",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DriveIGain",
+      "value": "5",
+      "has_colon": true
+    },
+    {
+      "key": "DrivePGain",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "DriveSGain",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn0Offset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn1Offset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn2Offset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "LateralOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "LastImage",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ZoomSize",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ZoomXOffset",
+      "value": "-9.4665e-08",
+      "has_colon": true
+    },
+    {
+      "key": "ZoomYOffset",
+      "value": "1.1856e-07",
+      "has_colon": true
+    },
+    {
+      "key": "User0Voltage",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "User1Voltage",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ExtendedZ",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DriveAmplitude1",
+      "value": "0.1",
+      "has_colon": true
+    },
+    {
+      "key": "DriveFrequency1",
+      "value": "4.464e+05",
+      "has_colon": true
+    },
+    {
+      "key": "SweepWidth1",
+      "value": "5000",
+      "has_colon": true
+    },
+    {
+      "key": "PhaseOffset1",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Amp2InvOLS",
+      "value": "5e-07",
+      "has_colon": true
+    },
+    {
+      "key": "VoltageParm",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ControllerID",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "CapacitanceSens",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "CapacitanceOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "OutAOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "OutBOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "OutCOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UseCantHolder",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "CurrentCantHolder",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "HasClickRing",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "XScanDirection",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "YScanDirection",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "SaveImageCount",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "SaveImageLines",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "OrcaGain2",
+      "value": "NaN",
+      "has_colon": true
+    },
+    {
+      "key": "UpdateSlowWave",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "",
+      "value": "",
+      "has_colon": false
+    },
+    {
+      "key": "NapIntegralGain",
+      "value": "10",
+      "has_colon": true
+    },
+    {
+      "key": "NapProportionalGain",
+      "value": "5",
+      "has_colon": true
+    },
+    {
+      "key": "NapDeflectionSetpointVolts",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "NapAmplitudeSetpointVolts",
+      "value": "0.8",
+      "has_colon": true
+    },
+    {
+      "key": "NapDriveAmplitude",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "NapDriveFrequency",
+      "value": "84000",
+      "has_colon": true
+    },
+    {
+      "key": "NapPhaseOffset",
+      "value": "90",
+      "has_colon": true
+    },
+    {
+      "key": "NapTipVoltage",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "NapUser0Voltage",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "NapUser1Voltage",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "NapHeight",
+      "value": "5e-08",
+      "has_colon": true
+    },
+    {
+      "key": "NapStartHeight",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "NapTime",
+      "value": "0.10016",
+      "has_colon": true
+    },
+    {
+      "key": "NapMode",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "NapParms",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "PotentialIGain",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "PotentialPGain",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "PotentialGainOn",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ElectricTune",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "",
+      "value": "",
+      "has_colon": false
+    },
+    {
+      "key": "Channel1DataType",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Channel2DataType",
+      "value": "6",
+      "has_colon": true
+    },
+    {
+      "key": "Channel3DataType",
+      "value": "7",
+      "has_colon": true
+    },
+    {
+      "key": "Channel4DataType",
+      "value": "5",
+      "has_colon": true
+    },
+    {
+      "key": "Channel5DataType",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Channel6DataType",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DataTypeSum",
+      "value": "113",
+      "has_colon": true
+    },
+    {
+      "key": "Channel1Show",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "Channel2Show",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Channel3Show",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Channel4Show",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Channel5Show",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Channel6Show",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "ChannelShowSum",
+      "value": "5",
+      "has_colon": true
+    },
+    {
+      "key": "RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "HeightCapture",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "Height1DataScale",
+      "value": "3.2233e-09",
+      "has_colon": true
+    },
+    {
+      "key": "Height1DataOffset",
+      "value": "1.1202e-09",
+      "has_colon": true
+    },
+    {
+      "key": "Height1RealPlanefit",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "Height1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Height1ColorMap",
+      "value": "45",
+      "has_colon": true
+    },
+    {
+      "key": "Height2DataScale",
+      "value": "6.5708e-10",
+      "has_colon": true
+    },
+    {
+      "key": "Height2DataOffset",
+      "value": "1.5481e-12",
+      "has_colon": true
+    },
+    {
+      "key": "Height2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Height2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Height2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "DeflectionCapture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Deflection1DataScale",
+      "value": "1e-08",
+      "has_colon": true
+    },
+    {
+      "key": "Deflection1DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Deflection1RealPlanefit",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Deflection1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Deflection1ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Deflection2DataScale",
+      "value": "1e-08",
+      "has_colon": true
+    },
+    {
+      "key": "Deflection2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Deflection2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Deflection2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Deflection2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "AmplitudeCapture",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude1DataScale",
+      "value": "8.7904e-05",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude1DataOffset",
+      "value": "3.7318e-06",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude1RealPlanefit",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude1ColorMap",
+      "value": "9",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude2DataScale",
+      "value": "0.025541",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude2DataOffset",
+      "value": "0.00091475",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude2RealPlanefit",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "ZSensorCapture",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "ZSensor1DataScale",
+      "value": "0.1094",
+      "has_colon": true
+    },
+    {
+      "key": "ZSensor1DataOffset",
+      "value": "0.70458",
+      "has_colon": true
+    },
+    {
+      "key": "ZSensor1RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ZSensor1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ZSensor1ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "ZSensor2DataScale",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ZSensor2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ZSensor2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "ZSensor2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "ZSensor2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "PhaseCapture",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "Phase1DataScale",
+      "value": "60",
+      "has_colon": true
+    },
+    {
+      "key": "Phase1DataOffset",
+      "value": "90",
+      "has_colon": true
+    },
+    {
+      "key": "Phase1RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Phase1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Phase1ColorMap",
+      "value": "9",
+      "has_colon": true
+    },
+    {
+      "key": "Phase2DataScale",
+      "value": "60",
+      "has_colon": true
+    },
+    {
+      "key": "Phase2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Phase2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Phase2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Phase2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "OffCapture",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "Off1DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Off1DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Off1RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Off1SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Off1ColorMap",
+      "value": "9",
+      "has_colon": true
+    },
+    {
+      "key": "Off2DataScale",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Off2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Off2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn1Capture",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn11DataScale",
+      "value": "0.0020926",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn11DataOffset",
+      "value": "-0.0023106",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn11RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn11SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn11ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn12DataScale",
+      "value": "1.2208",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn12DataOffset",
+      "value": "6.5955",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn12RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn12SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn12ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn2Capture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn21DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn21DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn21RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn21SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn21ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn22DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn22DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn22RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn22SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn22ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn0Capture",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn01DataScale",
+      "value": "0.0040686",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn01DataOffset",
+      "value": "3.1379e-05",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn01RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn01SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn01ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn02DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn02DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn02RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn02SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn02ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "InputICapture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "InputI1DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "InputI1DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "InputI1RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "InputI1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "InputI1ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "InputI2DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "InputI2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "InputI2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "InputI2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "InputI2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "InputQCapture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "InputQ1DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "InputQ1DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "InputQ1RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "InputQ1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "InputQ1ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "InputQ2DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "InputQ2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "InputQ2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "InputQ2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "InputQ2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "LateralCapture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Lateral1DataScale",
+      "value": "0.01",
+      "has_colon": true
+    },
+    {
+      "key": "Lateral1DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Lateral1RealPlanefit",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Lateral1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Lateral1ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Lateral2DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Lateral2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Lateral2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Lateral2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Lateral2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "FrequencyCapture",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Frequency1DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Frequency1DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Frequency1RealPlanefit",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Frequency1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Frequency1ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Frequency2DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Frequency2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Frequency2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Frequency2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Frequency2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "CurrentCapture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Current1DataScale",
+      "value": "1e-09",
+      "has_colon": true
+    },
+    {
+      "key": "Current1DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Current1RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Current1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Current1ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Current2DataScale",
+      "value": "1e-09",
+      "has_colon": true
+    },
+    {
+      "key": "Current2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Current2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Current2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "CurrentColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Current2Capture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Current21DataScale",
+      "value": "1e-06",
+      "has_colon": true
+    },
+    {
+      "key": "Current21DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Current21RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Current21SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Current21ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Current22DataScale",
+      "value": "1e-06",
+      "has_colon": true
+    },
+    {
+      "key": "Current22DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Current22RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Current22SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Current22ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalcCapture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalc1DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalc1DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalc1RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalc1SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalc1ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalc2DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalc2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalc2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalc2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalc2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "CountCapture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Count1DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Count1DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Count1RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Count1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Count1ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Count2DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Count2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Count2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Count2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Count2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "PotentialCapture",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Potential1DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Potential1DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Potential1RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Potential1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Potential1ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Potential2DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Potential2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Potential2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Potential2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Potential2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude1Capture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude11DataScale",
+      "value": "2e-08",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude11DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude11RealPlanefit",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude11SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude11ColorMap",
+      "value": "9",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude12DataScale",
+      "value": "2e-08",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude12DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude12RealPlanefit",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude12SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude12ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude2Capture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude21DataScale",
+      "value": "2e-08",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude21DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude21RealPlanefit",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude21SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude21ColorMap",
+      "value": "9",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude22DataScale",
+      "value": "2e-08",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude22DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude22RealPlanefit",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude22SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Amplitude22ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Phase1Capture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Phase11DataScale",
+      "value": "60",
+      "has_colon": true
+    },
+    {
+      "key": "Phase11DataOffset",
+      "value": "90",
+      "has_colon": true
+    },
+    {
+      "key": "Phase11RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Phase11SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Phase11ColorMap",
+      "value": "9",
+      "has_colon": true
+    },
+    {
+      "key": "Phase12DataScale",
+      "value": "60",
+      "has_colon": true
+    },
+    {
+      "key": "Phase12DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Phase12RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Phase12SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Phase12ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Phase2Capture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Phase21DataScale",
+      "value": "60",
+      "has_colon": true
+    },
+    {
+      "key": "Phase21DataOffset",
+      "value": "90",
+      "has_colon": true
+    },
+    {
+      "key": "Phase21RealPlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Phase21SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Phase21ColorMap",
+      "value": "9",
+      "has_colon": true
+    },
+    {
+      "key": "Phase22DataScale",
+      "value": "60",
+      "has_colon": true
+    },
+    {
+      "key": "Phase22DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Phase22RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Phase22SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Phase22ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Channel1Scope",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "Channel2Scope",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "Channel3Scope",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "Channel4Scope",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "Channel5Scope",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "Channel6Scope",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Channel1Auto",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Channel2Auto",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Channel3Auto",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Channel4Auto",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Channel5Auto",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Channel6Auto",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Channel1AutoImg",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Channel2AutoImg",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Channel3AutoImg",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Channel4AutoImg",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Channel5AutoImg",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalcFunc",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "DissipationCapture",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Dissipation1DataScale",
+      "value": "0.022176",
+      "has_colon": true
+    },
+    {
+      "key": "Dissipation1DataOffset",
+      "value": "8.3456e-05",
+      "has_colon": true
+    },
+    {
+      "key": "Dissipation1RealPlanefit",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Dissipation1SavePlanefit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Dissipation1ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Dissipation2DataScale",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "Dissipation2DataOffset",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Dissipation2RealPlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Dissipation2SavePlanefit",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "Dissipation2ColorMap",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "",
+      "value": "",
+      "has_colon": false
+    },
+    {
+      "key": "InA",
+      "value": "In0",
+      "has_colon": true
+    },
+    {
+      "key": "InB",
+      "value": "In1",
+      "has_colon": true
+    },
+    {
+      "key": "InFast",
+      "value": "In0",
+      "has_colon": true
+    },
+    {
+      "key": "InAOffset",
+      "value": "Ground",
+      "has_colon": true
+    },
+    {
+      "key": "InBOffset",
+      "value": "Ground",
+      "has_colon": true
+    },
+    {
+      "key": "InFastOffset",
+      "value": "Ground",
+      "has_colon": true
+    },
+    {
+      "key": "OutXMod",
+      "value": "Off",
+      "has_colon": true
+    },
+    {
+      "key": "OutYMod",
+      "value": "Off",
+      "has_colon": true
+    },
+    {
+      "key": "OutZMod",
+      "value": "Ground",
+      "has_colon": true
+    },
+    {
+      "key": "FilterIn",
+      "value": "Ground",
+      "has_colon": true
+    },
+    {
+      "key": "Out0",
+      "value": "Ground",
+      "has_colon": true
+    },
+    {
+      "key": "Out1",
+      "value": "Ground",
+      "has_colon": true
+    },
+    {
+      "key": "Out2",
+      "value": "Ground",
+      "has_colon": true
+    },
+    {
+      "key": "PogoOut",
+      "value": "Ground",
+      "has_colon": true
+    },
+    {
+      "key": "Chip",
+      "value": "Ground",
+      "has_colon": true
+    },
+    {
+      "key": "Shake",
+      "value": "Ground",
+      "has_colon": true
+    },
+    {
+      "key": "",
+      "value": "",
+      "has_colon": false
+    },
+    {
+      "key": "Fast_PassFilter",
+      "value": "1e+05",
+      "has_colon": true
+    },
+    {
+      "key": "Z_PassFilter",
+      "value": "1e+05",
+      "has_colon": true
+    },
+    {
+      "key": "X_PassFilter",
+      "value": "1e+05",
+      "has_colon": true
+    },
+    {
+      "key": "Y_PassFilter",
+      "value": "1e+05",
+      "has_colon": true
+    },
+    {
+      "key": "R_PassFilter",
+      "value": "1e+05",
+      "has_colon": true
+    },
+    {
+      "key": "A_PassFilter",
+      "value": "1e+05",
+      "has_colon": true
+    },
+    {
+      "key": "B_PassFilter",
+      "value": "1e+05",
+      "has_colon": true
+    },
+    {
+      "key": "R1_PassFilter",
+      "value": "1e+05",
+      "has_colon": true
+    },
+    {
+      "key": "",
+      "value": "",
+      "has_colon": false
+    },
+    {
+      "key": "ThermalDC",
+      "value": "7.2968e-06",
+      "has_colon": true
+    },
+    {
+      "key": "ThermalQ",
+      "value": "4.1424",
+      "has_colon": true
+    },
+    {
+      "key": "ThermalFrequency",
+      "value": "25224",
+      "has_colon": true
+    },
+    {
+      "key": "ThermalWhiteNoise",
+      "value": "2.8601e-06",
+      "has_colon": true
+    },
+    {
+      "key": "ScaleLog",
+      "value": "3",
+      "has_colon": true
+    },
+    {
+      "key": "FitWidth",
+      "value": "1e+05",
+      "has_colon": true
+    },
+    {
+      "key": "ThermalSamples",
+      "value": "1000",
+      "has_colon": true
+    },
+    {
+      "key": "ThermalCounter",
+      "value": "108",
+      "has_colon": true
+    },
+    {
+      "key": "SectionSamples",
+      "value": "10",
+      "has_colon": true
+    },
+    {
+      "key": "SectionCounter",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DoThermal",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ThermalResolution",
+      "value": "4",
+      "has_colon": true
+    },
+    {
+      "key": "ThermalZoom",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DoCantTune",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "ZoomCounter",
+      "value": "107",
+      "has_colon": true
+    },
+    {
+      "key": "AutoTuneLow",
+      "value": "2e+05",
+      "has_colon": true
+    },
+    {
+      "key": "AutoTuneHigh",
+      "value": "4e+05",
+      "has_colon": true
+    },
+    {
+      "key": "TargetVoltage",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "TargetPercent",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "CheckTuneTraces",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "ButtonTime",
+      "value": "2.3363e+12",
+      "has_colon": true
+    },
+    {
+      "key": "ShowThermalFit",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "AppendThermalBit",
+      "value": "8",
+      "has_colon": true
+    },
+    {
+      "key": "TuneQ",
+      "value": "100",
+      "has_colon": true
+    },
+    {
+      "key": "TuneGain",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "TunePeakResult",
+      "value": "1.0041",
+      "has_colon": true
+    },
+    {
+      "key": "TuneFreqResult",
+      "value": "3.1511e+05",
+      "has_colon": true
+    },
+    {
+      "key": "TuneQResult",
+      "value": "282.72",
+      "has_colon": true
+    },
+    {
+      "key": "ThermalSamplesLimit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "TuneFeedback",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "TuneDDSOutput",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "TipVoltCenter",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "TipVoltWidth",
+      "value": "10",
+      "has_colon": true
+    },
+    {
+      "key": "ThermalFrequencyRange",
+      "value": "2",
+      "has_colon": true
+    },
+    {
+      "key": "AutoTuneLimit",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "AutoTuneLow1",
+      "value": "3e+05",
+      "has_colon": true
+    },
+    {
+      "key": "AutoTuneHigh1",
+      "value": "6e+05",
+      "has_colon": true
+    },
+    {
+      "key": "TargetVoltage1",
+      "value": "0.1",
+      "has_colon": true
+    },
+    {
+      "key": "TargetPercent1",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DualACMode",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "WhichACMode",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "BackwardsTune",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "TuneCaptureRate",
+      "value": "500",
+      "has_colon": true
+    },
+    {
+      "key": "TuneTime",
+      "value": "0.96",
+      "has_colon": true
+    },
+    {
+      "key": "TuneFilter",
+      "value": "500",
+      "has_colon": true
+    },
+    {
+      "key": "iDriveOn",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "iDriveIsHere",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "FrequencyRatio",
+      "value": "14.88",
+      "has_colon": true
+    },
+    {
+      "key": "DFRTFrequencyCenter",
+      "value": "3.5e+05",
+      "has_colon": true
+    },
+    {
+      "key": "DFRTFrequencyWidth",
+      "value": "5000",
+      "has_colon": true
+    },
+    {
+      "key": "HVPFMHolder",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "DFRTOn",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "",
+      "value": "",
+      "has_colon": false
+    },
+    {
+      "key": "YourVariablesStartHere",
+      "value": "1",
+      "has_colon": true
+    },
+    {
+      "key": "",
+      "value": "",
+      "has_colon": false
+    },
+    {
+      "key": "Log File",
+      "value": "Start",
+      "has_colon": true
+    },
+    {
+      "key": "Log File",
+      "value": "Stop",
+      "has_colon": true
+    },
+    {
+      "key": "",
+      "value": "",
+      "has_colon": false
+    },
+    {
+      "key": "Date",
+      "value": "2019\u0094N8\u008c\u008e20\u0093\u00fa",
+      "has_colon": true
+    },
+    {
+      "key": "Time",
+      "value": "19:48:54",
+      "has_colon": true
+    },
+    {
+      "key": "Seconds",
+      "value": "3649175334",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalcUnit",
+      "value": "\u00b0",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn0Unit",
+      "value": "V",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn1Unit",
+      "value": "V",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn2Unit",
+      "value": "V",
+      "has_colon": true
+    },
+    {
+      "key": "LateralUnit",
+      "value": "V",
+      "has_colon": true
+    },
+    {
+      "key": "ARUserPanelName",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn0Name",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn1Name",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn2Name",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalcName",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn0Ab",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn1Ab",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn2Ab",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalcAb",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn0Force",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn1Force",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserIn2Force",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "UserCalcForce",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "",
+      "value": "",
+      "has_colon": false
+    },
+    {
+      "key": "VerDate",
+      "value": "80501",
+      "has_colon": true
+    },
+    {
+      "key": "Version",
+      "value": "080501+1506",
+      "has_colon": true
+    },
+    {
+      "key": "XopVersion",
+      "value": "20081.28.3.1",
+      "has_colon": true
+    },
+    {
+      "key": "OSVersion",
+      "value": "Windows XP Professional Service Pack 3 (Build 2600)",
+      "has_colon": true
+    },
+    {
+      "key": "IgorFileVersion",
+      "value": "6.0.5.0",
+      "has_colon": true
+    },
+    {
+      "key": "BaseName",
+      "value": "dna1_pll",
+      "has_colon": true
+    },
+    {
+      "key": "ImageNote",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "TipSerialNumber",
+      "value": "",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit 0",
+      "value": "None",
+      "has_colon": true
+    },
+    {
+      "key": "PlanefitOrder 0",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "FlattenOrder 0",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Offset 0",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit X Slope 0",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Y Slope 0",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Display Offset 0",
+      "value": "-8.3195e-07",
+      "has_colon": true
+    },
+    {
+      "key": "Display Range 0",
+      "value": "3.2233e-09",
+      "has_colon": true
+    },
+    {
+      "key": "ColorMap 0",
+      "value": "NanonisB",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit 1",
+      "value": "None",
+      "has_colon": true
+    },
+    {
+      "key": "PlanefitOrder 1",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "FlattenOrder 1",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Offset 1",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit X Slope 1",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Y Slope 1",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Display Offset 1",
+      "value": "-8.32e-07",
+      "has_colon": true
+    },
+    {
+      "key": "Display Range 1",
+      "value": "3.2233e-09",
+      "has_colon": true
+    },
+    {
+      "key": "ColorMap 1",
+      "value": "NanonisB",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit 2",
+      "value": "None",
+      "has_colon": true
+    },
+    {
+      "key": "PlanefitOrder 2",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "FlattenOrder 2",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Offset 2",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit X Slope 2",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Y Slope 2",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Display Offset 2",
+      "value": "0.98579",
+      "has_colon": true
+    },
+    {
+      "key": "Display Range 2",
+      "value": "0.1094",
+      "has_colon": true
+    },
+    {
+      "key": "ColorMap 2",
+      "value": "Grays256",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit 3",
+      "value": "None",
+      "has_colon": true
+    },
+    {
+      "key": "PlanefitOrder 3",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "FlattenOrder 3",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Offset 3",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit X Slope 3",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Y Slope 3",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Display Offset 3",
+      "value": "0.98581",
+      "has_colon": true
+    },
+    {
+      "key": "Display Range 3",
+      "value": "0.1094",
+      "has_colon": true
+    },
+    {
+      "key": "ColorMap 3",
+      "value": "Grays256",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit 4",
+      "value": "None",
+      "has_colon": true
+    },
+    {
+      "key": "PlanefitOrder 4",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "FlattenOrder 4",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Offset 4",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit X Slope 4",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Y Slope 4",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Display Offset 4",
+      "value": "-0.036008",
+      "has_colon": true
+    },
+    {
+      "key": "Display Range 4",
+      "value": "0.0040686",
+      "has_colon": true
+    },
+    {
+      "key": "ColorMap 4",
+      "value": "Grays256",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit 5",
+      "value": "None",
+      "has_colon": true
+    },
+    {
+      "key": "PlanefitOrder 5",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "FlattenOrder 5",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Offset 5",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit X Slope 5",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Y Slope 5",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Display Offset 5",
+      "value": "0.086792",
+      "has_colon": true
+    },
+    {
+      "key": "Display Range 5",
+      "value": "0.0040686",
+      "has_colon": true
+    },
+    {
+      "key": "ColorMap 5",
+      "value": "Grays256",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit 6",
+      "value": "None",
+      "has_colon": true
+    },
+    {
+      "key": "PlanefitOrder 6",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "FlattenOrder 6",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Offset 6",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit X Slope 6",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Y Slope 6",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Display Offset 6",
+      "value": "6.7362",
+      "has_colon": true
+    },
+    {
+      "key": "Display Range 6",
+      "value": "0.0020926",
+      "has_colon": true
+    },
+    {
+      "key": "ColorMap 6",
+      "value": "Grays256",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit 7",
+      "value": "None",
+      "has_colon": true
+    },
+    {
+      "key": "PlanefitOrder 7",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "FlattenOrder 7",
+      "value": "-1",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Offset 7",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit X Slope 7",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Planefit Y Slope 7",
+      "value": "0",
+      "has_colon": true
+    },
+    {
+      "key": "Display Offset 7",
+      "value": "6.7674",
+      "has_colon": true
+    },
+    {
+      "key": "Display Range 7",
+      "value": "0.0020926",
+      "has_colon": true
+    },
+    {
+      "key": "ColorMap 7",
+      "value": "Grays256",
+      "has_colon": true
+    },
+    {
+      "key": "EndHeadTemp",
+      "value": "*ERROR*",
+      "has_colon": true
+    },
+    {
+      "key": "EndScannerTemp",
+      "value": "*ERROR*",
+      "has_colon": true
+    }
+  ],
+  "extended_data_units": {
+    "latin1": "",
+    "hex": ""
+  },
+  "extended_dimension_units": {
+    "latin1": "",
+    "hex": ""
+  },
+  "trailing_offset": 8402537,
+  "trailing_bytes": 131415,
+  "footer_last_5_ascii": "MFP3D",
+  "coordinate_evidence": {
+    "formula": "coordinate[d,index]=sfA[d]*index+sfB[d]",
+    "header_pitch_m": [
+      1.5655577299412918e-09,
+      1.5655577299412918e-09
+    ],
+    "header_first_to_last_span_m": [
+      8.000000000000002e-07,
+      8.000000000000002e-07
+    ],
+    "pixel_cell_extent_m": [
+      8.015655577299414e-07,
+      8.015655577299414e-07
+    ],
+    "note_FastScanSize_m": 8e-07,
+    "note_SlowScanSize_m": 8e-07,
+    "AFMReader_note_pitch_nm": 1.5625
+  },
+  "orientation": "igor2 returns wave[x,y,channel]. channel-N.f64 is flipud(wave[:,:,N].T), unscaled, C row-major [display_row,x]. channel-N-wave-order.f64 is wave[:,:,N], C row-major [x,y], unscaled. No direction-dependent horizontal flip.",
+  "AFMReader_source_behavior": "Pinned AFMReader caeecf32ac5900f99c0dfee4b49d27ba4ca0fd77 source inspected, not executed: flipud(wData[:,:,channel].T * 1e9) for all channels; multiplication can retain float32 rounding. Pixel pitch derived from note SlowScanSize/shape[0]. This is not a valid universal nm conversion for voltage channels.",
+  "gwyddion_unit_source": {
+    "svn_revision": 27984,
+    "sha256": "9a587932d971374f2c5aed3a720b913688dd9758a5c89ed7ab9e9ad6f0320a43",
+    "url": "https://svn.code.sf.net/p/gwyddion/code/!svn/bc/27984/trunk/gwyddion/modules/file/igorfile.c",
+    "behavior": "Per canonical channel note <name>Unit overrides channel-title fallback; Height and ZSensor fallback m. This is a reader convention, not explicit fixture unit calibration."
+  },
+  "channels": [
+    {
+      "index": 0,
+      "label_c_string": "HeightTrace",
+      "label_igor2": "HeightTracee",
+      "storage_offset": 384,
+      "storage_bytes": 1048576,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "statistics_unscaled": {
+        "min": -8.451128792330564e-07,
+        "max": -8.218554512495757e-07,
+        "mean": -8.319530450562503e-07,
+        "finite_count": 262144,
+        "nan_count": 0,
+        "infinite_count": 0
+      },
+      "fixture_explicit_unit": null,
+      "gwyddion_fallback_unit": "m",
+      "array_path": "/tmp/afm-ibw-reference/channel-0.f64",
+      "array_sha256": "b867b5e9a31a1c12887a8a31025b8cfa74ac5500ee2fd9650bae7af57214edb6",
+      "array_encoding": "little-endian float64, C row-major, transpose then vertical flip, no unit conversion",
+      "wave_order_array_path": "/tmp/afm-ibw-reference/channel-0-wave-order.f64",
+      "wave_order_array_sha256": "8242d2115f7f221b870039cfaef9da2f057b4064a63aa2659ec88abf4c7b562e",
+      "samples": [
+        {
+          "row": 0,
+          "column": 0,
+          "value": -8.318572213283915e-07,
+          "igor_x": 0,
+          "igor_y": 511
+        },
+        {
+          "row": 0,
+          "column": 511,
+          "value": -8.447236155006976e-07,
+          "igor_x": 511,
+          "igor_y": 511
+        },
+        {
+          "row": 511,
+          "column": 0,
+          "value": -8.26381835850043e-07,
+          "igor_x": 0,
+          "igor_y": 0
+        },
+        {
+          "row": 511,
+          "column": 511,
+          "value": -8.397410056204535e-07,
+          "igor_x": 511,
+          "igor_y": 0
+        },
+        {
+          "row": 256,
+          "column": 256,
+          "value": -8.309882559842663e-07,
+          "igor_x": 256,
+          "igor_y": 255
+        },
+        {
+          "row": 349,
+          "column": 60,
+          "value": -8.256080263890908e-07,
+          "igor_x": 60,
+          "igor_y": 162
+        },
+        {
+          "row": 296,
+          "column": 107,
+          "value": -8.270457101389184e-07,
+          "igor_x": 107,
+          "igor_y": 215
+        },
+        {
+          "row": 341,
+          "column": 206,
+          "value": -8.280470638055704e-07,
+          "igor_x": 206,
+          "igor_y": 170
+        },
+        {
+          "row": 217,
+          "column": 469,
+          "value": -8.368273256564862e-07,
+          "igor_x": 469,
+          "igor_y": 294
+        },
+        {
+          "row": 121,
+          "column": 304,
+          "value": -8.337525514434674e-07,
+          "igor_x": 304,
+          "igor_y": 390
+        },
+        {
+          "row": 54,
+          "column": 207,
+          "value": -8.333304890584259e-07,
+          "igor_x": 207,
+          "igor_y": 457
+        },
+        {
+          "row": 249,
+          "column": 482,
+          "value": -8.369624993065372e-07,
+          "igor_x": 482,
+          "igor_y": 262
+        },
+        {
+          "row": 304,
+          "column": 473,
+          "value": -8.356045100299525e-07,
+          "igor_x": 473,
+          "igor_y": 207
+        },
+        {
+          "row": 432,
+          "column": 356,
+          "value": -8.344937327819935e-07,
+          "igor_x": 356,
+          "igor_y": 79
+        },
+        {
+          "row": 94,
+          "column": 371,
+          "value": -8.35702735457744e-07,
+          "igor_x": 371,
+          "igor_y": 417
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "label_c_string": "HeightRetrace",
+      "label_igor2": "HeightRetrace",
+      "storage_offset": 1048960,
+      "storage_bytes": 1048576,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "statistics_unscaled": {
+        "min": -8.451142434751091e-07,
+        "max": -8.217187428272155e-07,
+        "mean": -8.32004644187468e-07,
+        "finite_count": 262144,
+        "nan_count": 0,
+        "infinite_count": 0
+      },
+      "fixture_explicit_unit": null,
+      "gwyddion_fallback_unit": "m",
+      "array_path": "/tmp/afm-ibw-reference/channel-1.f64",
+      "array_sha256": "c9775826699b8e0d1e16e17b92d95ac9ac7418d070c733447edc2302b933425e",
+      "array_encoding": "little-endian float64, C row-major, transpose then vertical flip, no unit conversion",
+      "wave_order_array_path": "/tmp/afm-ibw-reference/channel-1-wave-order.f64",
+      "wave_order_array_sha256": "75f57a0e18ba457f070c1507b6bb9bd1497a381c9500d93200f21044302b24ed",
+      "samples": [
+        {
+          "row": 0,
+          "column": 0,
+          "value": -8.318902473547496e-07,
+          "igor_x": 0,
+          "igor_y": 511
+        },
+        {
+          "row": 0,
+          "column": 511,
+          "value": -8.448228641100286e-07,
+          "igor_x": 511,
+          "igor_y": 511
+        },
+        {
+          "row": 511,
+          "column": 0,
+          "value": -8.258800789917586e-07,
+          "igor_x": 0,
+          "igor_y": 0
+        },
+        {
+          "row": 511,
+          "column": 511,
+          "value": -8.395484201173531e-07,
+          "igor_x": 511,
+          "igor_y": 0
+        },
+        {
+          "row": 256,
+          "column": 256,
+          "value": -8.294515509987832e-07,
+          "igor_x": 256,
+          "igor_y": 255
+        },
+        {
+          "row": 349,
+          "column": 60,
+          "value": -8.262972528427781e-07,
+          "igor_x": 60,
+          "igor_y": 162
+        },
+        {
+          "row": 296,
+          "column": 107,
+          "value": -8.262244364232174e-07,
+          "igor_x": 107,
+          "igor_y": 215
+        },
+        {
+          "row": 341,
+          "column": 206,
+          "value": -8.284191608254332e-07,
+          "igor_x": 206,
+          "igor_y": 170
+        },
+        {
+          "row": 217,
+          "column": 469,
+          "value": -8.367427994926402e-07,
+          "igor_x": 469,
+          "igor_y": 294
+        },
+        {
+          "row": 121,
+          "column": 304,
+          "value": -8.33749027151498e-07,
+          "igor_x": 304,
+          "igor_y": 390
+        },
+        {
+          "row": 54,
+          "column": 207,
+          "value": -8.331674052897142e-07,
+          "igor_x": 207,
+          "igor_y": 457
+        },
+        {
+          "row": 249,
+          "column": 482,
+          "value": -8.369710826627852e-07,
+          "igor_x": 482,
+          "igor_y": 262
+        },
+        {
+          "row": 304,
+          "column": 473,
+          "value": -8.34831666907121e-07,
+          "igor_x": 473,
+          "igor_y": 207
+        },
+        {
+          "row": 432,
+          "column": 356,
+          "value": -8.345095920958556e-07,
+          "igor_x": 356,
+          "igor_y": 79
+        },
+        {
+          "row": 94,
+          "column": 371,
+          "value": -8.357103524758713e-07,
+          "igor_x": 371,
+          "igor_y": 417
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "label_c_string": "ZSensorTrace",
+      "label_igor2": "ZSensorTrace",
+      "storage_offset": 2097536,
+      "storage_bytes": 1048576,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "statistics_unscaled": {
+        "min": 0.60516357421875,
+        "max": 1.1822509765625,
+        "mean": 0.9857888182159513,
+        "finite_count": 262144,
+        "nan_count": 0,
+        "infinite_count": 0
+      },
+      "fixture_explicit_unit": null,
+      "gwyddion_fallback_unit": "m",
+      "array_path": "/tmp/afm-ibw-reference/channel-2.f64",
+      "array_sha256": "305baa335b014e66adf49dd6778a27daa628294a3fba0044b1aed9b348d6177d",
+      "array_encoding": "little-endian float64, C row-major, transpose then vertical flip, no unit conversion",
+      "wave_order_array_path": "/tmp/afm-ibw-reference/channel-2-wave-order.f64",
+      "wave_order_array_sha256": "3bca2e06dee633e42297db6441b13bbe5ae0fa8410baafc2ec7943f4e94c6090",
+      "samples": [
+        {
+          "row": 0,
+          "column": 0,
+          "value": 0.97503662109375,
+          "igor_x": 0,
+          "igor_y": 511
+        },
+        {
+          "row": 0,
+          "column": 511,
+          "value": 0.941162109375,
+          "igor_x": 511,
+          "igor_y": 511
+        },
+        {
+          "row": 511,
+          "column": 0,
+          "value": 1.00433349609375,
+          "igor_x": 0,
+          "igor_y": 0
+        },
+        {
+          "row": 511,
+          "column": 511,
+          "value": 0.968017578125,
+          "igor_x": 511,
+          "igor_y": 0
+        },
+        {
+          "row": 256,
+          "column": 256,
+          "value": 0.9478759765625,
+          "igor_x": 256,
+          "igor_y": 255
+        },
+        {
+          "row": 349,
+          "column": 60,
+          "value": 1.024169921875,
+          "igor_x": 60,
+          "igor_y": 162
+        },
+        {
+          "row": 296,
+          "column": 107,
+          "value": 0.97808837890625,
+          "igor_x": 107,
+          "igor_y": 215
+        },
+        {
+          "row": 341,
+          "column": 206,
+          "value": 0.96710205078125,
+          "igor_x": 206,
+          "igor_y": 170
+        },
+        {
+          "row": 217,
+          "column": 469,
+          "value": 1.007080078125,
+          "igor_x": 469,
+          "igor_y": 294
+        },
+        {
+          "row": 121,
+          "column": 304,
+          "value": 0.96405029296875,
+          "igor_x": 304,
+          "igor_y": 390
+        },
+        {
+          "row": 54,
+          "column": 207,
+          "value": 0.9588623046875,
+          "igor_x": 207,
+          "igor_y": 457
+        },
+        {
+          "row": 249,
+          "column": 482,
+          "value": 0.97900390625,
+          "igor_x": 482,
+          "igor_y": 262
+        },
+        {
+          "row": 304,
+          "column": 473,
+          "value": 0.96527099609375,
+          "igor_x": 473,
+          "igor_y": 207
+        },
+        {
+          "row": 432,
+          "column": 356,
+          "value": 0.99761962890625,
+          "igor_x": 356,
+          "igor_y": 79
+        },
+        {
+          "row": 94,
+          "column": 371,
+          "value": 1.02569580078125,
+          "igor_x": 371,
+          "igor_y": 417
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "label_c_string": "ZSensorRetrace",
+      "label_igor2": "ZSensorRetrace",
+      "storage_offset": 3146112,
+      "storage_bytes": 1048576,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "statistics_unscaled": {
+        "min": 0.615234375,
+        "max": 1.25640869140625,
+        "mean": 0.9858077275566757,
+        "finite_count": 262144,
+        "nan_count": 0,
+        "infinite_count": 0
+      },
+      "fixture_explicit_unit": null,
+      "gwyddion_fallback_unit": "m",
+      "array_path": "/tmp/afm-ibw-reference/channel-3.f64",
+      "array_sha256": "826064be68b31fa20077c017ec800c03b398cd39a6a02b873b2f0ce7b232a98d",
+      "array_encoding": "little-endian float64, C row-major, transpose then vertical flip, no unit conversion",
+      "wave_order_array_path": "/tmp/afm-ibw-reference/channel-3-wave-order.f64",
+      "wave_order_array_sha256": "ccda0365d23f65cfe3eed88005f3bcba321f0ed828dd345f10add8d4a9fbfd11",
+      "samples": [
+        {
+          "row": 0,
+          "column": 0,
+          "value": 0.968017578125,
+          "igor_x": 0,
+          "igor_y": 511
+        },
+        {
+          "row": 0,
+          "column": 511,
+          "value": 1.04766845703125,
+          "igor_x": 511,
+          "igor_y": 511
+        },
+        {
+          "row": 511,
+          "column": 0,
+          "value": 1.0186767578125,
+          "igor_x": 0,
+          "igor_y": 0
+        },
+        {
+          "row": 511,
+          "column": 511,
+          "value": 0.97137451171875,
+          "igor_x": 511,
+          "igor_y": 0
+        },
+        {
+          "row": 256,
+          "column": 256,
+          "value": 0.99884033203125,
+          "igor_x": 256,
+          "igor_y": 255
+        },
+        {
+          "row": 349,
+          "column": 60,
+          "value": 1.00189208984375,
+          "igor_x": 60,
+          "igor_y": 162
+        },
+        {
+          "row": 296,
+          "column": 107,
+          "value": 1.02935791015625,
+          "igor_x": 107,
+          "igor_y": 215
+        },
+        {
+          "row": 341,
+          "column": 206,
+          "value": 0.96466064453125,
+          "igor_x": 206,
+          "igor_y": 170
+        },
+        {
+          "row": 217,
+          "column": 469,
+          "value": 0.98785400390625,
+          "igor_x": 469,
+          "igor_y": 294
+        },
+        {
+          "row": 121,
+          "column": 304,
+          "value": 1.011962890625,
+          "igor_x": 304,
+          "igor_y": 390
+        },
+        {
+          "row": 54,
+          "column": 207,
+          "value": 0.9979248046875,
+          "igor_x": 207,
+          "igor_y": 457
+        },
+        {
+          "row": 249,
+          "column": 482,
+          "value": 1.01806640625,
+          "igor_x": 482,
+          "igor_y": 262
+        },
+        {
+          "row": 304,
+          "column": 473,
+          "value": 0.9576416015625,
+          "igor_x": 473,
+          "igor_y": 207
+        },
+        {
+          "row": 432,
+          "column": 356,
+          "value": 0.96771240234375,
+          "igor_x": 356,
+          "igor_y": 79
+        },
+        {
+          "row": 94,
+          "column": 371,
+          "value": 1.0467529296875,
+          "igor_x": 371,
+          "igor_y": 417
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "label_c_string": "UserIn0Trace",
+      "label_igor2": "UserIn0Trace",
+      "storage_offset": 4194688,
+      "storage_bytes": 1048576,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "statistics_unscaled": {
+        "min": -2.83966064453125,
+        "max": 6.53045654296875,
+        "mean": -0.03600806463509798,
+        "finite_count": 262144,
+        "nan_count": 0,
+        "infinite_count": 0
+      },
+      "fixture_explicit_unit": "V",
+      "gwyddion_fallback_unit": null,
+      "array_path": "/tmp/afm-ibw-reference/channel-4.f64",
+      "array_sha256": "e8b56903891efbc57d0c2e32f7e92159f9fe6ec01be8ddd3003fc741761f8f0d",
+      "array_encoding": "little-endian float64, C row-major, transpose then vertical flip, no unit conversion",
+      "wave_order_array_path": "/tmp/afm-ibw-reference/channel-4-wave-order.f64",
+      "wave_order_array_sha256": "070a1c922215ee19556d85abdb38106f9a0119fc728b53382b2d3403a3c2c520",
+      "samples": [
+        {
+          "row": 0,
+          "column": 0,
+          "value": -0.31402587890625,
+          "igor_x": 0,
+          "igor_y": 511
+        },
+        {
+          "row": 0,
+          "column": 511,
+          "value": -0.30517578125,
+          "igor_x": 511,
+          "igor_y": 511
+        },
+        {
+          "row": 511,
+          "column": 0,
+          "value": -0.6298828125,
+          "igor_x": 0,
+          "igor_y": 0
+        },
+        {
+          "row": 511,
+          "column": 511,
+          "value": -1.380615234375,
+          "igor_x": 511,
+          "igor_y": 0
+        },
+        {
+          "row": 256,
+          "column": 256,
+          "value": 0.0164794921875,
+          "igor_x": 256,
+          "igor_y": 255
+        },
+        {
+          "row": 349,
+          "column": 60,
+          "value": -0.7684326171875,
+          "igor_x": 60,
+          "igor_y": 162
+        },
+        {
+          "row": 296,
+          "column": 107,
+          "value": 0.7659912109375,
+          "igor_x": 107,
+          "igor_y": 215
+        },
+        {
+          "row": 341,
+          "column": 206,
+          "value": 1.3458251953125,
+          "igor_x": 206,
+          "igor_y": 170
+        },
+        {
+          "row": 217,
+          "column": 469,
+          "value": 0.16357421875,
+          "igor_x": 469,
+          "igor_y": 294
+        },
+        {
+          "row": 121,
+          "column": 304,
+          "value": 0.4840087890625,
+          "igor_x": 304,
+          "igor_y": 390
+        },
+        {
+          "row": 54,
+          "column": 207,
+          "value": -0.426025390625,
+          "igor_x": 207,
+          "igor_y": 457
+        },
+        {
+          "row": 249,
+          "column": 482,
+          "value": -0.64910888671875,
+          "igor_x": 482,
+          "igor_y": 262
+        },
+        {
+          "row": 304,
+          "column": 473,
+          "value": 0.13092041015625,
+          "igor_x": 473,
+          "igor_y": 207
+        },
+        {
+          "row": 432,
+          "column": 356,
+          "value": -0.24627685546875,
+          "igor_x": 356,
+          "igor_y": 79
+        },
+        {
+          "row": 94,
+          "column": 371,
+          "value": -0.00518798828125,
+          "igor_x": 371,
+          "igor_y": 417
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "label_c_string": "UserIn0Retrace",
+      "label_igor2": "UserIn0Retrace",
+      "storage_offset": 5243264,
+      "storage_bytes": 1048576,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "statistics_unscaled": {
+        "min": -2.59674072265625,
+        "max": 6.3983154296875,
+        "mean": 0.08679189370013773,
+        "finite_count": 262144,
+        "nan_count": 0,
+        "infinite_count": 0
+      },
+      "fixture_explicit_unit": "V",
+      "gwyddion_fallback_unit": null,
+      "array_path": "/tmp/afm-ibw-reference/channel-5.f64",
+      "array_sha256": "0c282f6f6e10c2f927879475fc98c908bee439b46a78cd42aeaad62ab41a101e",
+      "array_encoding": "little-endian float64, C row-major, transpose then vertical flip, no unit conversion",
+      "wave_order_array_path": "/tmp/afm-ibw-reference/channel-5-wave-order.f64",
+      "wave_order_array_sha256": "0022c7ecea3b63a25f21b16b08b55485ac4d643fb065ee9a3b43bc12650321f8",
+      "samples": [
+        {
+          "row": 0,
+          "column": 0,
+          "value": -0.0433349609375,
+          "igor_x": 0,
+          "igor_y": 511
+        },
+        {
+          "row": 0,
+          "column": 511,
+          "value": 0.13214111328125,
+          "igor_x": 511,
+          "igor_y": 511
+        },
+        {
+          "row": 511,
+          "column": 0,
+          "value": 0.166015625,
+          "igor_x": 0,
+          "igor_y": 0
+        },
+        {
+          "row": 511,
+          "column": 511,
+          "value": 0.2557373046875,
+          "igor_x": 511,
+          "igor_y": 0
+        },
+        {
+          "row": 256,
+          "column": 256,
+          "value": 0.5059814453125,
+          "igor_x": 256,
+          "igor_y": 255
+        },
+        {
+          "row": 349,
+          "column": 60,
+          "value": -0.10467529296875,
+          "igor_x": 60,
+          "igor_y": 162
+        },
+        {
+          "row": 296,
+          "column": 107,
+          "value": 0.2734375,
+          "igor_x": 107,
+          "igor_y": 215
+        },
+        {
+          "row": 341,
+          "column": 206,
+          "value": -0.37200927734375,
+          "igor_x": 206,
+          "igor_y": 170
+        },
+        {
+          "row": 217,
+          "column": 469,
+          "value": 0.6024169921875,
+          "igor_x": 469,
+          "igor_y": 294
+        },
+        {
+          "row": 121,
+          "column": 304,
+          "value": 0.55023193359375,
+          "igor_x": 304,
+          "igor_y": 390
+        },
+        {
+          "row": 54,
+          "column": 207,
+          "value": 0.335693359375,
+          "igor_x": 207,
+          "igor_y": 457
+        },
+        {
+          "row": 249,
+          "column": 482,
+          "value": 0.4302978515625,
+          "igor_x": 482,
+          "igor_y": 262
+        },
+        {
+          "row": 304,
+          "column": 473,
+          "value": 1.44500732421875,
+          "igor_x": 473,
+          "igor_y": 207
+        },
+        {
+          "row": 432,
+          "column": 356,
+          "value": -0.11322021484375,
+          "igor_x": 356,
+          "igor_y": 79
+        },
+        {
+          "row": 94,
+          "column": 371,
+          "value": -0.04913330078125,
+          "igor_x": 371,
+          "igor_y": 417
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "label_c_string": "UserIn1Trace",
+      "label_igor2": "UserIn1Trace",
+      "storage_offset": 6291840,
+      "storage_bytes": 1048576,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "statistics_unscaled": {
+        "min": 5.855712890625,
+        "max": 9.68780517578125,
+        "mean": 6.736212474061176,
+        "finite_count": 262144,
+        "nan_count": 0,
+        "infinite_count": 0
+      },
+      "fixture_explicit_unit": "V",
+      "gwyddion_fallback_unit": null,
+      "array_path": "/tmp/afm-ibw-reference/channel-6.f64",
+      "array_sha256": "0e8011746a068a6eb704de30f812314e2b786a36537e1698bbb4a8d8ce98be43",
+      "array_encoding": "little-endian float64, C row-major, transpose then vertical flip, no unit conversion",
+      "wave_order_array_path": "/tmp/afm-ibw-reference/channel-6-wave-order.f64",
+      "wave_order_array_sha256": "214ea630bcaff21158d97ec55eaba4ecb9db9ac0eebe65c07ae15c70a97a0bf9",
+      "samples": [
+        {
+          "row": 0,
+          "column": 0,
+          "value": 6.5966796875,
+          "igor_x": 0,
+          "igor_y": 511
+        },
+        {
+          "row": 0,
+          "column": 511,
+          "value": 6.67266845703125,
+          "igor_x": 511,
+          "igor_y": 511
+        },
+        {
+          "row": 511,
+          "column": 0,
+          "value": 6.72607421875,
+          "igor_x": 0,
+          "igor_y": 0
+        },
+        {
+          "row": 511,
+          "column": 511,
+          "value": 6.81365966796875,
+          "igor_x": 511,
+          "igor_y": 0
+        },
+        {
+          "row": 256,
+          "column": 256,
+          "value": 6.5875244140625,
+          "igor_x": 256,
+          "igor_y": 255
+        },
+        {
+          "row": 349,
+          "column": 60,
+          "value": 6.78314208984375,
+          "igor_x": 60,
+          "igor_y": 162
+        },
+        {
+          "row": 296,
+          "column": 107,
+          "value": 6.93115234375,
+          "igor_x": 107,
+          "igor_y": 215
+        },
+        {
+          "row": 341,
+          "column": 206,
+          "value": 7.08160400390625,
+          "igor_x": 206,
+          "igor_y": 170
+        },
+        {
+          "row": 217,
+          "column": 469,
+          "value": 6.77520751953125,
+          "igor_x": 469,
+          "igor_y": 294
+        },
+        {
+          "row": 121,
+          "column": 304,
+          "value": 6.7535400390625,
+          "igor_x": 304,
+          "igor_y": 390
+        },
+        {
+          "row": 54,
+          "column": 207,
+          "value": 6.719970703125,
+          "igor_x": 207,
+          "igor_y": 457
+        },
+        {
+          "row": 249,
+          "column": 482,
+          "value": 6.58050537109375,
+          "igor_x": 482,
+          "igor_y": 262
+        },
+        {
+          "row": 304,
+          "column": 473,
+          "value": 7.37152099609375,
+          "igor_x": 473,
+          "igor_y": 207
+        },
+        {
+          "row": 432,
+          "column": 356,
+          "value": 7.1466064453125,
+          "igor_x": 356,
+          "igor_y": 79
+        },
+        {
+          "row": 94,
+          "column": 371,
+          "value": 6.298828125,
+          "igor_x": 371,
+          "igor_y": 417
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "label_c_string": "UserIn1Retrace",
+      "label_igor2": "UserIn1Retrace",
+      "storage_offset": 7340416,
+      "storage_bytes": 1048576,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "statistics_unscaled": {
+        "min": 5.9771728515625,
+        "max": 9.75494384765625,
+        "mean": 6.76740572671406,
+        "finite_count": 262144,
+        "nan_count": 0,
+        "infinite_count": 0
+      },
+      "fixture_explicit_unit": "V",
+      "gwyddion_fallback_unit": null,
+      "array_path": "/tmp/afm-ibw-reference/channel-7.f64",
+      "array_sha256": "2e870ea3419040852e0ad203ed6a0d35901c065a0844caf97a7c15154dd8e2ae",
+      "array_encoding": "little-endian float64, C row-major, transpose then vertical flip, no unit conversion",
+      "wave_order_array_path": "/tmp/afm-ibw-reference/channel-7-wave-order.f64",
+      "wave_order_array_sha256": "9f803c03a0e319910ab58083bfa07ee05955e174e62e1d15d87cbf965b1beab2",
+      "samples": [
+        {
+          "row": 0,
+          "column": 0,
+          "value": 6.57470703125,
+          "igor_x": 0,
+          "igor_y": 511
+        },
+        {
+          "row": 0,
+          "column": 511,
+          "value": 6.3861083984375,
+          "igor_x": 511,
+          "igor_y": 511
+        },
+        {
+          "row": 511,
+          "column": 0,
+          "value": 6.88232421875,
+          "igor_x": 0,
+          "igor_y": 0
+        },
+        {
+          "row": 511,
+          "column": 511,
+          "value": 7.139892578125,
+          "igor_x": 511,
+          "igor_y": 0
+        },
+        {
+          "row": 256,
+          "column": 256,
+          "value": 6.71173095703125,
+          "igor_x": 256,
+          "igor_y": 255
+        },
+        {
+          "row": 349,
+          "column": 60,
+          "value": 6.778564453125,
+          "igor_x": 60,
+          "igor_y": 162
+        },
+        {
+          "row": 296,
+          "column": 107,
+          "value": 6.9573974609375,
+          "igor_x": 107,
+          "igor_y": 215
+        },
+        {
+          "row": 341,
+          "column": 206,
+          "value": 6.5484619140625,
+          "igor_x": 206,
+          "igor_y": 170
+        },
+        {
+          "row": 217,
+          "column": 469,
+          "value": 6.744384765625,
+          "igor_x": 469,
+          "igor_y": 294
+        },
+        {
+          "row": 121,
+          "column": 304,
+          "value": 6.64154052734375,
+          "igor_x": 304,
+          "igor_y": 390
+        },
+        {
+          "row": 54,
+          "column": 207,
+          "value": 6.2945556640625,
+          "igor_x": 207,
+          "igor_y": 457
+        },
+        {
+          "row": 249,
+          "column": 482,
+          "value": 6.8414306640625,
+          "igor_x": 482,
+          "igor_y": 262
+        },
+        {
+          "row": 304,
+          "column": 473,
+          "value": 6.77001953125,
+          "igor_x": 473,
+          "igor_y": 207
+        },
+        {
+          "row": 432,
+          "column": 356,
+          "value": 6.83929443359375,
+          "igor_x": 356,
+          "igor_y": 79
+        },
+        {
+          "row": 94,
+          "column": 371,
+          "value": 6.7816162109375,
+          "igor_x": 371,
+          "igor_y": 417
+        }
+      ]
+    }
+  ]
+}

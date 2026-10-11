@@ -1,0 +1,103 @@
+{
+  "fixture_sha256": "71a535e577285b6d43c1cbad134b69ab9f472806661a231f981a2c96b2d3972d",
+  "engine_sha256": "de69c15deefbfa05cc3856acb20fd8953b6ef5ae5df10d6e4ed5b287ead61f67",
+  "reference_reader": {
+    "name": "pySPM",
+    "version": "0.6.3",
+    "commit": "20a05dbae154bc1e8c87f64f8c094f251d0da830",
+    "Bruker.py_sha256": "c544e5c1279b461ea94981bfe44747e52da2b22f52800e9388b5178f81c670e5",
+    "source_url": "https://github.com/scholi/pySPM/blob/20a05dbae154bc1e8c87f64f8c094f251d0da830/pySPM/Bruker.py"
+  },
+  "transformation": "Reverse reference rows once; convert height nm to m. Other values unchanged; unit labels validated separately against header.",
+  "limitation": "Reader agreement on one real fixture; not universal format coverage or manufacturer-certified calibration.",
+  "channels": [
+    {
+      "id": "0",
+      "title": "Height Sensor",
+      "pixels": 1048576,
+      "unit": "m",
+      "reference_array_sha256": "b5a582bb6a776be3c8eb1503581dab268b1476e07d9f432ac1d1bcafc6e36341",
+      "max_absolute_error": 5.293955920339377e-23,
+      "rmse": 1.854299041330856e-23,
+      "tolerance": 1.080711492075347e-21,
+      "passed": true
+    },
+    {
+      "id": "1",
+      "title": "Peak Force Error",
+      "pixels": 1048576,
+      "unit": "V",
+      "reference_array_sha256": "4e3d35230fbbb89f66cd00ae144dfa7dac5ca284b0964ff875ea820716696825",
+      "max_absolute_error": 0,
+      "rmse": 0,
+      "tolerance": 3.8191672047105384e-16,
+      "passed": true
+    },
+    {
+      "id": "2",
+      "title": "DMTModulus",
+      "pixels": 1048576,
+      "unit": "Arb",
+      "reference_array_sha256": "70cb7de780e5318acb4a694cafe7d09122b7becd723ee1536accc84744ce1b5b",
+      "max_absolute_error": 0,
+      "rmse": 0,
+      "tolerance": 1.4551915221590588e-11,
+      "passed": true
+    },
+    {
+      "id": "3",
+      "title": "LogDMTModulus",
+      "pixels": 1048576,
+      "unit": "log(Arb)",
+      "reference_array_sha256": "3c72e1ed1edcc3eacc69b70ec4eafa10d37a2743336b3ae9f0a9f57d18ff7452",
+      "max_absolute_error": 0,
+      "rmse": 0,
+      "tolerance": 8.800890517659393e-14,
+      "passed": true
+    },
+    {
+      "id": "4",
+      "title": "Adhesion",
+      "pixels": 1048576,
+      "unit": "V",
+      "reference_array_sha256": "a591938a4091504ab16fa6842c34d0bf1edcf652c88ecd59ef6214b7e06b3e25",
+      "max_absolute_error": 0,
+      "rmse": 0,
+      "tolerance": 3.7616967646283277e-16,
+      "passed": true
+    },
+    {
+      "id": "5",
+      "title": "Deformation",
+      "pixels": 1048576,
+      "unit": "V",
+      "reference_array_sha256": "3156aed1822bc95e1fece38d8b36691bc608f949a22a1a3803029d2b89e53c56",
+      "max_absolute_error": 0,
+      "rmse": 0,
+      "tolerance": 1.5996377351064052e-16,
+      "passed": true
+    },
+    {
+      "id": "6",
+      "title": "Dissipation",
+      "pixels": 1048576,
+      "unit": "Arb",
+      "reference_array_sha256": "2ba093c9d8c2ead47b5ba3614bfc6d5421419aaf977fe253c9df7ab1ae141ccc",
+      "max_absolute_error": 0,
+      "rmse": 0,
+      "tolerance": 3.91769678764059e-16,
+      "passed": true
+    },
+    {
+      "id": "7",
+      "title": "Height",
+      "pixels": 1048576,
+      "unit": "m",
+      "reference_array_sha256": "b194f14efae4fe8f025b4338086e81b28d7a224d81b055f8bc68b4628fa85d0b",
+      "max_absolute_error": 1.3234889800848443e-23,
+      "rmse": 3.9094377922252556e-24,
+      "tolerance": 2.6378599182714376e-22,
+      "passed": true
+    }
+  ]
+}
