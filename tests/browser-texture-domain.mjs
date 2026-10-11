@@ -146,7 +146,20 @@ try {
   await bounds(r);
   assert.deepEqual(await snapshot(), original);
   await roi([2e-6, 1e-6, 6e-6, 3e-6]);
+  const edgePolygon = [
+    [0, 0],
+    [0.5e-6, 0],
+    [0.5e-6, 8e-6],
+    [0, 8e-6],
+  ];
+  await page.locator("#coordinate-polygon").fill(JSON.stringify(edgePolygon));
+  await page.locator("#coordinate-exclude").click();
+  await page.locator("#operation").selectOption("plane");
+  await page.locator("#add").click();
+  await ready();
   const selected = await snapshot();
+  assert.equal(selected.recipe.operations[0].name, "plane");
+  assert.deepEqual(selected.recipe.selection.exclude_polygons, [edgePolygon]);
   await page.locator("#tab-texture").click();
   assert.deepEqual(
     await report(),
@@ -160,6 +173,37 @@ try {
   assert.deepEqual(r.domain.requested_roi, selected.recipe.selection.roi);
   await bounds(r);
   assert.deepEqual(await snapshot(), selected);
+  await page.screenshot({
+    path: join(scratch, "texture-roi-desktop.png"),
+    fullPage: true,
+  });
+  const expectedFull = await page.evaluate(async (recipe) => {
+    const { apiFetch } = await import("./api.js");
+    const response = await apiFetch("/api/analyze", {
+      method: "POST",
+      body: JSON.stringify({
+        file: recipe.source.file,
+        channel: Number(recipe.source.channel),
+        operations: recipe.operations,
+        selection: { ...recipe.selection, roi: null },
+        profile: recipe.profile,
+        plateaus: recipe.plateaus,
+        reference: null,
+      }),
+    });
+    if (!response.ok) throw Error(await response.text());
+    return response.json();
+  }, selected.recipe);
+  assert.notEqual(
+    expectedFull.recipe.output.sha256,
+    selected.recipe.output.sha256,
+    "ROI-dependent leveling changes on full recapture",
+  );
+  assert.deepEqual(
+    await snapshot(),
+    selected,
+    "independent analysis leaves viewer unchanged",
+  );
   await capture("full");
   r = await measure();
   assert.equal(r.domain.kind, "full_processed_image");
@@ -169,7 +213,15 @@ try {
     r.input_recipe.selection.exclude_polygons,
     selected.recipe.selection.exclude_polygons,
   );
-  assert.deepEqual(r.domain.effective_pixel_bounds, [0, 0, 16, 16]);
+  assert.deepEqual(r.domain.effective_pixel_bounds, [1, 0, 16, 16]);
+  assert.deepEqual(
+    r.input_recipe.output,
+    expectedFull.recipe.output,
+    "full capture exactly matches separate full-domain analysis",
+  );
+  assert.deepEqual(r.input_recipe.source, expectedFull.recipe.source);
+  assert.deepEqual(r.input_recipe.selection, expectedFull.recipe.selection);
+  assert.equal(r.domain.exclude_polygon_count, 1);
   assert.deepEqual(await snapshot(), selected);
   await bounds(r);
   await page.locator("#operation").selectOption("crop");
