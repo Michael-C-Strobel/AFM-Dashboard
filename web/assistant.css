@@ -1,0 +1,138 @@
+.assistant-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+.assistant-local {
+  font-size: 9px;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  color: #5c6d89;
+}
+.assistant-panel h3 {
+  font-size: 12px;
+  margin: 12px 0 7px;
+}
+.assistant-panel p {
+  line-height: 1.45;
+}
+.assistant-starters {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+  border-bottom: 1px solid #cbd2dd;
+}
+.assistant-starters .check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 0 5px;
+  font-size: 11px;
+}
+.assistant-starters .check input {
+  width: auto;
+  min-height: 0;
+  margin: 0;
+}
+.assistant-review ol {
+  padding-left: 23px;
+}
+.assistant-review li {
+  padding: 8px 0;
+  border-bottom: 1px solid #d6dce5;
+}
+.assistant-review p {
+  font-size: 11px;
+  color: #59677c;
+  margin: 5px 0;
+}
+.assistant-review details {
+  margin: 5px 0 0;
+  padding: 0;
+  border: 0;
+}
+.assistant-actions {
+  margin-top: 12px;
+}
+#assistant-run {
+  background: #365fe9;
+  border-color: #244bcd;
+  color: white;
+}
+#assistant-source-info {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  border-left: 3px solid #7c91b6;
+  padding-left: 10px;
+  max-height: 160px;
+  overflow: auto;
+}
+#assistant-status {
+  padding: 8px 10px;
+  background: #e4eaf7;
+  border-left: 3px solid #5375e4;
+  font-size: 12px;
+}
+.assistant-panel .error {
+  color: #913f2c;
+  background: #fff0e8;
+}
+.assistant-result {
+  padding: 8px 0 12px;
+  border-bottom: 1px solid #cbd2dd;
+  overflow-wrap: anywhere;
+}
+.assistant-result h3 {
+  margin: 0 0 7px;
+}
+.assistant-result[data-status="complete"] h3 {
+  color: #255a42;
+}
+.assistant-result[data-status="failed"] h3 {
+  color: #9b402d;
+}
+.assistant-result details {
+  margin-top: 8px;
+  padding-top: 7px;
+}
+.assistant-metrics {
+  font-variant-numeric: tabular-nums;
+  color: #254abe;
+  font-size: 13px;
+}
+.assistant-panel pre {
+  max-height: 220px;
+}
+.assistant-advanced textarea {
+  font-size: 11px;
+  line-height: 1.5;
+}
+.assistant-panel button:disabled {
+  cursor: not-allowed;
+}
+@media (max-width: 760px) {
+  .inspection-tabs {
+    flex-wrap: wrap;
+  }
+  .inspection-tabs button {
+    flex: 1 1 45%;
+    min-height: 36px;
+  }
+  .assistant-heading {
+    display: block;
+  }
+  .assistant-local {
+    display: none;
+  }
+  .assistant-starters button {
+    flex: 1 1 45%;
+  }
+  .assistant-starters .check {
+    margin: 6px 0;
+  }
+  .assistant-panel .toolbar label {
+    min-width: 100%;
+  }
+}
