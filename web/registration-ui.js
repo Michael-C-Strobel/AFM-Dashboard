@@ -172,7 +172,7 @@ function render() {
   if (r.search)
     rows.push([
       "Automatic proposal",
-      `Pixel shift ${JSON.stringify(t.pixel_shift)}\n${r.search.origin_convention}\nTied candidates ${JSON.stringify(r.search.tied_candidates)}\nBoundary peak: ${r.search.boundary_peak ? "yes — review search extent" : "no"}`,
+      `Pixel shift ${JSON.stringify(t.pixel_shift)}\n${r.search.origin_convention}\nTied candidates: ${r.search.tied_candidates.length}; first 10 ${JSON.stringify(r.search.tied_candidates.slice(0, 10))}. Full list in JSON.\nBoundary peak: ${r.search.boundary_peak ? "yes — review search extent" : "no"}`,
     ]);
   $("summary").replaceChildren(
     ...rows.map(([name, value]) => {

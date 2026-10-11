@@ -209,6 +209,65 @@ async function dispatch(type, payload) {
     };
   }
   if (type === "registry") return operationRegistry();
+  if (type === "registration" || type === "registration-export") {
+    const { registrationRecipe, registrationBundle } = await import(
+      "./registration-service.js"
+    );
+    const { report_sha256, ...request } = payload;
+    if (type === "registration" && Object.hasOwn(payload, "report_sha256"))
+      throw new Error("Unexpected registration report hash.");
+    if (
+      type === "registration-export" &&
+      (typeof report_sha256 !== "string" ||
+        !/^[a-f0-9]{64}$/.test(report_sha256))
+    )
+      throw new Error("Registration export requires a valid report SHA-256.");
+    const fixed = get(request.fixed_recipe?.source?.file),
+      moving = get(request.moving_recipe?.source?.file);
+    const files = await Promise.all(
+      ["registration.js", "registration-service.js", "engine.js"].map(
+        async (name) => {
+          const response = await fetch(new URL(name, import.meta.url));
+          if (!response.ok)
+            throw new Error("Cannot identify registration code.");
+          return { name, text: await response.text() };
+        },
+      ),
+    );
+    const digest = (text) => sha256(new TextEncoder().encode(text));
+    const code = {
+      sha256: await digest(files.map((f) => f.text).join("\n")),
+      files: await Promise.all(
+        files.map(async (f) => ({
+          name: f.name,
+          sha256: await digest(f.text),
+        })),
+      ),
+    };
+    const result = await registrationRecipe(
+      request,
+      fixed,
+      moving,
+      request.fixed_recipe?.reference
+        ? get(request.fixed_recipe.reference.file)
+        : null,
+      request.moving_recipe?.reference
+        ? get(request.moving_recipe.reference.file)
+        : null,
+      {
+        fixed: await identityFor(fixed.format),
+        moving: await identityFor(moving.format),
+      },
+      code,
+    );
+    if (type === "registration") return result.report;
+    if (result.report.report_sha256 !== report_sha256)
+      throw new Error(
+        "Registration report SHA-256 mismatch; recompute the reviewed report before exporting.",
+      );
+    return registrationBundle(result);
+  }
+
   const source = get(
     ["replay", "segment", "texture", "texture-export"].includes(type)
       ? (payload.file ?? payload.recipe?.source?.file)

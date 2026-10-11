@@ -46,6 +46,18 @@ node scripts/texture.mjs --recipe artifacts/automatic/recipe.json \
 
 The selected domain must be a complete rectangle without internal missing/masked pixels. Zero-energy surfaces have no normalized ACF. Finite scan area and leveling affect estimates; no fitted correlation length is claimed. See [definitions and limits](docs/texture.md) and [exports and measured resource costs](docs/texture-workflows.md).
 
+## Register captured surfaces
+
+In **Registration**, capture a processed analysis as the fixed grid, select/process the other measurement in the main viewer, then capture it as moving. Choose a physical translation with nearest/bilinear interpolation, or explicitly request an integer correlation search. Review the transform, overlap, candidate ties, boundary warnings and residual map. Registration is separate from ordinary reference comparison and does not change either captured analysis.
+
+```sh
+node scripts/register.mjs --fixed-recipe fixed/recipe.json \
+  --moving-recipe moving/recipe.json --fixed data/fixed.gwy --moving data/moving.gwy \
+  --out registration-result --mode automatic --radius-x 4 --radius-y 4
+```
+
+Recorded references require `--fixed-reference` or `--moving-reference`. Automatic search requires equal pixel pitches and a bounded candidate workload; manual resampling supports different grids. Only compatible declared units are accepted. Rotations, scaling and local deformation are unsupported. JSON and verified TAR exports retain both recipes, transform, common-valid mask and full numerical rasters. See [registration definitions](docs/registration.md) and [replay/export workflow](docs/registration-workflows.md).
+
 ## Reviewed analysis plans
 
 Open **Assistant**, refresh loaded sources, then choose a starter or expand **Ask for a plan**. Local starters require no model. Review the arguments, validate the plan, and select **Run reviewed plan**. Completed steps expose recipes and artifacts; **Verify evidence report** produces linked numeric claims and Markdown/JSON exports, including partial results after a failure or cancellation.

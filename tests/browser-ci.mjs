@@ -301,6 +301,34 @@ try {
   assert.equal(texture.kind, "spatial_texture");
   near(texture.psd.integral, texture.psd.expected_mean_square, 1e-30);
   assert.equal(texture.acf.overview.width, 5);
+  await page.locator("#tab-registration").click();
+  await page.locator("#registration-capture-fixed").click();
+  await page.locator("#registration-capture-moving").click();
+  await page.locator("#registration-run").click();
+  await page.waitForFunction(
+    () =>
+      !document.querySelector("#registration-json").disabled ||
+      document.querySelector("#registration-status.error"),
+  );
+  assert.equal(
+    await page.locator("#registration-status.error").count(),
+    0,
+    await page.locator("#registration-status").textContent(),
+  );
+  const registration = (
+    await download("#registration-json", "registration.json")
+  ).value;
+  assert.equal(registration.kind, "translation_registration");
+  assert.equal(registration.metrics.rmse, 0);
+  assert.equal(registration.metrics.valid_count, 6);
+  assert.equal(
+    registration.input_recipes.fixed.output.sha256,
+    restored.output.sha256,
+  );
+  assert.deepEqual(
+    registration.input_recipes.fixed,
+    registration.input_recipes.moving,
+  );
   await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(
     await page.evaluate(
@@ -317,6 +345,11 @@ try {
   await page.keyboard.press("ArrowRight");
   assert.equal(
     await page.locator("#tab-texture").getAttribute("aria-selected"),
+    "true",
+  );
+  await page.keyboard.press("ArrowRight");
+  assert.equal(
+    await page.locator("#tab-registration").getAttribute("aria-selected"),
     "true",
   );
   await page.keyboard.press("ArrowRight");
@@ -347,6 +380,7 @@ try {
           "Assistant strict replay",
           "captured processed segmentation",
           "captured processed spatial texture",
+          "dual-recipe registration",
           "keyboard tabs",
           "mobile overflow",
         ],

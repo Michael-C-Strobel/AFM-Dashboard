@@ -21,6 +21,7 @@ async function visiblePanel(name) {
     "assistant",
     "features",
     "texture",
+    "registration",
   ]) {
     assert.equal(
       await page.locator("#panel-" + other).isVisible(),
@@ -62,11 +63,11 @@ try {
     true,
   );
   await page.keyboard.press("End");
-  await visiblePanel("texture");
+  await visiblePanel("registration");
   await page.keyboard.press("ArrowRight");
   await visiblePanel("measurements");
   await page.keyboard.press("ArrowLeft");
-  await visiblePanel("texture");
+  await visiblePanel("registration");
   await page.keyboard.press("Home");
   await visiblePanel("measurements");
   assert.deepEqual(
@@ -143,7 +144,7 @@ try {
     JSON.stringify(
       {
         status: "passed",
-        panels: 6,
+        panels: 7,
         keyboard: "arrows, Home, End, Tab",
         widths: [1440, 1024, 768, 390],
         screenshots: [

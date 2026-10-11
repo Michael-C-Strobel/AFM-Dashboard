@@ -120,6 +120,20 @@ export async function apiFetch(path, options = {}) {
       await ensure(body.file);
       return Response.json(await call("quality", body));
     }
+    if (["/api/registration", "/api/registration-export"].includes(route)) {
+      if (options.method?.toUpperCase() !== "POST")
+        throw new Error("Registration routes require POST.");
+      for (const recipe of [body.fixed_recipe, body.moving_recipe]) {
+        await ensure(recipe?.source?.file);
+        if (recipe?.reference) await ensure(recipe.reference.file);
+      }
+      const result = await call(route.slice(5), body);
+      return route === "/api/registration-export"
+        ? new Response(result, {
+            headers: { "Content-Type": "application/x-tar" },
+          })
+        : Response.json(result);
+    }
     if (["/api/texture", "/api/texture-export"].includes(route)) {
       if (options.method?.toUpperCase() !== "POST")
         throw new Error("Texture routes require POST.");
