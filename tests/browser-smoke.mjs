@@ -495,13 +495,11 @@ try {
   });
   if (jpkFixture) {
     const started = performance.now();
-    await page
-      .locator("#import")
-      .setInputFiles({
-        name: "jpk-reference.jpk",
-        mimeType: "application/octet-stream",
-        buffer: jpkFixture,
-      });
+    await page.locator("#import").setInputFiles({
+      name: "jpk-reference.jpk",
+      mimeType: "application/octet-stream",
+      buffer: jpkFixture,
+    });
     await page.waitForFunction(
       () => document.querySelector("#file").value === "jpk-reference.jpk",
       {},
@@ -567,7 +565,7 @@ try {
     );
     assert.equal(errorChannel.title, "error_retrace");
     assert.equal(errorChannel.z_unit, "V");
-    // Mutate only declared TIFF Software-tag ASCII bytes, never image strips.
+    // Mutate only declared JPK software-version-tag ASCII bytes, never image strips.
     const modified = Buffer.from(jpkFixture),
       little = modified.toString("ascii", 0, 2) === "II";
     const u16 = (offset) =>
@@ -582,7 +580,7 @@ try {
       const count = u16(ifd);
       for (let i = 0; i < count; i++) {
         const entry = ifd + 2 + 12 * i;
-        if (u16(entry) !== 305 || u16(entry + 2) !== 2) continue;
+        if (u16(entry) !== 0x8000 || u16(entry + 2) !== 2) continue;
         const length = u32(entry + 4),
           offset = length <= 4 ? entry + 8 : u32(entry + 8);
         const index = modified
@@ -596,13 +594,11 @@ try {
       ifd = u32(ifd + 2 + 12 * count);
     }
     assert.ok(replacements > 0, "Software configuration tag was identified");
-    await page
-      .locator("#import")
-      .setInputFiles({
-        name: "jpk-unverified-config.jpk",
-        mimeType: "application/octet-stream",
-        buffer: modified,
-      });
+    await page.locator("#import").setInputFiles({
+      name: "jpk-unverified-config.jpk",
+      mimeType: "application/octet-stream",
+      buffer: modified,
+    });
     await page.waitForFunction(
       () =>
         document.querySelector("#file").value === "jpk-unverified-config.jpk",
