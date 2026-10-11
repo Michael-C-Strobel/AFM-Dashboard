@@ -6,7 +6,7 @@ The preview packages the buildless HTML/JavaScript application, its Node 20+ run
 
 ```sh
 mkdir -p dist
-npm run preview:package -- --out dist/local-preview-0.1.0
+npm run preview:package -- --out dist/local-preview-agents-0.1.0
 ```
 
 The parent directory must exist and the destination must be new. The builder refuses an existing destination instead of merging or overwriting it. It writes `afm-dashboard-0.1.0-preview.tar` and its `.sha256` sidecar. Version comes from `package.json`; no Git metadata, credentials, user environment files or runtime dependency directories are copied.
@@ -16,7 +16,7 @@ The uncompressed POSIX archive uses sorted paths, fixed permissions, zero owners
 ## Verify and run from a clean directory
 
 ```sh
-cd dist/local-preview-0.1.0
+cd dist/local-preview-agents-0.1.0
 sha256sum -c afm-dashboard-0.1.0-preview.tar.sha256
 mkdir extracted
 tar -xf afm-dashboard-0.1.0-preview.tar -C extracted
@@ -29,6 +29,8 @@ Use another `PORT` if the default 4173 demo is already running. The server binds
 
 The verifier checks the exact file inventory and SHA-256/byte length of every entry before importing packaged analysis modules. It rejects missing/extra files, unexpected directories, symlinks, unsafe paths and malformed manifests. It then checks all four format-specific engine identities, calibration/units, every expected synthetic pixel, known statistics, and strict legacy/portable recipe replay. It writes nothing to the package; keep analysis exports outside it. Checksums provide integrity evidence, not author authentication or a license grant.
 
+The current snapshot includes autonomous/help modes, provider presets, pilot SOPs, a structured Documentation guide with two synthetic screenshots, and interactive measurement readouts. Clean-install browser checks also load the guide and both screenshots. Earlier preview archives remain unchanged.
+
 ## Generated example
 
 `data/synthetic-step.gwy` is a 16×16 image covering 8×8 µm with metre units. At zero-based pixel `(x,y)`, height is `1e-9 * (x + 2*y + (x >= 8 ? 5 : 0))` metres. The mean is 25 nm, range 0–50 nm and area 64 µm². Metadata labels it as a generated mathematical demonstration. The generator source is included.
@@ -37,9 +39,9 @@ The two saved recipes perform mean subtraction. The browser loads only this exam
 
 ## Validation — 2026-10-11
 
-- **330 tests pass**, including deterministic builds, independent system-tar extraction, overwrite refusal, synthetic-only inventory, hash-before-import checks, strict replay and changed-pixel rejection even when mean/extrema are preserved.
+- **374 tests pass**, including deterministic builds, independent system-tar extraction, overwrite refusal, synthetic-only inventory, hash-before-import checks, strict replay and changed-pixel rejection even when mean/extrema are preserved.
 - Chromium **151.0.7922.34**, Firefox **141.0** and WebKit **26.0** each passed `tests/browser-preview.mjs` against a freshly extracted package. They verified initial synthetic loading/calibration, disabled chemist preset, strict original replay, portable recipe loading/saving, no laboratory requests, no console errors and unchanged package hashes after use.
-- All three builds produced archive SHA-256 `714e5cf1e77944daf5a1c15b64e67b55e21b7d2fb6b9180f946128331fceb096`, with 69 inventory entries plus the manifest.
+- All three builds produced archive SHA-256 `2f787d7bebf1ae1ffe61abd488fda7bf5903d33aea645a5267d9676c0a08b11f`, with 80 inventory entries plus the manifest.
 - Source SHA-256: `070d5511c2b04a14a98dc9f9a5f720bc08b0c2e5b8f25a7cd403453698cd1f19`.
 - Mean-subtracted output SHA-256: `4a6764893b4045be3131c691650e533b9b6ec27da81dcf9a3e47706ee883b61c`.
 

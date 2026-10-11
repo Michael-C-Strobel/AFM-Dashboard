@@ -113,7 +113,7 @@ export const helpTopics = Object.freeze(
       id: "navigation",
       title: "Navigate inspection panels",
       target: "expand-inspection",
-      text: "Recalculate sits in the inspection toolbar beside the measurement panels and stays available when expanded. Use the inspection tabs; Left/Right arrows move between tabs and Home/End select the first/last. Expand inspection opens the current controls in a native modal; Escape or Return to viewer closes it. On a narrow screen, Data & processing reveals source and pipeline controls. Navigation and display colors do not change measurements.",
+      text: "Move or drag across Height distribution for bin bounds/counts or Line profile for nearest recorded distance/height and source X/Y. Focus plots and use Left/Right, Home/End for keyboard inspection; readouts describe the last completed analysis and do not change it. Recalculate sits in the inspection toolbar beside the measurement panels and stays available when expanded. Use the inspection tabs; Left/Right arrows move between tabs and Home/End select the first/last. Expand inspection opens the current controls in a native modal; Escape or Return to viewer closes it. On a narrow screen, Data & processing reveals source and pipeline controls. Navigation and display colors do not change measurements.",
     },
     {
       id: "limitations",

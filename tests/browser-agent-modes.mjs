@@ -199,6 +199,15 @@ try {
   assert.equal(await guide.locator("figure img").count(), 2);
   for (const photo of await guide.locator("figure img").all()) {
     await photo.scrollIntoViewIfNeeded();
+    await guide.waitForFunction(
+      (src) => {
+        const image = [...document.images].find(
+          (img) => img.getAttribute("src") === src,
+        );
+        return image?.complete && image.naturalWidth > 0;
+      },
+      await photo.getAttribute("src"),
+    );
     await photo.evaluate((img) => img.decode());
     assert.ok(await photo.evaluate((img) => img.naturalWidth > 0));
   }

@@ -6,7 +6,7 @@ Open **Documentation** in the main toolbar for the [in-app guide](../web/help.ht
 
 Start with **Import local files**, then select a source and channel. Read **Import support**, warnings and channel metadata before measuring. The [supported-input matrix](supported-inputs.md) describes specific image subsets, not blanket instrument compatibility. Check lateral and vertical units; unknown units remain unknown, and an electrical channel is not a height measurement.
 
-Processing preserves original measurements. Choose an **Operation**, then **Add operation & apply**; review History, **Undo**, or **Reset pipeline**. Select an ROI, line profile or exclusion polygon with **Selection tool**. In **Measurements**, **Enter exact selection coordinates** provides a keyboard alternative in source base units. Use **Recalculate** after selection edits. Imported masks and nonfinite pixels are excluded from measurements.
+Processing preserves original measurements. Choose an **Operation**, then **Add operation & apply**; review History, **Undo**, or **Reset pipeline**. Select an ROI, line profile or exclusion polygon with **Selection tool**. In **Measurements**, **Enter exact selection coordinates** provides a keyboard alternative in source base units. Use **Recalculate** in the inspection toolbar after selection edits; it remains available in expanded inspection. Imported masks and nonfinite pixels are excluded from measurements.
 
 ![Synthetic training example: importing a measurement and choosing its source/channel.](../web/help-import.png)
 
@@ -15,6 +15,10 @@ _Import and channel selection in a synthetic training example, not an experiment
 Use Left/Right and Home/End to navigate inspection tabs. **Expand inspection** opens a larger modal; Escape returns to the viewer. On narrow screens, **Data & processing** reveals source and pipeline controls.
 
 **Save recipe** retains the legacy format; **Save portable recipe** verifies a captured analysis and adds reorder-safe checksums. **Load recipe** accepts either format and requires the matching inputs and code for strict replay. **Export analysis TAR** contains results and provenance, not the original measurement bytes. Keep the raw files separately and download work before reloading: imports and unfinished work are session-only. See [recipe guidance](recipe-interchange.md).
+
+### Inspect plotted values
+
+Move or drag across **Height distribution** to see bin bounds and pixel counts, including empty bins. Move across **Line profile** to read the nearest recorded sample's distance, height, and source X/Y coordinates. Missing/excluded heights remain unavailable. Focus either plot and use Left/Right, Home/End for keyboard navigation. Readouts describe the last completed analysis; changing selections requires **Recalculate**. Cursor inspection does not alter recipes or measurements.
 
 ## Agents and automation
 

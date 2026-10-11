@@ -470,26 +470,34 @@ try {
       },
     );
   });
-  await new Promise((resolve, reject) => {
-    execFile(
-      process.execPath,
-      [fileURLToPath(new URL("./browser-agent-modes.mjs", import.meta.url))],
-      {
-        env: { ...process.env, AFM_BASE_URL: `http://127.0.0.1:${port}/web/` },
-        timeout: 120000,
-        maxBuffer: 1048576,
-      },
-      (error, stdout, stderr) =>
-        error
-          ? reject(
-              new Error(
-                `Agent modes browser workflow failed: ${stdout} ${stderr}`,
-                { cause: error },
-              ),
-            )
-          : resolve(),
-    );
-  });
+  for (const file of [
+    "./browser-agent-modes.mjs",
+    "./browser-measurement-readout.mjs",
+  ]) {
+    await new Promise((resolve, reject) => {
+      execFile(
+        process.execPath,
+        [fileURLToPath(new URL(file, import.meta.url))],
+        {
+          env: {
+            ...process.env,
+            AFM_BASE_URL: `http://127.0.0.1:${port}/web/`,
+          },
+          timeout: 120000,
+          maxBuffer: 1048576,
+        },
+        (error, stdout, stderr) =>
+          error
+            ? reject(
+                new Error(
+                  `${file} browser workflow failed: ${stdout} ${stderr}`,
+                  { cause: error },
+                ),
+              )
+            : resolve(),
+      );
+    });
+  }
   assert.deepEqual(errors, []);
   console.log(
     JSON.stringify(
@@ -508,6 +516,7 @@ try {
           "portable recipe save/upload/strict replay",
           "mocked multi-source planning and opt-in verified evidence",
           "autonomous adaptive rounds, help agent, provider presets and pilot SOPs",
+          "histogram and profile pointer/keyboard readouts",
           "Assistant strict replay",
           "captured processed segmentation",
           "captured processed spatial texture",

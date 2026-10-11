@@ -1008,3 +1008,30 @@ body.inspection-expanded {
   justify-content: flex-end;
   gap: 8px;
 }
+
+.measurement-plot {
+  cursor: crosshair;
+}
+.measurement-plot:focus-visible {
+  outline: 2px solid #345ff0;
+  outline-offset: 2px;
+}
+.measurement-readout {
+  padding: 7px 9px;
+  margin-top: 6px;
+  border-left: 3px solid #397e7e;
+  background: #eef3f4;
+  color: #213b47;
+  font:
+    12px/1.55 ui-monospace,
+    monospace;
+  min-height: 3.1em;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+.measurement-readout-help {
+  margin: 5px 0 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #596978;
+}

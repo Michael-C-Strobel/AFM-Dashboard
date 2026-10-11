@@ -102,6 +102,19 @@ try {
     await (await pending).saveAs(file);
     return JSON.parse(await readFile(file, "utf8"));
   }
+  assert.equal(await page.locator("#documentation-link").isVisible(), true);
+  const guide = await browser.newPage();
+  await guide.goto(`http://127.0.0.1:${port}/web/help.html`);
+  assert.equal(await guide.locator("main > section").count(), 3);
+  await guide
+    .locator("img")
+    .evaluateAll((images) => images.forEach((img) => (img.loading = "eager")));
+  await guide.waitForFunction(
+    () =>
+      document.images.length === 2 &&
+      [...document.images].every((img) => img.complete && img.naturalWidth > 0),
+  );
+  await guide.close();
   const original = await download("#download", "original.json");
   assert.equal(original.source.sha256, verified.source_sha256);
   assert.deepEqual(original.source.geometry.shape, [16, 16]);

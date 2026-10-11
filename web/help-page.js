@@ -51,7 +51,9 @@ for (const group of helpSections) {
         image = el("img");
       image.src = photo.src;
       image.alt = photo.alt;
-      image.loading = "lazy";
+      image.loading = "eager";
+      image.width = 1320;
+      image.height = 940;
       const link = el("a");
       link.href = photo.src;
       link.target = "_blank";

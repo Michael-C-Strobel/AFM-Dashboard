@@ -159,6 +159,11 @@ export function mountMeasurementReadout({
     svg.append(dot);
   }
   target.append(output);
+  const hint = doc.createElement("p");
+  hint.className = "measurement-readout-help";
+  hint.textContent =
+    "Recorded analysis · move or drag across the plot. Keyboard: ←/→, Home/End. Recalculate after changing selections.";
+  target.append(hint);
   let index = 0,
     drag = null;
   function show(next, keyboard = false) {
