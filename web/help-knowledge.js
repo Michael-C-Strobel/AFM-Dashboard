@@ -1,0 +1,154 @@
+/** Curated interface knowledge only. No DOM, measurement, network or model access. */
+export const helpTopics = Object.freeze(
+  [
+    {
+      id: "import-support",
+      title: "Import files and check support",
+      target: "import-trigger",
+      text: "Choose Import local files, then select a source file and channel. Supported image subsets are native GWYP, NanoScope binary images, Igor IBW v5 and JPK TIFF images. Read Import support and channel warnings: readable unverified configurations are warned, while unsupported encodings are rejected. File extension alone does not establish compatibility.",
+    },
+    {
+      id: "units-calibration",
+      title: "Read units and calibration",
+      target: "metadata",
+      text: "Open channel metadata to inspect dimensions, physical spans, offsets and stored XY/Z units. Values retain their stored units; unknown units remain unknown. Non-height signals must not be interpreted as height. Matching unit strings or successful import does not certify instrument calibration. Exact selection coordinates use the source channel base units.",
+    },
+    {
+      id: "processing",
+      title: "Process a copy and preserve raw data",
+      target: "operation",
+      text: "Select an Operation and Add operation & apply. Review the ordered History; Undo removes the last operation and Reset pipeline starts again from original data. Robust plane + zero minimum is a starting point requiring review. Processing preserves original measurements. Replay chemist points is restricted to its identified source/channel, not a general leveling preset.",
+    },
+    {
+      id: "selection",
+      title: "Select a measurement region",
+      target: "coordinate-roi",
+      text: "Choose Rectangle ROI or Exclude polygon in Selection tool, or open Enter exact selection coordinates in Measurements for a keyboard alternative. Finish polygon closes a drawn exclusion. Recalculate after selection edits. Clear selections removes the global selection and profile. Imported masks and nonfinite samples remain excluded; changing selection changes the measured population.",
+    },
+    {
+      id: "profiles-plateaus",
+      title: "Measure profiles and step height",
+      target: "coordinate-profile",
+      text: "Choose Line profile and draw endpoints, or enter exact coordinates in Measurements and select Set profile. For step height, set an ROI and Use current ROI as plateau A; select another ROI for plateau B. Plateaus are measured independently of the global ROI, while exclusions still apply. Recalculate to update results. Pixel spreads are descriptive, not confidence intervals.",
+    },
+    {
+      id: "quality",
+      title: "Check acquisition quality",
+      target: "tab-acquisition",
+      text: "Open Acquisition quality and run Check acquisition on the original channel with the current selection. Review row/column boundary candidates and warnings; these are diagnostic flags, not proven defects or automatic repairs. A reference channel is explicit and unaligned. Download the separate quality report to retain parameters and provenance.",
+    },
+    {
+      id: "batch",
+      title: "Apply a reviewed recipe to multiple files",
+      target: "tab-batch",
+      text: "In Batch, capture a completed current recipe, Refresh file list after importing files, select inputs and Check selected inputs before Start batch. Reference-bearing templates are rejected. Each compatible input receives a new recipe; this is not replay of the template source. Failures remain visible and later files continue. Cancel finishes the current file. Download the manifest and verified per-file exports before reloading.",
+    },
+    {
+      id: "segmentation",
+      title: "Measure threshold regions",
+      target: "tab-features",
+      text: "In Features, Capture processed analysis, set a threshold in the stored Z unit and review direction, connectivity, minimum pixels and boundary rules before running. Inspect accepted and excluded regions, calibrated areas and the independent label preview. Captures remain detached from later viewer edits. Regions are descriptive components, not material identities or independent samples.",
+    },
+    {
+      id: "texture",
+      title: "Measure spatial texture",
+      target: "tab-texture",
+      text: "In Texture, capture a completed processed analysis, choose explicit detrending and window settings, then measure. The selected domain must be a complete rectangle without internal missing or excluded pixels. PSD and linear autocorrelation plots show recorded bin means; TAR retains full numerical arrays. Log colors and display normalization do not change evidence. Zero-energy normalized ACF is unavailable; zero padding adds frequency samples, not physical resolution.",
+    },
+    {
+      id: "registration",
+      title: "Register two captured surfaces",
+      target: "tab-registration",
+      text: "In Registration, capture fixed and moving completed analyses separately, changing the main viewer between captures as needed. Manual translation maps moving coordinates into fixed coordinates; inspect units and interpolation. Automatic integer search requires compatible pitches and explicit search limits. Review overlap, ties and boundary warnings. Missing overlap is not filled. Neither capture nor the main viewer is changed; translation does not establish physical deformation.",
+    },
+    {
+      id: "sensitivity",
+      title: "Review processing and selection alternatives",
+      target: "tab-sensitivity",
+      text: "In Sensitivity, capture a baseline, add current processing/selection or a baseline-plus-mean/plane alternative, and review the full JSON definitions and assumptions before Run reviewed alternatives. Source/channel must match; baseline profile, plateaus and reference stay fixed. Inspect every outcome, valid counts and range membership. Alternative spread is not independent-replicate uncertainty; calibration uncertainty remains not evaluated.",
+    },
+    {
+      id: "recipes-export",
+      title: "Save, load and verify recipes",
+      target: "download-portable",
+      text: "Save recipe downloads the legacy recipe; Save portable recipe strictly verifies the captured analysis and adds canonical checksums that survive object-key reordering. Load recipe accepts either format up to 1 MiB and strictly checks source/calibration/output identities. Dirty or pending analyses cannot be saved as portable recipes. Export analysis TAR retains processed results and provenance, not original source bytes. Keep exact input files and matching application code for replay; hashes are not signatures.",
+    },
+    {
+      id: "assistant",
+      title: "Review Assistant plans before execution",
+      target: "tab-assistant",
+      text: "In Assistant, Refresh loaded sources, choose a local starter, inspect the exact plan, Validate plan and explicitly Run reviewed plan. Starter plans operate on selected source channels independently of the viewer pipeline. Verify evidence report to inspect attributed recorded claims. Optional model planning sends only selected context and explicitly opted-in verified evidence; proposals never run automatically. Model-selected evidence is recorded output, not a new analysis or scientific interpretation. Download session audits before reloading.",
+    },
+    {
+      id: "navigation",
+      title: "Navigate inspection panels",
+      target: "expand-inspection",
+      text: "Use the inspection tabs; Left/Right arrows move between tabs and Home/End select the first/last. Expand inspection opens the current controls in a native modal; Escape or Return to viewer closes it. On a narrow screen, Data & processing reveals source and pipeline controls. Navigation and display colors do not change measurements.",
+    },
+    {
+      id: "limitations",
+      title: "Understand interpretation and session limits",
+      target: null,
+      text: "This image viewer does not support force spectroscopy or every vendor encoding. Review support warnings and unknown units before interpretation. Sa/Sq, plateau spread, threshold regions, quality candidates, texture, registration and processing sensitivity are descriptive under their recorded assumptions, not calibration certificates or automatic scientific conclusions. Browser session imports, plans and results are memory-only; save evidence before reload. Full screen-reader usability and live-provider behavior are not certified by automated checks.",
+    },
+  ].map((topic) => Object.freeze(topic)),
+);
+
+const tabTopics = Object.freeze({
+  "tab-measurements": ["units-calibration", "selection", "profiles-plateaus"],
+  "tab-acquisition": ["quality"],
+  "tab-batch": ["batch"],
+  "tab-assistant": ["assistant"],
+  "tab-features": ["segmentation"],
+  "tab-texture": ["texture"],
+  "tab-registration": ["registration"],
+  "tab-sensitivity": ["sensitivity"],
+});
+
+/** tab is an exact known DOM tab ID; unrecognized input contributes no context. */
+export function helpContext(options = {}) {
+  const descriptor =
+    options && typeof options === "object"
+      ? Object.getOwnPropertyDescriptor(options, "tab")
+      : null;
+  const candidate =
+    descriptor && Object.hasOwn(descriptor, "value") ? descriptor.value : null;
+  const tab =
+    typeof candidate === "string" && Object.hasOwn(tabTopics, candidate)
+      ? candidate
+      : null;
+  const preferred = tab ? tabTopics[tab] : [];
+  const topics = [
+    ...helpTopics.filter((topic) => preferred.includes(topic.id)),
+    ...helpTopics.filter((topic) => !preferred.includes(topic.id)),
+  ];
+  return { schema_version: 1, tab, topics: structuredClone(topics) };
+}
+
+/** Return only named curated topics, in requested order, without shared references. */
+export function resolveHelpTopics(ids) {
+  if (
+    !Array.isArray(ids) ||
+    Object.getPrototypeOf(ids) !== Array.prototype ||
+    ids.length < 1 ||
+    ids.length > 8 ||
+    Reflect.ownKeys(ids).length !== ids.length + 1
+  )
+    throw new Error("Choose 1–8 unique known help topic IDs.");
+  const seen = new Set(),
+    result = [];
+  for (let i = 0; i < ids.length; i++) {
+    const descriptor = Object.getOwnPropertyDescriptor(ids, String(i));
+    const id =
+      descriptor && Object.hasOwn(descriptor, "value") && descriptor.enumerable
+        ? descriptor.value
+        : null;
+    const topic =
+      typeof id === "string" ? helpTopics.find((item) => item.id === id) : null;
+    if (!topic || seen.has(id))
+      throw new Error("Choose 1–8 unique known help topic IDs.");
+    seen.add(id);
+    result.push({ ...topic });
+  }
+  return result;
+}
