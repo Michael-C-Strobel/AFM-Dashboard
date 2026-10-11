@@ -18,4 +18,4 @@ node scripts/quality.mjs data/example.gwy --channel 0 --reference-channel 1 --ou
 node --test tests/quality.test.mjs
 ```
 
-The CLI uses the default full-image selection and threshold, records input SHA-256, channel IDs, normalized parameters and hashes of `quality.js` and `engine.js`. Output must be a new file; existing paths are never overwritten. Unit declarations and geometric agreement are not certification of acquisition accuracy.
+The CLI uses the default full-image selection and threshold, records input SHA-256, format/support classification, channel IDs and titles, import warnings, normalized parameters, the format-specific reader/engine identity and hashes of `quality.js` and `engine.js`. Source and reference calibration warnings remain visible; missing units receive an explicit warning without an assumed height unit. Output must be a new file; existing paths are never overwritten. Unit declarations and geometric agreement are not certification of acquisition accuracy.

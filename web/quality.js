@@ -89,8 +89,14 @@ export function qualityReport(
     }
   }
   const warnings = [
+    ...(channel.warnings ?? []),
+    ...(reference?.warnings ?? []).map((warning) => `Reference: ${warning}`),
     "Physical steps and sample structure can trigger boundary candidates. These diagnostics do not identify acquisition defects or automatically repair data.",
   ];
+  if (channel.xy_unit == null || channel.z_unit == null)
+    warnings.push(
+      "Unknown lateral or vertical unit; diagnostics retain stored values and do not imply physical height calibration.",
+    );
   if (!selected) warnings.push("No valid selected pixels.");
   const rows = axisReport(
     channel,

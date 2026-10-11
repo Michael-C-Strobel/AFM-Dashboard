@@ -1,8 +1,8 @@
 /** Usage: node scripts/quality.mjs INPUT --channel 0 [--reference-channel 1] --out REPORT.json */
-import { readFile, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { resolve, dirname } from "node:path";
 import { createHash, webcrypto } from "node:crypto";
-import { loadSource } from "./io.mjs";
+import { loadSource, engineIdentity } from "./io.mjs";
 import { qualityReport } from "../web/quality.js";
 
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
@@ -51,8 +51,18 @@ const output = {
     file: resolve(input),
     sha256: source.sha256,
     channel: String(channel.id),
+    channel_title: channel.title,
+    format: source.format,
+    support: source.support ?? null,
+    warnings: [
+      ...new Set([...(source.warnings ?? []), ...(channel.warnings ?? [])]),
+    ],
     reference_channel: reference ? String(reference.id) : null,
+    reference_title: reference?.title ?? null,
+    reference_warnings: reference?.warnings ?? [],
   },
+  reader_engine_sha256: await engineIdentity(source.format),
+  warnings: [...new Set([...(source.warnings ?? []), ...report.warnings])],
   code: {
     sha256: digest(files.map((f) => f.text).join("\n")),
     definition: "SHA-256 of UTF-8 quality.js + newline + engine.js",
@@ -71,6 +81,7 @@ const text =
     },
     2,
   ) + "\n";
+await mkdir(dirname(resolve(options["--out"])), { recursive: true });
 // Exclusive creation also protects source files reached through symlinks or hardlinks.
 await writeFile(options["--out"], text, { flag: "wx" });
 console.log(`Wrote quality diagnostics to ${options["--out"]}`);

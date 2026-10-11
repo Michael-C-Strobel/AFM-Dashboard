@@ -167,3 +167,23 @@ test("trace pairing requires unambiguous exact families and never matches distin
     [],
   );
 });
+
+test("import warnings and unknown units stay visible without implying height", () => {
+  const c = fixture();
+  c.z_unit = null;
+  c.warnings = ["Unverified instrument configuration"];
+  const reference = fixture();
+  reference.z_unit = null;
+  reference.warnings = ["Reference calibration unverified"];
+  const report = qualityReport(c, {}, reference);
+  assert.ok(report.warnings.includes("Unverified instrument configuration"));
+  assert.ok(
+    report.warnings.some((w) => w.includes("Reference calibration unverified")),
+  );
+  assert.ok(
+    report.warnings.some((w) => w.includes("Unknown lateral or vertical unit")),
+  );
+  assert.equal(report.units.z, null);
+  assert.equal(report.comparison.z_unit, null);
+  assert.deepEqual(c.warnings, ["Unverified instrument configuration"]);
+});
