@@ -502,3 +502,61 @@ textarea {
   border-left-color: #b57c22;
   color: #754b15;
 }
+
+.acquisition-card {
+  margin-top: 22px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #dce3dc;
+  border-radius: 10px;
+  min-width: 0;
+}
+#acquisition-status {
+  font-size: 12px;
+  line-height: 1.6;
+}
+#acquisition-status.error {
+  color: #913f2c;
+  background: #fff0e8;
+  padding: 10px;
+}
+#acquisition-report {
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.acquisition-counts {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+.acquisition-counts span {
+  background: #eff4ee;
+  border-radius: 5px;
+  padding: 7px 10px;
+}
+.acquisition-boundaries {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.acquisition-boundaries h3 {
+  font-size: 13px;
+}
+.acquisition-boundaries table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 11px;
+}
+.acquisition-boundaries th,
+.acquisition-boundaries td {
+  text-align: left;
+  border-bottom: 1px solid #e1e7df;
+  padding: 6px;
+}
+@media (max-width: 650px) {
+  .acquisition-boundaries {
+    grid-template-columns: 1fr;
+  }
+}

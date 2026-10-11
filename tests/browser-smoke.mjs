@@ -1,5 +1,6 @@
 /** Optional browser integration: start npm run dev first. No browser dependency is installed by this script. */
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile, mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -60,6 +61,99 @@ try {
   assert.equal(await page.locator("#histogram svg").count(), 1);
   assert.match(await page.locator("#raw-scale").textContent(), /[nµm]?m/);
   const calibration = JSON.parse(await page.locator("#metadata").textContent());
+  // Original-source diagnostics must not mutate maps, source data, or pipeline.
+  const originalRecipe = JSON.parse(
+    await readFile(
+      await download("#download", "before-quality-recipe.json"),
+      "utf8",
+    ),
+  );
+  const mapBefore = await page
+    .locator("#result")
+    .evaluate((canvas) => canvas.toDataURL());
+  assert.equal(await page.locator("#acquisition-reference").inputValue(), "");
+  await page.locator("#acquisition-check").click();
+  await page.waitForFunction(
+    () =>
+      document.querySelector("#acquisition-status.error") ||
+      !document.querySelector("#acquisition-export").disabled,
+    {},
+    { timeout: 30000 },
+  );
+  assert.equal(
+    await page.locator("#acquisition-status.error").count(),
+    0,
+    await page.locator("#acquisition-status").textContent(),
+  );
+  const qualityFile = await download(
+    "#acquisition-export",
+    "acquisition-quality.json",
+  );
+  const qualityReport = JSON.parse(await readFile(qualityFile, "utf8"));
+  assert.equal(qualityReport.input.sha256, originalRecipe.source.sha256);
+  assert.match(qualityReport.code.sha256, /^[a-f0-9]{64}$/);
+  assert.equal(
+    qualityReport.reader_engine_sha256,
+    originalRecipe.engine.sha256,
+  );
+  const qualitySources = await Promise.all(
+    ["quality.js", "engine.js"].map((name) =>
+      readFile(new URL("../web/" + name, import.meta.url), "utf8"),
+    ),
+  );
+  assert.equal(
+    qualityReport.code.sha256,
+    createHash("sha256").update(qualitySources.join("\n")).digest("hex"),
+  );
+  assert.equal(qualityReport.input.reference_channel, null);
+  assert.equal(qualityReport.report.comparison, null);
+  assert.equal(qualityReport.report.counts.total, 160000);
+  assert.equal(qualityReport.report.counts.selected, 160000);
+  assert.ok(Array.isArray(qualityReport.report.rows.candidates));
+  assert.ok(Array.isArray(qualityReport.report.columns.candidates));
+  assert.equal(await page.locator("#history li").count(), 0);
+  assert.equal(
+    await page.locator("#result").evaluate((canvas) => canvas.toDataURL()),
+    mapBefore,
+  );
+  const afterQuality = JSON.parse(
+    await readFile(
+      await download("#download", "after-quality-recipe.json"),
+      "utf8",
+    ),
+  );
+  assert.equal(afterQuality.output.sha256, originalRecipe.output.sha256);
+  await page.locator("#acquisition-reference").selectOption("1");
+  assert.equal(await page.locator("#acquisition-export").isDisabled(), true);
+  await page.locator("#acquisition-check").click();
+  await page.waitForFunction(
+    () =>
+      document.querySelector("#acquisition-status.error") ||
+      !document.querySelector("#acquisition-export").disabled,
+  );
+  assert.equal(await page.locator("#acquisition-status.error").count(), 0);
+  const paired = JSON.parse(
+    await readFile(
+      await download("#acquisition-export", "paired-acquisition.json"),
+      "utf8",
+    ),
+  );
+  assert.equal(paired.input.reference_channel, "1");
+  assert.ok(Number.isFinite(paired.report.comparison.rmse));
+  await page.screenshot({ path: "/tmp/afm-quality-ui.png", fullPage: true });
+  await page.locator("#acquisition-reference").selectOption("2");
+  await page.locator("#acquisition-check").click();
+  await page.waitForSelector("#acquisition-status.error");
+  assert.equal(await page.locator("#acquisition-export").isDisabled(), true);
+  assert.match(
+    await page.locator("#acquisition-status").textContent(),
+    /unit|geometry|compatible/i,
+  );
+  await page.locator("#acquisition-reference").selectOption("");
+  await page.locator("#acquisition-check").click();
+  await page.waitForFunction(
+    () => !document.querySelector("#acquisition-export").disabled,
+  );
   await action("#preset");
   assert.equal(await page.locator("#history li").count(), 2);
   await action("#chemist");
@@ -109,6 +203,7 @@ try {
   });
   await page.mouse.up();
   assert.match(await page.locator("#selection-info").textContent(), /ROI:/);
+  assert.equal(await page.locator("#acquisition-export").isDisabled(), true);
   await action("#refresh");
   const selected = await download("#download", "roi-recipe.json");
   assert.ok(JSON.parse(await readFile(selected, "utf8")).selection.roi);
@@ -671,6 +766,8 @@ try {
       {
         status: "passed",
         rmse: comparison.rmse,
+        quality_code_sha256: qualityReport.code.sha256,
+        quality_source_sha256: qualityReport.input.sha256,
         recipe_sha256: selectionRecipe.output.sha256,
         scratch,
         screenshot: process.env.AFM_SCREENSHOT || "/tmp/afm-ui-preview.png",

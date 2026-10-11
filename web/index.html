@@ -298,6 +298,41 @@
             </p>
           </article>
         </section>
+        <section class="acquisition-card" aria-labelledby="acquisition-title">
+          <h2 id="acquisition-title">Check acquisition</h2>
+          <p class="hint">
+            On-demand diagnostics of the original source channel with the
+            current ROI and excluded polygons. Processing operations and cropped
+            previews are not used. Boundary candidates can reflect real sample
+            structure; they are not defect classifications.
+          </p>
+          <div class="toolbar">
+            <label
+              >Boundary threshold multiplier<input
+                id="acquisition-sigma"
+                type="number"
+                min="0.1"
+                step="0.1"
+                value="6" /></label
+            ><label
+              >Optional channel from this file<select
+                id="acquisition-reference"
+              >
+                <option value="">None — no comparison</option>
+              </select></label
+            ><button id="acquisition-check">Check original acquisition</button
+            ><button id="acquisition-export" disabled>
+              Export quality JSON
+            </button>
+          </div>
+          <p id="acquisition-pair" class="hint">
+            Select a reference explicitly to compare channels.
+          </p>
+          <p id="acquisition-status" role="status" aria-live="polite">
+            No acquisition diagnostics requested.
+          </p>
+          <div id="acquisition-report"></div>
+        </section>
       </main>
     </div>
   </body>

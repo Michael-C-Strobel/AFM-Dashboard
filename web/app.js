@@ -4,6 +4,7 @@ const $ = (id) => document.getElementById(id);
 const state = {
   files: [],
   channels: [],
+  tracePairs: [],
   support: null,
   reference: null,
   referenceChannels: [],
@@ -20,6 +21,7 @@ const state = {
   drag: null,
   rasters: {},
 };
+const acquisition = { sequence: 0, result: null };
 const finite = (x) => typeof x === "number" && Number.isFinite(x);
 function format(value, unit) {
   if (!finite(value)) return "—";
@@ -100,12 +102,14 @@ function body() {
   };
 }
 function dirty(message = "Selection changed. Recalculate to update analysis.") {
+  invalidateAcquisition();
   ++state.sequence;
   status(message);
   $("download").disabled = true;
   $("export").disabled = true;
 }
 function resetSelections() {
+  invalidateAcquisition();
   state.selection = { roi: null, exclude_polygons: [] };
   state.profile = null;
   state.plateaus = [null, null];
@@ -163,6 +167,8 @@ async function loadFile() {
     );
     if (seq !== state.sequence) return;
     state.channels = result.channels;
+    state.tracePairs = result.trace_pairs || [];
+    configureAcquisition();
     state.support = result.support || null;
     renderSupport();
     for (const c of state.channels)
@@ -174,6 +180,7 @@ async function loadFile() {
     if (!state.channels.length)
       throw new Error("This file contains no supported image channels.");
     syncReference();
+    configureAcquisition();
     await analyze();
   } catch (e) {
     if (seq === state.sequence) status(e.message, true);
@@ -776,6 +783,7 @@ function save(blob, name) {
 }
 $("file").onchange = loadFile;
 $("channel").onchange = () => {
+  configureAcquisition();
   resetComparison();
   state.operations = [];
   resetSelections();
@@ -904,6 +912,7 @@ $("upload").onchange = async (event) => {
   const file = event.target.files[0];
   if (!file) return;
   const seq = ++state.sequence;
+  invalidateAcquisition();
   try {
     status("Replaying recipe…");
     const recipe = JSON.parse(await file.text());
@@ -914,11 +923,13 @@ $("upload").onchange = async (event) => {
     const info = await api("/api/channels?file=" + encodeURIComponent(source));
     if (seq !== state.sequence) return;
     state.channels = info.channels;
+    state.tracePairs = info.trace_pairs || [];
     state.support = info.support || null;
     $("channel").replaceChildren();
     for (const c of info.channels)
       option($("channel"), c.id, c.id + " · " + c.title);
     $("channel").value = String(result.channel.id);
+    configureAcquisition();
     state.operations = (recipe.operations || result.history || []).map(
       (op) => ({ name: op.name, params: op.params || {} }),
     );
@@ -1214,3 +1225,207 @@ function renderSupport() {
     );
   $("support-message").textContent = lines.filter(Boolean).join("\n");
 }
+
+function invalidateAcquisition() {
+  ++acquisition.sequence;
+  acquisition.result = null;
+  $("acquisition-export").disabled = true;
+  $("acquisition-report").replaceChildren();
+  $("acquisition-status").classList.remove("error");
+  $("acquisition-status").textContent =
+    "Diagnostics not current. Check the original acquisition to refresh.";
+}
+function configureAcquisition() {
+  invalidateAcquisition();
+  const selector = $("acquisition-reference");
+  selector.replaceChildren();
+  option(selector, "", "None — no comparison");
+  const id = $("channel").value;
+  const pair = state.tracePairs.find(
+    (pair) => String(pair.trace_id) === id || String(pair.retrace_id) === id,
+  );
+  const suggestion = pair
+    ? String(pair.trace_id) === id
+      ? String(pair.retrace_id)
+      : String(pair.trace_id)
+    : null;
+  for (const channel of state.channels)
+    option(
+      selector,
+      channel.id,
+      channel.id +
+        " · " +
+        channel.title +
+        (String(channel.id) === suggestion
+          ? " · named trace/retrace pair"
+          : ""),
+    );
+  selector.value = "";
+  $("acquisition-pair").textContent =
+    suggestion !== null
+      ? "Named trace/retrace pairing suggests channel " +
+        suggestion +
+        ". Select it explicitly to compare; no alignment is performed."
+      : "Select a reference explicitly to compare channels; no alignment is performed.";
+}
+function acquisitionText(tag, text, parent) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  parent.append(node);
+  return node;
+}
+function renderAcquisition(result) {
+  const target = $("acquisition-report");
+  target.replaceChildren();
+  const report = result.report,
+    counts = report.counts,
+    unit = report.units?.z;
+  acquisitionText(
+    "p",
+    "Original source: " +
+      result.input.file +
+      " · channel " +
+      result.input.channel +
+      " · " +
+      result.input.channel_title,
+    target,
+  );
+  const countBox = document.createElement("div");
+  countBox.className = "acquisition-counts";
+  for (const [label, count] of [
+    ["Total", counts.total],
+    ["Selected valid", counts.selected],
+    ["Nonfinite (whole source)", counts.invalid],
+    ["Imported mask (whole source)", counts.imported_mask],
+    ["Selection-excluded valid", counts.selection_excluded_valid],
+  ])
+    acquisitionText(
+      "span",
+      label + ": " + Number(count).toLocaleString(),
+      countBox,
+    );
+  target.append(countBox);
+  const boundaries = document.createElement("div");
+  boundaries.className = "acquisition-boundaries";
+  for (const [label, axis] of [
+    ["Row", report.rows],
+    ["Column", report.columns],
+  ]) {
+    const section = document.createElement("section"),
+      candidates = axis.candidates || [];
+    acquisitionText(
+      "h3",
+      label + " boundaries: " + candidates.length + " candidate(s)",
+      section,
+    );
+    acquisitionText(
+      "p",
+      "Threshold: " +
+        format(axis.threshold, unit) +
+        " · centered adjacent-median changes; first " +
+        Math.min(20, candidates.length) +
+        " shown.",
+      section,
+    );
+    if (candidates.length) {
+      const table = document.createElement("table"),
+        head = document.createElement("tr");
+      for (const text of ["Boundary index", "Delta", "Threshold"])
+        acquisitionText("th", text, head);
+      const thead = document.createElement("thead");
+      thead.append(head);
+      table.append(thead);
+      const tbody = document.createElement("tbody");
+      for (const candidate of candidates.slice(0, 20)) {
+        const row = document.createElement("tr");
+        for (const value of [
+          String(candidate.boundary_index),
+          format(candidate.delta, candidate.z_unit ?? unit),
+          format(candidate.threshold, candidate.z_unit ?? unit),
+        ])
+          acquisitionText("td", value, row);
+        tbody.append(row);
+      }
+      table.append(tbody);
+      section.append(table);
+    }
+    boundaries.append(section);
+  }
+  target.append(boundaries);
+  if (report.comparison) {
+    const comparison = report.comparison;
+    acquisitionText(
+      "p",
+      "Explicit reference channel " +
+        result.input.reference_channel +
+        ": RMSE " +
+        format(comparison.rmse, comparison.z_unit ?? unit) +
+        " · MAE " +
+        format(comparison.mae, comparison.z_unit ?? unit) +
+        " · mean difference " +
+        format(comparison.mean_difference, comparison.z_unit ?? unit) +
+        ". " +
+        (comparison.definition || ""),
+      target,
+    );
+  } else acquisitionText("p", "No reference comparison requested.", target);
+  const warnings = [
+    ...new Set([...(result.input.warnings || []), ...(report.warnings || [])]),
+  ];
+  if (warnings.length) {
+    const list = document.createElement("ul");
+    for (const warning of warnings) acquisitionText("li", warning, list);
+    target.append(list);
+  }
+  acquisitionText(
+    "p",
+    "Source SHA-256: " +
+      result.input.sha256 +
+      " · Diagnostic code SHA-256: " +
+      result.code.sha256,
+    target,
+  );
+}
+$("acquisition-check").onclick = async () => {
+  invalidateAcquisition();
+  const seq = acquisition.sequence;
+  const file = $("file").value,
+    channel = $("channel").value;
+  if (!file || channel === "") {
+    $("acquisition-status").textContent = "Select a source channel first.";
+    $("acquisition-status").classList.add("error");
+    return;
+  }
+  $("acquisition-status").textContent = "Checking original acquisition…";
+  try {
+    const result = await api("/api/quality", {
+      file,
+      channel,
+      selection: structuredClone(state.selection),
+      boundary_sigma: Number($("acquisition-sigma").value),
+      reference_channel: $("acquisition-reference").value || null,
+    });
+    if (seq !== acquisition.sequence) return;
+    acquisition.result = result;
+    renderAcquisition(result);
+    $("acquisition-export").disabled = false;
+    $("acquisition-status").textContent =
+      "Original acquisition diagnostics complete. Data and processing pipeline are unchanged.";
+  } catch (error) {
+    if (seq === acquisition.sequence) {
+      $("acquisition-status").textContent = error.message;
+      $("acquisition-status").classList.add("error");
+    }
+  }
+};
+$("acquisition-export").onclick = () => {
+  if (acquisition.result)
+    save(
+      new Blob([JSON.stringify(acquisition.result, null, 2)], {
+        type: "application/json",
+      }),
+      "afm-acquisition-quality.json",
+    );
+};
+$("acquisition-reference").onchange = invalidateAcquisition;
+$("acquisition-sigma").onchange = invalidateAcquisition;
