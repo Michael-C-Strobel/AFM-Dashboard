@@ -137,6 +137,19 @@ const toolSession = createToolSession({
       });
       return report;
     }
+    if (name === "measure_texture") {
+      const saved = toolSession.artifact(args.recipe_artifact);
+      const recipe = saved.content.result?.recipe;
+      if (
+        !recipe ||
+        recipe.source?.file !== args.file ||
+        recipe.source?.sha256 !== args.source_sha256
+      )
+        throw new Error(
+          "Texture recipe artifact does not match the bound source.",
+        );
+      return dispatch("texture", { recipe, parameters: args.parameters });
+    }
     if (name === "replay_recipe") {
       const saved = toolSession.artifact(args.recipe_artifact);
       const recipe = saved.content.result?.recipe;
@@ -197,7 +210,7 @@ async function dispatch(type, payload) {
   }
   if (type === "registry") return operationRegistry();
   const source = get(
-    type === "replay" || type === "segment"
+    ["replay", "segment", "texture", "texture-export"].includes(type)
       ? (payload.file ?? payload.recipe?.source?.file)
       : payload.file,
   );
@@ -242,6 +255,53 @@ async function dispatch(type, payload) {
     // Keep the captured run record after independently verifying its numerical replay.
     result.recipe = structuredClone(payload.recipe);
     return exportBundle(result);
+  }
+  if (type === "texture" || type === "texture-export") {
+    const { textureRecipe, textureBundle } = await import(
+      "./texture-service.js"
+    );
+    const { report_sha256, ...request } = payload;
+    if (type === "texture" && Object.hasOwn(payload, "report_sha256"))
+      throw new Error("Unexpected texture report hash.");
+    if (
+      type === "texture-export" &&
+      (typeof report_sha256 !== "string" ||
+        report_sha256.length !== 64 ||
+        !/^[a-f0-9]{64}$/.test(report_sha256))
+    )
+      throw new Error("Texture export requires a valid report SHA-256.");
+    const files = await Promise.all(
+      ["fft.js", "texture.js", "texture-service.js", "engine.js"].map(
+        async (name) => {
+          const response = await fetch(new URL(name, import.meta.url));
+          if (!response.ok) throw new Error("Cannot identify texture code.");
+          return { name, text: await response.text() };
+        },
+      ),
+    );
+    const digest = (text) => sha256(new TextEncoder().encode(text));
+    const code = {
+      sha256: await digest(files.map((file) => file.text).join("\n")),
+      files: await Promise.all(
+        files.map(async (file) => ({
+          name: file.name,
+          sha256: await digest(file.text),
+        })),
+      ),
+    };
+    const result = await textureRecipe(
+      request,
+      source,
+      request.recipe?.reference ? get(request.recipe.reference.file) : null,
+      engine,
+      code,
+    );
+    if (type === "texture") return result.report;
+    if (result.report.report_sha256 !== report_sha256)
+      throw new Error(
+        "Texture report SHA-256 mismatch; recompute the reviewed report before exporting.",
+      );
+    return textureBundle(result);
   }
   if (type === "segment") {
     const { segmentRecipe } = await import("./segmentation-service.js");

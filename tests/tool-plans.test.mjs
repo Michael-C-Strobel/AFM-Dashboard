@@ -345,3 +345,31 @@ test("segmentation plans resolve only prior recipe artifact dependencies", () =>
   result.steps.reverse();
   assert.throws(() => validatePlan(result), /earlier step/);
 });
+
+test("texture resolves only prior recipe artifact references", async () => {
+  const input = plan();
+  input.steps[1].call = {
+    name: "measure_texture",
+    arguments: {
+      file: "a.gwy",
+      source_sha256: "b".repeat(64),
+      recipe_artifact: "$step:first",
+      parameters: {},
+    },
+  };
+  const calls = [];
+  const result = await runPlan(input, {
+    execute: async (call) => {
+      calls.push(call);
+      return success();
+    },
+  });
+  assert.equal(result.status, "complete");
+  assert.equal(calls[1].arguments.recipe_artifact, id);
+  assert.deepEqual(calls[1].arguments.parameters, {
+    detrend: "mean",
+    window: "boxcar",
+  });
+  input.steps[1].call.arguments.recipe_artifact = "$step:later";
+  assert.throws(() => validatePlan(input));
+});

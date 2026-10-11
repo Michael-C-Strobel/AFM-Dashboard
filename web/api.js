@@ -120,6 +120,18 @@ export async function apiFetch(path, options = {}) {
       await ensure(body.file);
       return Response.json(await call("quality", body));
     }
+    if (["/api/texture", "/api/texture-export"].includes(route)) {
+      if (options.method?.toUpperCase() !== "POST")
+        throw new Error("Texture routes require POST.");
+      await ensure(body.recipe?.source?.file);
+      if (body.recipe?.reference) await ensure(body.recipe.reference.file);
+      const result = await call(route.slice(5), body);
+      return route === "/api/texture-export"
+        ? new Response(result, {
+            headers: { "Content-Type": "application/x-tar" },
+          })
+        : Response.json(result);
+    }
     if (route === "/api/segment") {
       await ensure(body.recipe?.source?.file);
       if (body.recipe?.reference) await ensure(body.recipe.reference.file);

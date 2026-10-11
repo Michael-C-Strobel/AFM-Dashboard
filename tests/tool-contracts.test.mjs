@@ -317,3 +317,31 @@ test("segmentation tool requires an explicit threshold and normalizes bounded co
   ])
     assert.throws(() => call("segment_surface", { ...args, parameters }));
 });
+
+test("texture tool defaults and strict recipe-only selection", () => {
+  const args = {
+    file: "sample.gwy",
+    source_sha256: "a".repeat(64),
+    recipe_artifact: "artifact:" + "b".repeat(64),
+    parameters: {},
+  };
+  assert.deepEqual(call("measure_texture", args).arguments.parameters, {
+    detrend: "mean",
+    window: "boxcar",
+  });
+  for (const parameters of [
+    { detrend: "polynomial" },
+    { window: "hamming" },
+    { selection: {} },
+    { detrend: null },
+  ])
+    assert.throws(() => call("measure_texture", { ...args, parameters }));
+  assert.throws(() => call("measure_texture", { ...args, channel: "0" }));
+  assert.deepEqual(
+    call("measure_texture", {
+      ...args,
+      parameters: { detrend: "plane", window: "hann" },
+    }).arguments.parameters,
+    { detrend: "plane", window: "hann" },
+  );
+});

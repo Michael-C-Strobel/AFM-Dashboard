@@ -165,6 +165,22 @@ const schemas = {
     },
     ["file", "source_sha256", "recipe_artifact", "parameters"],
   ),
+  measure_texture: object(
+    {
+      file,
+      source_sha256: sha,
+      recipe_artifact: artifact,
+      parameters: object({
+        detrend: {
+          type: "string",
+          enum: ["none", "mean", "plane"],
+          default: "mean",
+        },
+        window: { type: "string", enum: ["boxcar", "hann"], default: "boxcar" },
+      }),
+    },
+    ["file", "source_sha256", "recipe_artifact", "parameters"],
+  ),
   replay_recipe: object(
     { file, source_sha256: sha, recipe_artifact: artifact },
     ["file", "source_sha256", "recipe_artifact"],
@@ -181,6 +197,8 @@ const toolDescriptions = {
     "Report acquisition diagnostics without repairing or aligning data.",
   segment_surface:
     "Strictly replay a prior analysis artifact, then measure user-reviewed threshold components; returns metadata and label hash, not a particle or defect classification.",
+  measure_texture:
+    "Strictly replay a prior analysis artifact and measure spatial PSD and ACF on its saved selection; returns compact evidence and raster hashes without selection overrides.",
   replay_recipe: "Replay a saved recipe artifact against a hash-bound source.",
   get_artifact:
     "Retrieve an existing immutable artifact by its content identifier.",
@@ -362,6 +380,10 @@ export function validateToolCall(call) {
     args.selection = normalizeSelection(args.selection ?? {});
     args.boundary_sigma ??= 6;
     args.reference_channel ??= null;
+  }
+  if (call.name === "measure_texture") {
+    args.parameters.detrend ??= "mean";
+    args.parameters.window ??= "boxcar";
   }
   if (call.name === "segment_surface") {
     args.parameters.direction ??= "above";
