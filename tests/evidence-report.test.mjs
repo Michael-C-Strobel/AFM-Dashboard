@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createEvidenceReport } from "../web/evidence-report.js";
 import { createToolSession, canonicalJSON } from "../web/tool-session.js";
 import { runPlan } from "../web/tool-plans.js";
-import { analyze } from "../web/service.js";
+import { analyze, replay } from "../web/service.js";
 import { sha256 } from "../web/engine.js";
 
 const hash = "a".repeat(64),
@@ -76,9 +76,9 @@ async function make({
         result = await analyze(args, source, null, engine);
       else if (name === "replay_recipe") {
         const previous = session.artifact(args.recipe_artifact).content.result;
-        result = structuredClone(previous);
-        result.replay_verified = true;
-        return result;
+        result = await replay(previous.recipe, source, null, engine);
+        // Ensure the test exercises a fresh execution timestamp even on a fast clock.
+        result.recipe.created_at = "2030-01-01T00:00:00.000Z";
       } else throw new Error("Unexpected tool");
       return Object.fromEntries(
         [
@@ -91,7 +91,8 @@ async function make({
           "profile",
           "warnings",
           "comparison",
-        ].map((k) => [k, result[k]]),
+          "replay_verified",
+        ].map((k) => [k, result[k] ?? null]),
       );
     },
   });

@@ -416,8 +416,17 @@ export async function createEvidenceReport({ manifest, journal }) {
           plain(reference.content.result?.recipe),
         "Replay recipe lacks a preceding verified analysis artifact",
       );
+      // Replay regenerates execution time; all scientific recipe fields must agree.
+      const { created_at: replayTime, ...replayedRecipe } =
+        artifact.content.result?.recipe ?? {};
+      const { created_at: originalTime, ...originalRecipe } =
+        reference.content.result.recipe;
       requireValue(
-        same(artifact.content.result?.recipe, reference.content.result.recipe),
+        text(replayTime) && text(originalTime),
+        "Missing recipe creation time",
+      );
+      requireValue(
+        same(replayedRecipe, originalRecipe),
         "Replay recipe differs from its referenced analysis artifact",
       );
     }
