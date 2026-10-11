@@ -52,7 +52,7 @@ try {
   }
   const identities = Object.fromEntries(
     await Promise.all(
-      ["GWYP", "NANOSCOPE", "IGOR_IBW"].map(async (format) => [
+      ["GWYP", "NANOSCOPE", "IGOR_IBW", "JPK_TIFF"].map(async (format) => [
         format,
         await engineIdentity(format),
       ]),

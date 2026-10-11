@@ -2,6 +2,7 @@
 import { parseGwy } from "./gwy.js";
 import { parseNanoscope } from "./nanoscope.js";
 import { parseIbw } from "./ibw.js";
+import { parseJpk } from "./jpk.js";
 import { annotateSupport } from "./support.js";
 export { summarizeChannel } from "./gwy.js";
 export function detectFormat(buffer) {
@@ -27,6 +28,7 @@ export function parseMeasurement(buffer) {
     return annotateSupport({ ...parseGwy(buffer), format });
   if (format === "NANOSCOPE") return annotateSupport(parseNanoscope(buffer));
   if (format === "IGOR_IBW") return annotateSupport(parseIbw(buffer));
+  if (format === "TIFF") return annotateSupport(parseJpk(buffer));
   const descriptions = {
     GWYO: "Legacy Gwyddion GWYO",
     IGOR_IBW: "Igor Binary Wave v5",
@@ -34,6 +36,6 @@ export function parseMeasurement(buffer) {
     UNKNOWN: "This file format",
   };
   throw new Error(
-    `${descriptions[format]} is not supported yet. Supported inputs: native GWYP, the documented NanoScope binary image subset, and calibrated Igor v5 image waves.`,
+    `${descriptions[format]} is not supported yet. Supported inputs: native GWYP, the documented NanoScope binary image subset, calibrated Igor v5 image waves, and the documented JPK TIFF image subset.`,
   );
 }

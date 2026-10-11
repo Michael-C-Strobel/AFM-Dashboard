@@ -20,6 +20,6 @@ The user confirms `sample-input.gwy` as raw input and `_worked.gwy` as the chemi
 
 ## Format adapters
 
-`web/formats.js` detects bytes and dispatches to `gwy.js`, `nanoscope.js`, or `ibw.js`, producing the same calibrated channel interface for browser workers and CLI. `web/identity.js` lists source files contributing to each format’s replay identity. The original GWYP code identity remains unchanged; NanoScope recipes include the new reader and dispatch code. Unknown formats fail explicitly. See `docs/nanoscope-support.md` for the supported subset and independent validation.
+`web/formats.js` detects bytes and dispatches to `gwy.js`, `nanoscope.js`, `ibw.js`, or `jpk.js`, producing the same calibrated channel interface for browser workers and CLI. `web/identity.js` lists source files contributing to each format’s replay identity. The original GWYP code identity remains unchanged; NanoScope recipes include the new reader and dispatch code. Unknown formats fail explicitly. See `docs/nanoscope-support.md` for the supported subset and independent validation.
 
 `web/support.js` annotates readable inputs with validated/unverified configuration records. The UI keeps these visible after analysis/replay; metadata exports preserve them. Unknown encodings fail at the adapter boundary. IBW units and coordinate choices are implemented in its reader, not guessed in the UI.

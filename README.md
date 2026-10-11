@@ -12,7 +12,7 @@ npm run dev
 
 Open **http://127.0.0.1:4173/web/**. There is no installation or build step. Node serves static files only. You can instead serve `web/` and `data/` with another static server on localhost or HTTPS; opening `index.html` directly through `file://` will not provide the worker/module environment. The development server binds only to loopback.
 
-The supplied `.gwy` measurements appear in the file selector. Use **Import local files** for native GWYP, supported NanoScope binary images, and calibrated Igor v5 image waves. Detection uses file contents, including numbered Bruker extensions such as `.001`. Browser limits are 64 MiB per file and 256 MiB of source bytes per session; reload to clear the session. These byte limits do not estimate total working memory.
+The supplied `.gwy` measurements appear in the file selector. Use **Import local files** for native GWYP, supported NanoScope binary images, calibrated Igor v5 image waves, and the supported JPK TIFF image subset. Detection uses file contents, including numbered Bruker extensions such as `.001`. Browser limits are 64 MiB per file and 256 MiB of source bytes per session; reload to clear the session. These byte limits do not estimate total working memory.
 
 ## First analysis
 
@@ -76,9 +76,9 @@ Synthetic numerical/importer tests do not require sample files or network access
 
 ## Compatibility and project status
 
-Supported inputs are native **GWYP image data**, a validated **NanoScope binary image subset**, and **Igor Binary Wave v5 image data**. See [NanoScope support and limitations](docs/nanoscope-support.md) for storage, calibration, orientation, and independent numerical checks. See [IBW calibration and limits](docs/ibw-support.md) and the [supported configuration matrix](docs/supported-inputs.md). Untested readable instrument configurations receive a persistent warning; unsupported formats/encodings are rejected. Legacy GWYO, older IBW, JPK, spectroscopy, and other scientific objects are not yet supported. Unknown objects/fields are reported; units are preserved or marked unknown. Invalid instrument text bytes remain visible with warnings.
+Supported inputs are native **GWYP image data**, a validated **NanoScope binary image subset**, **Igor Binary Wave v5 image data**, and a validated **JPK TIFF image subset**. See [NanoScope support and limitations](docs/nanoscope-support.md) for storage, calibration, orientation, and independent numerical checks. See [IBW calibration and limits](docs/ibw-support.md) , [JPK limitations](docs/jpk-support.md), and the [supported configuration matrix](docs/supported-inputs.md). Untested readable instrument configurations receive a persistent warning; unsupported formats/encodings are rejected. Legacy GWYO, older IBW, ordinary TIFF, spectroscopy, and other scientific objects are not yet supported. Unknown objects/fields are reported; units are preserved or marked unknown. Invalid instrument text bytes remain visible with warnings.
 
-Four additional public reference files cover GWYP, SPM, IBW, and JPK. The GWYP sample imports three channels and the NanoScope and IBW samples each import eight channels; JPK remains an adapter milestone. Provenance, local-only downloads, and redistribution gaps are recorded in [compatibility samples](docs/compatibility-samples.md). These external binaries are ignored and must not be included in releases without resolving their terms. The supplied laboratory data also needs redistribution approval before publication.
+Four additional public reference files cover GWYP, SPM, IBW, and JPK. The GWYP sample imports three channels and the NanoScope and IBW samples each import eight channels, and the JPK sample imports ten. Provenance, local-only downloads, and redistribution gaps are recorded in [compatibility samples](docs/compatibility-samples.md). These external binaries are ignored and must not be included in releases without resolving their terms. The supplied laboratory data also needs redistribution approval before publication.
 
 
 

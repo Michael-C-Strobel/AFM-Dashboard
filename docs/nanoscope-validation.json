@@ -1,6 +1,6 @@
 {
   "fixture_sha256": "71a535e577285b6d43c1cbad134b69ab9f472806661a231f981a2c96b2d3972d",
-  "engine_sha256": "de69c15deefbfa05cc3856acb20fd8953b6ef5ae5df10d6e4ed5b287ead61f67",
+  "engine_sha256": "5e60d3430596d2dfaaa5f426d735859d99ce7341823a50d42cf37feb6a6484b9",
   "reference_reader": {
     "name": "pySPM",
     "version": "0.6.3",

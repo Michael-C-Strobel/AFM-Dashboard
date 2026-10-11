@@ -36,7 +36,11 @@ for (const entry of manifest.samples) {
       };
     } catch (error) {
       support = { supported: false, reason: error.message };
-      if (["GWYP", "Nanoscope SPM", "Igor Binary Wave"].includes(entry.format))
+      if (
+        ["GWYP", "Nanoscope SPM", "Igor Binary Wave", "JPK TIFF"].includes(
+          entry.format,
+        )
+      )
         failures++;
     }
     console.log(

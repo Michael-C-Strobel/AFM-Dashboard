@@ -1,0 +1,115 @@
+{
+  "fixture_sha256": "02d0e0a57a66dd3353957e9658f4a8360ba299000de20ce135b3f14907ba8712",
+  "engine_sha256": "cac97ce0183d60c9c142cae456d3aede57355926b1179438a81ad518c83823b2",
+  "reference_reader": {
+    "name": "AFMReader",
+    "commit": "caeecf32ac5900f99c0dfee4b49d27ba4ca0fd77",
+    "jpk.py_sha256": "4ee8212d76f1cb0b1f5f9ae97fac4a8e84136a92645aa17ba73a10a2e7200fdf",
+    "source_url": "https://github.com/AFM-SPM/AFMReader/blob/caeecf32ac5900f99c0dfee4b49d27ba4ca0fd77/AFMReader/jpk.py",
+    "package_metadata_note": "AFMReader0.0.1 installed only to supply importlib.metadata. Executed package files are unmodified source from the above commit, ahead of installed package on PYTHONPATH."
+  },
+  "tiff_reader": {
+    "name": "tifffile",
+    "version": "2025.5.10",
+    "tifffile.py_sha256": "42cfd527fb4bd18ef95095f04cf2245b8dcdf7d8cb2e5cd740417acf4f3cdbb5"
+  },
+  "support": {
+    "status": "validated",
+    "format": "JPK_TIFF",
+    "configuration": "JPK image version 6.0.41 / ac-ultra-speed-direct-drive / internal tip and Z scanner",
+    "message": "Supported JPK 6.0.41 uncompressed signed32 image subset. Stored calibration is used; acquisition accuracy is not certified."
+  },
+  "transformation": "Reference arrays already have one Y flip and native selected-slot units; no further scaling. Direct raw multiplier/offset applied once, parent coefficients not reapplied.",
+  "channels": [
+    {
+      "id": "0",
+      "title": "height_retrace",
+      "pixels": 65536,
+      "unit": "m",
+      "max_absolute_error": 0,
+      "reference_array_sha256": "f09711357f8d08907a846819090eb6016d1fcc74dfcdf95be8a1d02a2bea3103",
+      "passed": true
+    },
+    {
+      "id": "1",
+      "title": "measuredHeight_retrace",
+      "pixels": 65536,
+      "unit": "m",
+      "max_absolute_error": 0,
+      "reference_array_sha256": "b40a4f0b2d8dcd5ad86b8a6038e307452f037e2525e8d76a5162a6514f1a6c15",
+      "passed": true
+    },
+    {
+      "id": "2",
+      "title": "amplitude_retrace",
+      "pixels": 65536,
+      "unit": "m",
+      "max_absolute_error": 0,
+      "reference_array_sha256": "bfbcc1838e3be4105e2d5d6d6334163dac01d05d3a651a68a452747a495eabb5",
+      "passed": true
+    },
+    {
+      "id": "3",
+      "title": "phase_retrace",
+      "pixels": 65536,
+      "unit": "deg",
+      "max_absolute_error": 0,
+      "reference_array_sha256": "2f5af7993ed11d82daeb2a7717eac0cb1044b28d3fea26d63cdc1143960d5934",
+      "passed": true
+    },
+    {
+      "id": "4",
+      "title": "error_retrace",
+      "pixels": 65536,
+      "unit": "V",
+      "max_absolute_error": 0,
+      "reference_array_sha256": "03fac62bf02f52a246e3d9454315cc0b6f6604c11afd62e456fa828c06a6316a",
+      "passed": true
+    },
+    {
+      "id": "5",
+      "title": "height_trace",
+      "pixels": 65536,
+      "unit": "m",
+      "max_absolute_error": 0,
+      "reference_array_sha256": "fa9138aed609f43f05e77a18afcb92e04a48eceda72a0ac55b21a81d3d3e0e21",
+      "passed": true
+    },
+    {
+      "id": "6",
+      "title": "measuredHeight_trace",
+      "pixels": 65536,
+      "unit": "m",
+      "max_absolute_error": 0,
+      "reference_array_sha256": "6c3aef98ed693b65eabbcc83b3ed9909fca1978608c929004cb20dc3feeb578d",
+      "passed": true
+    },
+    {
+      "id": "7",
+      "title": "amplitude_trace",
+      "pixels": 65536,
+      "unit": "m",
+      "max_absolute_error": 0,
+      "reference_array_sha256": "837de6cb35035891bed979b91488b19ff831d2e33ac273c7d3c01f4b6ca0bd1a",
+      "passed": true
+    },
+    {
+      "id": "8",
+      "title": "phase_trace",
+      "pixels": 65536,
+      "unit": "deg",
+      "max_absolute_error": 0,
+      "reference_array_sha256": "8322aa29b39a32e7abfdc0d332f8a43981c9d045c502196b7c1bb1fa07c69510",
+      "passed": true
+    },
+    {
+      "id": "9",
+      "title": "error_trace",
+      "pixels": 65536,
+      "unit": "V",
+      "max_absolute_error": 0,
+      "reference_array_sha256": "3d711ca9f7c0d236691725dff9a395b703e91e1af28e29c14ccff15599bc165e",
+      "passed": true
+    }
+  ]
+}
