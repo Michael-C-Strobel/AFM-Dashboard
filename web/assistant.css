@@ -182,3 +182,97 @@
   margin: 6px 0;
   overflow-wrap: anywhere;
 }
+
+/* The guide is a live sibling workspace, never a replacement for the maps. */
+#panel-assistant {
+  min-width: 0;
+  min-height: 0;
+  padding: 0 16px 20px;
+  background: #f5f7f3;
+  border-left: 1px solid #9dbdb4;
+  overflow: auto;
+  overscroll-behavior: contain;
+  overflow-wrap: anywhere;
+}
+#panel-assistant[hidden] {
+  display: none;
+}
+#panel-assistant .assistant-heading {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 -16px 14px;
+  padding: 16px;
+  background: #e5efea;
+  border-top: 3px solid #317b70;
+  border-bottom: 1px solid #abc9bd;
+}
+#panel-assistant .assistant-heading h2 {
+  color: #164c48;
+  font-size: 17px;
+}
+#panel-assistant .assistant-heading p {
+  margin-bottom: 0;
+}
+#assistant-close {
+  flex: 0 0 auto;
+  color: #164c48;
+  border-color: #9dbdb4;
+}
+#tab-assistant {
+  color: #e5f5ee;
+  background: #245e56;
+  border-color: #6ba597;
+}
+#tab-assistant[aria-expanded="true"] {
+  background: #d2ece1;
+  color: #164c48;
+}
+#panel-assistant input,
+#panel-assistant select,
+#panel-assistant textarea {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+#panel-assistant .toolbar > *,
+#panel-assistant .assistant-panel,
+#panel-assistant #assistant-model-host {
+  min-width: 0;
+  max-width: 100%;
+}
+#panel-assistant pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+@media (min-width: 1101px) {
+  body.assistant-open .layout {
+    grid-template-columns: 272px minmax(0, 1fr) minmax(380px, min(420px, 32vw));
+  }
+  #panel-assistant {
+    height: 100%;
+    box-sizing: border-box;
+  }
+}
+@media (max-width: 1100px) {
+  body.assistant-open .layout {
+    height: auto;
+  }
+  #panel-assistant {
+    grid-column: 1 / -1;
+    width: 100%;
+    box-sizing: border-box;
+    max-height: 80dvh;
+    border-left: 0;
+    border-top: 1px solid #9dbdb4;
+  }
+}
+@media (max-width: 760px) {
+  #tab-assistant {
+    font-size: 10px;
+    padding: 6px;
+  }
+  body.assistant-open .header-actions {
+    flex-wrap: wrap;
+  }
+}

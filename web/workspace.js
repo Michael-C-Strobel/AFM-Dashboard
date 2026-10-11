@@ -24,6 +24,22 @@ for (const tab of tabs) {
     activate(tabs[index], true);
   });
 }
+const assistantToggle = document.getElementById("tab-assistant");
+const assistantPanel = document.getElementById("panel-assistant");
+function setAssistantOpen(open, restoreFocus = false) {
+  assistantPanel.hidden = !open;
+  assistantToggle.setAttribute("aria-expanded", String(open));
+  document.body.classList.toggle("assistant-open", open);
+  if (restoreFocus) assistantToggle.focus({ preventScroll: true });
+}
+assistantToggle.addEventListener("click", () =>
+  setAssistantOpen(assistantPanel.hidden),
+);
+document
+  .getElementById("assistant-close")
+  .addEventListener("click", () => setAssistantOpen(false, true));
+setAssistantOpen(false);
+
 const toggle = document.getElementById("toggle-inspector");
 toggle.addEventListener("click", () => {
   const expanded = toggle.getAttribute("aria-expanded") !== "true";
@@ -87,6 +103,8 @@ function revealDocumentationTarget() {
   if (!id) return;
   const target = document.getElementById(id);
   if (!target) return;
+  if (assistantPanel.contains(target) || target === assistantToggle)
+    setAssistantOpen(true);
   const panel = target.closest('[role="tabpanel"]');
   const tab = panel
     ? document.getElementById(panel.getAttribute("aria-labelledby"))

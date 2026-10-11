@@ -34,6 +34,14 @@
         </div>
       </div>
       <div class="header-actions">
+        <button
+          id="tab-assistant"
+          type="button"
+          aria-controls="panel-assistant"
+          aria-expanded="false"
+        >
+          Analysis guide
+        </button>
         <a
           id="documentation-link"
           href="./help.html"
@@ -313,15 +321,7 @@
             >
               Batch
             </button>
-            <button
-              id="tab-assistant"
-              role="tab"
-              aria-selected="false"
-              aria-controls="panel-assistant"
-              tabindex="-1"
-            >
-              Assistant
-            </button>
+
             <button
               id="tab-features"
               role="tab"
@@ -551,132 +551,6 @@
                 No batch started.
               </p>
               <div id="batch-records"></div>
-            </section>
-          </div>
-          <div
-            id="panel-assistant"
-            role="tabpanel"
-            aria-labelledby="tab-assistant"
-            tabindex="0"
-            hidden
-          >
-            <section aria-labelledby="assistant-title" class="assistant-panel">
-              <div class="assistant-heading">
-                <div>
-                  <h2 id="assistant-title">Local plan builder</h2>
-                  <p class="hint">
-                    Explicit, auditable tool plans. Model planning is optional.
-                    Nothing runs until you review and run it.
-                  </p>
-                </div>
-                <span class="assistant-local">LOCAL / TYPED TOOLS</span>
-              </div>
-              <div class="toolbar">
-                <button id="assistant-refresh">Refresh loaded sources</button>
-                <label
-                  >Plan source<select id="assistant-source">
-                    <option value="">Refresh sources first</option>
-                  </select></label
-                >
-                <label
-                  >Plan channel<select id="assistant-channel"></select
-                ></label>
-              </div>
-              <p id="assistant-source-info" class="hint">
-                Source inspection reads metadata only. The viewer’s source,
-                maps, selections, and pipeline stay independent.
-              </p>
-              <div id="assistant-model-host"></div>
-              <div
-                class="assistant-starters"
-                role="group"
-                aria-label="Plan starters"
-              >
-                <button id="assistant-inspect" disabled>Inspect only</button>
-                <button id="assistant-measure" disabled>
-                  Measure current values
-                </button>
-                <button id="assistant-robust" disabled>
-                  Robust plane + roughness
-                </button>
-                <button id="assistant-quality" disabled>
-                  Check acquisition
-                </button>
-                <label class="check"
-                  ><input type="checkbox" id="assistant-replay" checked />
-                  Include strict replay in new analysis plans</label
-                >
-              </div>
-              <div class="assistant-review">
-                <h3>Review the proposed steps</h3>
-                <ol id="assistant-steps">
-                  <li>Choose a loaded source and a starter to build a plan.</li>
-                </ol>
-              </div>
-              <details class="assistant-advanced">
-                <summary>Advanced: edit plan JSON</summary>
-                <label
-                  >Plan JSON<textarea
-                    id="assistant-plan"
-                    rows="12"
-                    spellcheck="false"
-                    placeholder="Build a plan with a starter above."
-                  ></textarea>
-                </label>
-              </details>
-              <div class="toolbar assistant-actions">
-                <button id="assistant-validate" disabled>Validate plan</button>
-                <button id="assistant-run" disabled>Run reviewed plan</button>
-                <button id="assistant-cancel" disabled>
-                  Cancel after current step
-                </button>
-                <button id="assistant-download-plan" disabled>
-                  Download plan
-                </button>
-                <button id="assistant-download-run" disabled>
-                  Download run manifest
-                </button>
-                <button id="assistant-download-journal">
-                  Download session journal
-                </button>
-              </div>
-              <p id="assistant-status" role="status" aria-live="polite">
-                No plan prepared.
-              </p>
-              <div
-                id="assistant-results"
-                role="region"
-                aria-label="Plan results"
-              ></div>
-              <div
-                class="toolbar assistant-actions"
-                role="group"
-                aria-label="Evidence report actions"
-              >
-                <button id="assistant-report-create" disabled>
-                  Build evidence report
-                </button>
-                <button id="assistant-report-markdown" disabled>
-                  Download report Markdown
-                </button>
-                <button id="assistant-report-json" disabled>
-                  Download report JSON
-                </button>
-              </div>
-              <section
-                id="assistant-report"
-                aria-label="Verified evidence report"
-                aria-live="polite"
-              ></section>
-              <p class="hint">
-                This session is ephemeral: download evidence before closing.
-                Limits: 16 steps and 1 MiB per plan; 256 tool calls and 32 MiB
-                of artifacts per session. Cancellation finishes the current
-                step; failed plans retain completed artifacts. Roughness
-                describes selected surface values, not independent samples or
-                measurement uncertainty. Acquisition candidates are not defect
-                classifications.
-              </p>
             </section>
           </div>
           <div
@@ -1263,6 +1137,130 @@
           </div>
         </section>
       </main>
+      <div
+        id="panel-assistant"
+        role="complementary"
+        aria-labelledby="assistant-title"
+        tabindex="0"
+        hidden
+      >
+        <section aria-labelledby="assistant-title" class="assistant-panel">
+          <div class="assistant-heading">
+            <div>
+              <h2 id="assistant-title">Analysis guide</h2>
+              <p class="hint">
+                Get help, review a plan, or authorize a bounded autonomous run.
+              </p>
+            </div>
+            <button
+              id="assistant-close"
+              type="button"
+              aria-label="Close analysis guide"
+            >
+              Close
+            </button>
+          </div>
+          <div class="toolbar">
+            <button id="assistant-refresh">Refresh loaded sources</button>
+            <label
+              >Plan source<select id="assistant-source">
+                <option value="">Refresh sources first</option>
+              </select></label
+            >
+            <label>Plan channel<select id="assistant-channel"></select></label>
+          </div>
+          <p id="assistant-source-info" class="hint">
+            Source inspection reads metadata only. The viewer’s source, maps,
+            selections, and pipeline stay independent.
+          </p>
+          <div id="assistant-model-host"></div>
+          <div
+            class="assistant-starters"
+            role="group"
+            aria-label="Plan starters"
+          >
+            <button id="assistant-inspect" disabled>Inspect only</button>
+            <button id="assistant-measure" disabled>
+              Measure current values
+            </button>
+            <button id="assistant-robust" disabled>
+              Robust plane + roughness
+            </button>
+            <button id="assistant-quality" disabled>Check acquisition</button>
+            <label class="check"
+              ><input type="checkbox" id="assistant-replay" checked /> Include
+              strict replay in new analysis plans</label
+            >
+          </div>
+          <div class="assistant-review">
+            <h3>Review the proposed steps</h3>
+            <ol id="assistant-steps">
+              <li>Choose a loaded source and a starter to build a plan.</li>
+            </ol>
+          </div>
+          <details class="assistant-advanced">
+            <summary>Advanced: edit plan JSON</summary>
+            <label
+              >Plan JSON<textarea
+                id="assistant-plan"
+                rows="12"
+                spellcheck="false"
+                placeholder="Build a plan with a starter above."
+              ></textarea>
+            </label>
+          </details>
+          <div class="toolbar assistant-actions">
+            <button id="assistant-validate" disabled>Validate plan</button>
+            <button id="assistant-run" disabled>Run reviewed plan</button>
+            <button id="assistant-cancel" disabled>
+              Cancel after current step
+            </button>
+            <button id="assistant-download-plan" disabled>Download plan</button>
+            <button id="assistant-download-run" disabled>
+              Download run manifest
+            </button>
+            <button id="assistant-download-journal">
+              Download session journal
+            </button>
+          </div>
+          <p id="assistant-status" role="status" aria-live="polite">
+            No plan prepared.
+          </p>
+          <div
+            id="assistant-results"
+            role="region"
+            aria-label="Plan results"
+          ></div>
+          <div
+            class="toolbar assistant-actions"
+            role="group"
+            aria-label="Evidence report actions"
+          >
+            <button id="assistant-report-create" disabled>
+              Build evidence report
+            </button>
+            <button id="assistant-report-markdown" disabled>
+              Download report Markdown
+            </button>
+            <button id="assistant-report-json" disabled>
+              Download report JSON
+            </button>
+          </div>
+          <section
+            id="assistant-report"
+            aria-label="Verified evidence report"
+            aria-live="polite"
+          ></section>
+          <p class="hint">
+            This session is ephemeral: download evidence before closing. Limits:
+            16 steps and 1 MiB per plan; 256 tool calls and 32 MiB of artifacts
+            per session. Cancellation finishes the current step; failed plans
+            retain completed artifacts. Roughness describes selected surface
+            values, not independent samples or measurement uncertainty.
+            Acquisition candidates are not defect classifications.
+          </p>
+        </section>
+      </div>
     </div>
     <dialog
       id="inspection-dialog"
