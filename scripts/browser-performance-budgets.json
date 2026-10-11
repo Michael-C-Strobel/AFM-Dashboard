@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "description": "Reference-workstation targets for deterministic synthetic image workflows. Run without competing browser jobs; timings are not guarantees for every device or format.",
+  "profiles": [
+    {
+      "name": "up-to-1024-square",
+      "max_pixels": 1048576,
+      "elapsed_ms": {
+        "import_two_files_first_analysis": 5000,
+        "mean_subtraction": 4000,
+        "palette_change": 300,
+        "batch_two_files": 4000
+      },
+      "max_long_task_ms": {
+        "import_two_files_first_analysis": 400,
+        "mean_subtraction": 400,
+        "palette_change": 250,
+        "batch_two_files": 100
+      },
+      "navigation_dispatch_p95_ms": 8,
+      "navigation_dispatch_max_ms": 50,
+      "navigation_raf_max_ms": 100
+    },
+    {
+      "name": "up-to-2048-square",
+      "max_pixels": 4194304,
+      "elapsed_ms": {
+        "import_two_files_first_analysis": 15000,
+        "mean_subtraction": 12000,
+        "palette_change": 1000,
+        "batch_two_files": 12000
+      },
+      "max_long_task_ms": {
+        "import_two_files_first_analysis": 1500,
+        "mean_subtraction": 1500,
+        "palette_change": 900,
+        "batch_two_files": 100
+      },
+      "navigation_dispatch_p95_ms": 8,
+      "navigation_dispatch_max_ms": 50,
+      "navigation_raf_max_ms": 100
+    }
+  ]
+}

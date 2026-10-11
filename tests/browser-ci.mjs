@@ -147,7 +147,10 @@ try {
     document.querySelector("#status").textContent.includes("Import a local"),
   );
   assert.equal(await page.locator("#file option").count(), 0);
-  await page.locator("#import").setInputFiles(sourcePath);
+  const importChooser = page.waitForEvent("filechooser");
+  await page.locator("#import-trigger").focus();
+  await page.keyboard.press("Enter");
+  await (await importChooser).setFiles(sourcePath);
   async function ready() {
     await page.waitForFunction(
       () =>
@@ -216,7 +219,10 @@ try {
   near(processedResult.statistics.sa, 1.5e-9);
   assert.equal(processedResult.recipe.output.sha256, processed.output.sha256);
   // Replay the downloaded recipe through the actual file input as well.
-  await page.locator("#upload").setInputFiles(processedDownload.path);
+  const recipeChooser = page.waitForEvent("filechooser");
+  await page.locator("#upload-trigger").focus();
+  await page.keyboard.press("Space");
+  await (await recipeChooser).setFiles(processedDownload.path);
   await page.waitForFunction(() =>
     document
       .querySelector("#status")
@@ -429,7 +435,7 @@ try {
         browser_engine: browserEngine,
         browser: await browser.version(),
         checks: [
-          "UI import",
+          "keyboard native file import",
           "calibrated statistics",
           "operation",
           "recipe download/upload/replay",

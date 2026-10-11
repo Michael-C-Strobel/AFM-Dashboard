@@ -1,4 +1,4 @@
-/** Optional browser evidence harness. No timing pass/fail thresholds. */
+/** Optional browser evidence harness with explicit reference-workstation budgets. */
 import assert from "node:assert/strict";
 import { spawn, execFileSync } from "node:child_process";
 import { mkdtemp, readFile, writeFile, readdir } from "node:fs/promises";
@@ -14,7 +14,15 @@ assert.ok(
   "Sizes must be integers 128..2048",
 );
 const port = Number(process.env.AFM_TEST_PORT || 4180);
-assert.ok(Number.isInteger(port) && port > 0 && port < 65536);
+assert.ok(
+  Number.isInteger(port) && port >= 1024 && port < 65536 && port !== 4173,
+  "Use a test port from 1024..65535 excluding live demo 4173",
+);
+const budgetBytes = await readFile(
+  new URL("./browser-performance-budgets.json", import.meta.url),
+);
+const budgets = JSON.parse(budgetBytes);
+const enforce = process.env.AFM_PERF_ENFORCE === "1";
 const scratch = await mkdtemp(join(tmpdir(), "afm-browser-performance-"));
 const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
 function fixture(size, offset) {
@@ -69,7 +77,8 @@ let browser, server;
 const report = {
   schema_version: 1,
   started_at: new Date().toISOString(),
-  observations_only: true,
+  observations_only: !enforce,
+  budgets: { ...budgets, sha256: digest(budgetBytes), enforced: enforce },
   environment: {
     node: process.version,
     platform: platform(),
@@ -353,13 +362,62 @@ try {
     run.checks.batch_manifest = manifestPath;
     run.checks.batch_records = batch.records;
     assert.deepEqual(errors, []);
+    const profile = budgets.profiles.find((p) => size * size <= p.max_pixels);
+    const checks = [];
+    const check = (metric, actual, limit) =>
+      checks.push({
+        metric,
+        actual,
+        limit,
+        passed: Number.isFinite(actual) && actual <= limit,
+      });
+    for (const [stageName, limit] of Object.entries(profile.elapsed_ms))
+      check(stageName + ".elapsed_ms", run.stages[stageName].elapsed_ms, limit);
+    for (const [stageName, limit] of Object.entries(profile.max_long_task_ms)) {
+      const tasks = run.stages[stageName].long_tasks;
+      check(
+        stageName + ".long_task_max_ms",
+        tasks.supported ? tasks.max_ms : null,
+        limit,
+      );
+    }
+    const navigation = run.stages.warm_navigation_60_wheels;
+    check(
+      "navigation.dispatch_p95_ms",
+      navigation.dispatch_ms.p95,
+      profile.navigation_dispatch_p95_ms,
+    );
+    check(
+      "navigation.dispatch_max_ms",
+      navigation.dispatch_ms.max,
+      profile.navigation_dispatch_max_ms,
+    );
+    check(
+      "navigation.raf_max_ms",
+      navigation.raf_gap_ms.max,
+      profile.navigation_raf_max_ms,
+    );
+    run.budget = {
+      profile: profile.name,
+      status: checks.every((c) => c.passed) ? "passed" : "failed",
+      checks,
+    };
     await context.close();
     await writeFile(
       join(scratch, "results.json"),
       JSON.stringify(report, null, 2),
     );
   }
+  report.budget_status = report.runs.every(
+    (run) => run.budget.status === "passed",
+  )
+    ? "passed"
+    : "failed";
   report.status = "complete";
+  if (enforce && report.budget_status !== "passed") {
+    report.status = "budget_exceeded";
+    process.exitCode = 1;
+  }
 } catch (error) {
   report.status = "failed";
   report.error = error.stack;

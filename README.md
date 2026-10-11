@@ -171,3 +171,7 @@ Four additional public reference files cover GWYP, SPM, IBW, and JPK. The GWYP s
 
 ## Contributing
 
+
+
+
+Performance and accessibility checks are documented in [browser performance](docs/browser-performance.md) and [accessibility audit](docs/accessibility-audit.md). Optional test tooling stays outside application dependencies. The synthetic workflow passes Chromium, Firefox and WebKit locally; screen-reader task review remains outstanding. Explicit performance budgets cover generated 512²–2048² images on the recorded workstation, with larger-image loading pauses documented.

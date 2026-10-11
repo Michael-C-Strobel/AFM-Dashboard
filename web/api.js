@@ -16,7 +16,7 @@ const manifest = fetch(new URL("../data/manifest.json", import.meta.url))
     return files;
   })
   .catch(() => []);
-function call(type, payload, transfer = []) {
+function call(type, payload, transfer = [], responseEncoding) {
   if (!worker) {
     worker = new Worker(new URL("./worker.js", import.meta.url), {
       type: "module",
@@ -41,7 +41,14 @@ function call(type, payload, transfer = []) {
   return new Promise((resolve, reject) => {
     const id = ++nextId;
     pending.set(id, { resolve, reject });
-    worker.postMessage({ id, type, payload }, transfer);
+    worker.postMessage({ id, type, payload, responseEncoding }, transfer);
+  });
+}
+// Large surface JSON is encoded off the UI thread and transferred as bytes.
+async function surfaceResponse(type, payload) {
+  const bytes = await call(type, payload, [], "json");
+  return new Response(bytes, {
+    headers: { "Content-Type": "application/json" },
   });
 }
 async function ensure(name) {
@@ -175,21 +182,16 @@ export async function apiFetch(path, options = {}) {
     if (route === "/api/replay") {
       await ensure(body.file ?? body.recipe?.source?.file);
       if (body.recipe.reference) await ensure(body.recipe.reference.file);
-      return Response.json(await call("replay", body));
+      return await surfaceResponse("replay", body);
     }
     if (!["/api/analyze", "/api/export"].includes(route))
       throw new Error("Unknown local analysis route.");
     await ensure(body.file);
     if (body.reference) await ensure(body.reference.file);
-    const result = await call(
-      route === "/api/export" ? "export" : "analyze",
-      body,
-    );
-    return route === "/api/export"
-      ? new Response(result, {
-          headers: { "Content-Type": "application/x-tar" },
-        })
-      : Response.json(result);
+    if (route === "/api/analyze") return await surfaceResponse("analyze", body);
+    return new Response(await call("export", body), {
+      headers: { "Content-Type": "application/x-tar" },
+    });
   } catch (error) {
     return Response.json({ detail: error.message }, { status: 400 });
   }

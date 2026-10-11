@@ -33,3 +33,8 @@ The user confirms `sample-input.gwy` as raw input and `_worked.gwy` as the chemi
 ## Browser batch queue
 
 `web/batch.js` supplies shared browser/CLI compatibility gates and a sequential browser queue with detached recipe snapshots and between-file cancellation. The API exposes `batch-check`, `batch-run`, and `batch-export` through the existing local worker. Queue records retain compact provenance/statistics instead of raster matrices. Exports replay each completed recipe against the exact loaded input before creating its TAR. Reference-bearing templates are rejected instead of silently dropping the comparison. The browser keeps its manifest only in memory; persistent verified resume remains a CLI capability.
+
+
+## Display performance
+
+Analysis and replay can return large image matrices. Their worker transport JSON-encodes the complete result inside the worker and transfers the UTF-8 buffer; the local API still returns a standard JSON `Response`. This avoids main-thread serialization and does not alter numerical modules, engine identities or recipe schemas. Display ranges use weak caches keyed by immutable response arrays, and palette interpolation writes directly to image bytes. Scientific arrays are never modified by display controls. See [measured budgets and limitations](browser-performance.md).

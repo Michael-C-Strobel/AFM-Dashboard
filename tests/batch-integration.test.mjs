@@ -8,7 +8,7 @@ import { execFile } from "node:child_process";
 import { loadSource, engineIdentity } from "../scripts/io.mjs";
 import { analyze } from "../web/service.js";
 const exec = promisify(execFile);
-function fixture(offset = 0, unit = "m") {
+function fixture(offset = 0, unit = "m", values = [0, 1, 2, 3, 4, 5]) {
   const string = (text) => Buffer.from(text + "\0");
   const uint = (n) => {
     const b = Buffer.alloc(4);
@@ -44,10 +44,7 @@ function fixture(offset = 0, unit = "m") {
     item(
       "data",
       "D",
-      Buffer.concat([
-        uint(6),
-        ...[0, 1, 2, 3, 4, 5].map((n) => double(n * 1e-9 + offset)),
-      ]),
+      Buffer.concat([uint(6), ...values.map((n) => double(n * 1e-9 + offset))]),
     ),
   ]);
   return Buffer.concat([
@@ -320,4 +317,89 @@ test("CLI shared batch gate preserves resume and rejects reference templates exp
     /must not contain a reference comparison/.test(error.stderr),
   );
   assert.deepEqual(await readFile(input), fixture());
+});
+
+test("worker UTF-8 surface transport preserves JSON and transfers only encoded bytes", async (t) => {
+  const oldSelf = globalThis.self,
+    oldFetch = globalThis.fetch;
+  let posted, transferred;
+  globalThis.self = {
+    postMessage(message, transfer = []) {
+      posted = message;
+      transferred = transfer;
+    },
+  };
+  globalThis.fetch = async (url) => new Response(await readFile(url, "utf8"));
+  t.after(() => {
+    globalThis.self = oldSelf;
+    globalThis.fetch = oldFetch;
+  });
+  await import("../web/worker.js?surface-transport");
+  let id = 0;
+  const call = async (type, payload, responseEncoding) => {
+    await self.onmessage({
+      data: { id: ++id, type, payload, responseEncoding },
+    });
+    assert.equal(posted.id, id);
+    if (posted.error) throw new Error(posted.error);
+    return posted.result;
+  };
+  const bytes = fixture();
+  await call("import", {
+    name: "transport.gwy",
+    buffer: bytes.buffer.slice(
+      bytes.byteOffset,
+      bytes.byteOffset + bytes.byteLength,
+    ),
+  });
+  const request = {
+    file: "transport.gwy",
+    channel: "0",
+    operations: [{ name: "mean", params: {} }],
+  };
+  const original = JSON.parse(JSON.stringify(await call("analyze", request)));
+  const encoded = await call("analyze", request, "json");
+  assert.ok(encoded instanceof Uint8Array);
+  assert.deepEqual(transferred, [encoded.buffer]);
+  const decoded = JSON.parse(new TextDecoder().decode(encoded));
+  // Each fresh execution owns its creation time; all remaining JSON must agree.
+  assert.ok(Number.isFinite(Date.parse(decoded.recipe.created_at)));
+  original.recipe.created_at = decoded.recipe.created_at;
+  assert.deepEqual(decoded, original);
+  const replayed = JSON.parse(
+    new TextDecoder().decode(
+      await call("replay", { recipe: decoded.recipe }, "json"),
+    ),
+  );
+  assert.equal(replayed.replay_verified, true);
+  assert.deepEqual(replayed.recipe.output, decoded.recipe.output);
+  assert.deepEqual(replayed.data, decoded.data);
+  const nonfinite = fixture(0, "m", [0, NaN, 2, Infinity, 4, 5]);
+  await call("import", {
+    name: "missing-pixels.gwy",
+    buffer: nonfinite.buffer.slice(
+      nonfinite.byteOffset,
+      nonfinite.byteOffset + nonfinite.byteLength,
+    ),
+  });
+  const masked = JSON.parse(
+    new TextDecoder().decode(
+      await call("analyze", { ...request, file: "missing-pixels.gwy" }, "json"),
+    ),
+  );
+  assert.equal(masked.statistics.valid_count, 4);
+  assert.equal(masked.original.flat().filter((x) => x === null).length, 2);
+  assert.equal(masked.data.flat().filter((x) => x === null).length, 2);
+  await assert.rejects(
+    call("analyze", { ...request, file: "missing.gwy" }, "json"),
+    /not loaded/i,
+  );
+  await assert.rejects(
+    call("analyze", request, "binary"),
+    /Unsupported worker response encoding/,
+  );
+  await assert.rejects(
+    call("export", request, "json"),
+    /Unsupported worker response encoding/,
+  );
 });

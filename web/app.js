@@ -364,14 +364,11 @@ const palettes = {
     [247, 249, 246],
   ],
 };
-function color(t) {
-  const stops = palettes[$("palette").value],
-    v = Math.max(0, Math.min(1, t)) * (stops.length - 1),
-    i = Math.min(stops.length - 2, Math.floor(v)),
-    f = v - i;
-  return stops[i].map((x, j) => Math.round(x * (1 - f) + stops[i + 1][j] * f));
-}
+// Analysis response arrays are immutable; weak keys release old display ranges.
+const displayRanges = new WeakMap();
 function range(data) {
+  if (!data) return [0, 1];
+  if (displayRanges.has(data)) return displayRanges.get(data);
   let min = Infinity,
     max = -Infinity;
   for (const row of data || [])
@@ -380,7 +377,9 @@ function range(data) {
         min = Math.min(min, x);
         max = Math.max(max, x);
       }
-  return min === Infinity ? [0, 1] : [min, max];
+  const limits = min === Infinity ? [0, 1] : [min, max];
+  displayRanges.set(data, limits);
+  return limits;
 }
 function rightData() {
   const r = state.response;
@@ -492,14 +491,27 @@ function draw(id, data, g, limits) {
     raster.width = data[0].length;
     raster.height = data.length;
     const c = raster.getContext("2d"),
-      pixels = c.createImageData(raster.width, raster.height);
+      pixels = c.createImageData(raster.width, raster.height),
+      stops = palettes[$("palette").value],
+      intervals = stops.length - 1,
+      span = limits[1] - limits[0] || 1;
+    // Keep interpolation identical while avoiding DOM reads and arrays per pixel.
     for (let y = 0; y < data.length; y++)
       for (let x = 0; x < data[y].length; x++) {
         const value = data[y][x],
           i = (y * raster.width + x) * 4;
         if (finite(value)) {
-          const rgb = color((value - limits[0]) / (limits[1] - limits[0] || 1));
-          pixels.data.set([...rgb, 255], i);
+          const v =
+              Math.max(0, Math.min(1, (value - limits[0]) / span)) * intervals,
+            lower = Math.min(intervals - 1, Math.floor(v)),
+            fraction = v - lower,
+            a = stops[lower],
+            b = stops[lower + 1];
+          for (let component = 0; component < 3; component++)
+            pixels.data[i + component] = Math.round(
+              a[component] * (1 - fraction) + b[component] * fraction,
+            );
+          pixels.data[i + 3] = 255;
         }
       }
     c.putImageData(pixels, 0, 0);
@@ -1012,13 +1024,8 @@ async function init() {
 }
 init();
 
-for (const label of document.querySelectorAll(".button[role=button]"))
-  label.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      label.querySelector("input").click();
-    }
-  });
+$("import-trigger").onclick = () => $("import").click();
+$("upload-trigger").onclick = () => $("upload").click();
 function coordinates() {
   const inputs = ["coord-x0", "coord-y0", "coord-x1", "coord-y1"];
   if (inputs.some((id) => $(id).value.trim() === ""))

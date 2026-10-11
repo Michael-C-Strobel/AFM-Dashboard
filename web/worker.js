@@ -532,9 +532,18 @@ async function dispatch(type, payload) {
   return type === "export" ? exportBundle(result) : result;
 }
 self.onmessage = async (event) => {
-  const { id, type, payload } = event.data;
+  const { id, type, payload, responseEncoding } = event.data;
   try {
-    const result = await dispatch(type, payload);
+    if (
+      responseEncoding !== undefined &&
+      (responseEncoding !== "json" || !["analyze", "replay"].includes(type))
+    )
+      throw new Error("Unsupported worker response encoding.");
+    const output = await dispatch(type, payload);
+    const result =
+      responseEncoding === "json"
+        ? new TextEncoder().encode(JSON.stringify(output))
+        : output;
     self.postMessage(
       { id, result },
       result instanceof Uint8Array ? [result.buffer] : [],

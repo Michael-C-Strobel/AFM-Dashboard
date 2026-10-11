@@ -56,13 +56,11 @@
             determine format; numeric filenames such as .001 are accepted.
           </p>
         </details>
-        <label class="button import-button" tabindex="0" role="button"
-          >Import local AFM files<input
-            id="import"
-            type="file"
-            multiple
-            hidden /></label
-        ><label>Source file<select id="file"></select></label
+        <button id="import-trigger" class="button import-button" type="button">
+          Import local AFM files
+        </button>
+        <input id="import" type="file" multiple hidden /><label
+          >Source file<select id="file"></select></label
         ><label>Channel<select id="channel"></select></label>
         <p class="hint">
           Original files stay unchanged. Every operation is recorded in a
@@ -128,13 +126,15 @@
         <p class="hint">Click a step to branch from that result.</p>
         <div class="button-row">
           <button id="download">Save recipe</button
-          ><label class="button" tabindex="0" role="button"
-            >Load recipe<input
-              id="upload"
-              type="file"
-              accept="application/json,.json"
-              hidden
-          /></label>
+          ><button id="upload-trigger" class="button" type="button">
+            Load recipe
+          </button>
+          <input
+            id="upload"
+            type="file"
+            accept="application/json,.json"
+            hidden
+          />
         </div>
         <button id="export">Export analysis TAR</button>
         <details>
@@ -559,7 +559,11 @@
                 maps, selections, and pipeline stay independent.
               </p>
               <div id="assistant-model-host"></div>
-              <div class="assistant-starters" aria-label="Plan starters">
+              <div
+                class="assistant-starters"
+                role="group"
+                aria-label="Plan starters"
+              >
                 <button id="assistant-inspect" disabled>Inspect only</button>
                 <button id="assistant-measure" disabled>
                   Measure current values
@@ -611,9 +615,14 @@
               <p id="assistant-status" role="status" aria-live="polite">
                 No plan prepared.
               </p>
-              <div id="assistant-results" aria-label="Plan results"></div>
+              <div
+                id="assistant-results"
+                role="region"
+                aria-label="Plan results"
+              ></div>
               <div
                 class="toolbar assistant-actions"
+                role="group"
                 aria-label="Evidence report actions"
               >
                 <button id="assistant-report-create" disabled>
@@ -666,7 +675,7 @@
                 No snapshot captured. Recalculate the main viewer before
                 capturing.
               </p>
-              <p id="features-warnings" role="status"></p>
+              <p id="features-warnings" tabindex="0" role="status"></p>
               <div class="toolbar features-options">
                 <label
                   >Threshold <span id="features-unit">(stored Z units)</span
@@ -742,7 +751,12 @@
                 extents. Excursion is max − threshold (above) or threshold − min
                 (below), in the stored vertical unit.
               </p>
-              <div class="features-table">
+              <div
+                class="features-table"
+                role="region"
+                aria-label="Threshold component measurements"
+                tabindex="0"
+              >
                 <table>
                   <caption>
                     Connected region measurements
@@ -815,9 +829,10 @@
               <div
                 id="texture-summary"
                 class="texture-summary"
+                role="group"
                 aria-label="Texture measurement summary"
               ></div>
-              <p id="texture-warnings" role="status"></p>
+              <p id="texture-warnings" tabindex="0" role="status"></p>
               <div class="toolbar texture-display">
                 <label class="check"
                   ><input id="texture-log" type="checkbox" checked disabled />
@@ -915,7 +930,11 @@
                   <button id="registration-capture-fixed">
                     Capture fixed analysis
                   </button>
-                  <p id="registration-fixed-source" class="readout">
+                  <p
+                    id="registration-fixed-source"
+                    tabindex="0"
+                    class="readout"
+                  >
                     No fixed analysis captured.
                   </p>
                 </div>
@@ -923,7 +942,11 @@
                   <button id="registration-capture-moving">
                     Capture moving analysis
                   </button>
-                  <p id="registration-moving-source" class="readout">
+                  <p
+                    id="registration-moving-source"
+                    tabindex="0"
+                    class="readout"
+                  >
                     No moving analysis captured.
                   </p>
                 </div>
@@ -1013,7 +1036,7 @@
                 Capture fixed and moving analyses to begin.
               </p>
               <div id="registration-summary" class="registration-summary"></div>
-              <p id="registration-warnings" role="status"></p>
+              <p id="registration-warnings" tabindex="0" role="status"></p>
               <div
                 id="registration-candidates"
                 class="registration-table"
@@ -1083,7 +1106,7 @@
               <button id="sensitivity-capture">
                 Capture baseline analysis
               </button>
-              <p id="sensitivity-source" class="readout">
+              <p id="sensitivity-source" tabindex="0" class="readout">
                 No baseline captured.
               </p>
               <div class="toolbar">
@@ -1165,6 +1188,7 @@
               <div
                 id="sensitivity-rows"
                 class="sensitivity-table"
+                role="region"
                 tabindex="0"
                 aria-label="Baseline and all alternative outcomes"
               ></div>
