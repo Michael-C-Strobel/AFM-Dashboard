@@ -93,6 +93,10 @@ export async function apiFetch(path, options = {}) {
       await ensure(file);
       return Response.json(await call("channels", { file }));
     }
+    if (route === "/api/quality") {
+      await ensure(body.file);
+      return Response.json(await call("quality", body));
+    }
     if (route === "/api/replay") {
       await ensure(body.file ?? body.recipe?.source?.file);
       if (body.recipe.reference) await ensure(body.recipe.reference.file);
