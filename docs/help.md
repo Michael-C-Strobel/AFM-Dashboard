@@ -62,3 +62,13 @@ For connected regions rather than two plateaus, open **Features**, capture proce
 5. Download texture JSON for the report and **Download full numerical TAR** for full arrays and replay provenance. Changing texture settings requires another measurement. See [texture exports](texture-workflows.md) and [estimator definitions](texture.md); no automatic correlation-length or material identification is claimed.
 
 For other tasks, follow [batch processing](browser-batch.md), [translation registration](registration-workflows.md), or [analysis sensitivity](sensitivity-workflows.md). Sensitivity alternatives describe dependence on processing choices, not independent samples or confidence intervals.
+
+## Three-point leveling
+
+Open **Data & processing → Three-point leveling** after recalculating the intended source, pipeline and selection. Start a fresh draft, click three points, and drag numbered markers or enter exact physical coordinates. The point selector lets you replace any point. Sampling radius is in pixels; the visible disk includes positions excluded by masks or the ROI, which the numerical engine omits.
+
+**Preview plane** changes only the preview map. The measurements remain those of the committed recipe, and analysis saving/capture is disabled until the preview is canceled or applied. **Apply previewed plane** appends exactly one `three_point` operation; zero-minimum shifting remains an explicit separate choice. Coordinate/radius edits invalidate the preview. Source, channel, selection or pipeline changes discard the active draft.
+
+Saved/replayed recipes and history branches restore recorded markers using geometry from before their operation, including crop offsets and non-square pixels. Recorded points are read-only; start a new draft to choose another plane. Out-of-image, collinear, or unusable masked/ROI samples reject; a successful fit does not establish that the chosen points represent the sample background.
+
+Validation uses generated surfaces in `tests/browser-three-point.mjs`, including exact direct-engine agreement, crop/offset geometry, pointer/keyboard editing, cancel/replay and invalid-sample checks. The optional local `tests/browser-three-point-reference.mjs` re-enters the existing chemist points and checks identical output and measurement hashes after separately applying zero-minimum shifting; [recorded results](three-point-validation.json) do not imply validation of an automatic estimator. It requires the original supplied raw file and the documented Playwright environment.

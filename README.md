@@ -22,6 +22,10 @@ The supplied `.gwy` measurements appear in the file selector. Use **Import local
 
 In **Measurements**, hover or drag over the histogram for bin bounds/counts, or over a line profile for recorded distance, height and source X/Y. Focus a plot and use arrows/Home/End for keyboard inspection. **Recalculate** sits in the inspection toolbar and remains available in expanded mode; cursor inspection does not recompute or change results.
 
+## Interactive three-point leveling
+
+In **Data & processing**, open **Three-point leveling**. Place or drag three numbered points, or enter physical coordinates and a pixel sampling radius. Preview the plane, then explicitly apply it to the recipe; cancel leaves the committed analysis unchanged. Footprints, source changes, masks and crop geometry are handled explicitly. Minimum-zero shifting is a separate operation. See the [workflow guide](docs/help.md#three-point-leveling).
+
 ## Measure threshold regions
 
 In **Features**, capture the current processed analysis, enter a threshold in the displayed stored Z unit, choose four/eight-neighbor connectivity and boundary/minimum-size rules, then segment. The worker strictly replays the captured recipe before measuring. Regions retain calibrated areas, bounding dimensions, centroids and threshold-relative value differences; rejected candidates remain reviewable. A separate label preview leaves the main maps unchanged. JSON/TSV exports preserve provenance and exclusions. Regions are descriptive components, not material identifications or independent samples.

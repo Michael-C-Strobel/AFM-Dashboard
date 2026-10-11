@@ -23,10 +23,13 @@ test("curated help has unique stable IDs and targets actual interface elements",
     new URL("../web/index.html", import.meta.url),
     "utf8",
   );
-  const js = await readFile(
-    new URL("../web/assistant.js", import.meta.url),
-    "utf8",
-  );
+  const js = (
+    await Promise.all(
+      ["assistant.js", "three-point-ui.js"].map((name) =>
+        readFile(new URL("../web/" + name, import.meta.url), "utf8"),
+      ),
+    )
+  ).join("\n");
   const ids = new Set(
     [
       ...html.matchAll(/\bid="([^"]+)"/g),

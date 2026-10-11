@@ -1,3 +1,4 @@
+import { mountThreePointEditor } from "./three-point-ui.js";
 import { apiFetch } from "./api.js";
 import { runBatch } from "./batch.js";
 import {
@@ -28,6 +29,9 @@ const state = {
   rasters: {},
 };
 const acquisition = { sequence: 0, result: null };
+let levelEditor = null,
+  levelPreview = null,
+  levelRequest = 0;
 const finite = (x) => typeof x === "number" && Number.isFinite(x);
 function format(value, unit) {
   if (!finite(value)) return "—";
@@ -108,6 +112,8 @@ function body() {
   };
 }
 function dirty(message = "Selection changed. Recalculate to update analysis.") {
+  levelEditor?.cancel();
+  clearLevelPreview();
   invalidateAcquisition();
   ++state.sequence;
   status(message);
@@ -154,6 +160,8 @@ function selectionLabel() {
     ". Draw a selection, then recalculate. Nonfinite pixels appear checkerboard.";
 }
 async function loadFile() {
+  levelEditor?.sync(null, null);
+  clearLevelPreview();
   resetComparison();
   $("download").disabled = true;
   $("export").disabled = true;
@@ -251,6 +259,8 @@ async function loadReference(
 }
 async function analyze() {
   if (!$("channel").value) return;
+  levelEditor?.cancel();
+  clearLevelPreview();
   const seq = ++state.sequence;
   const request = body();
   status("Analyzing surface…");
@@ -288,6 +298,7 @@ function renderAll() {
   syncChemist();
   const r = state.response;
   if (!r) return;
+  levelEditor?.sync(levelContext(), recordedLevelPoints());
   $("title").textContent = r.source?.file || $("file").value;
   $("metadata").textContent = JSON.stringify(r.channel, null, 2);
   $("coordinate-units").textContent =
@@ -387,7 +398,10 @@ function range(data) {
   return limits;
 }
 function rightData() {
-  const r = state.response;
+  const r =
+    levelPreview && $("view").value === "processed"
+      ? levelPreview.result
+      : state.response;
   return !r
     ? null
     : $("view").value === "reference"
@@ -453,12 +467,17 @@ function render() {
     reference: "Reference",
     difference: "Processed − reference",
   }[$("view").value];
+  if (levelPreview && $("view").value === "processed")
+    $("result-title").textContent =
+      "Three-point preview · apply to update measurements";
   $("result-badge").textContent =
-    $("view").value === "processed"
-      ? "RECIPE OUTPUT"
-      : $("view").value === "reference"
-        ? "BENCHMARK"
-        : "RESIDUAL";
+    levelPreview && $("view").value === "processed"
+      ? "DRAFT PREVIEW"
+      : $("view").value === "processed"
+        ? "RECIPE OUTPUT"
+        : $("view").value === "reference"
+          ? "BENCHMARK"
+          : "RESIDUAL";
 }
 function draw(id, data, g, limits) {
   const canvas = $(id),
@@ -584,6 +603,12 @@ function draw(id, data, g, limits) {
     ctx.font = "12px system-ui";
     ctx.fillText(i ? "B" : "A", pos[0] + 6, pos[1] + 15);
   });
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(box.x, box.y, box.w, box.h);
+  ctx.clip();
+  levelEditor?.draw(ctx, point);
+  ctx.restore();
   ctx.fillStyle = "#214b42";
   ctx.font = "10px system-ui";
   ctx.textAlign = "left";
@@ -660,6 +685,43 @@ for (const id of ["raw", "result"]) {
     if (!state.response) return;
     const p = physical(event, canvas);
     if (!p) return;
+    if ($("tool").value === "level-points") {
+      if (event.button !== 0) return;
+      if (!levelEditor.isActive()) {
+        if ($("download").disabled || !levelContext()) {
+          status("Recalculate before placing leveling points.", true);
+          return;
+        }
+        levelEditor.start(levelContext());
+      }
+      const box = rect(canvas, p.g),
+        bounds = canvas.getBoundingClientRect();
+      const project = (point) => [
+        box.x + ((point[0] - p.g.xoff) / p.g.xreal) * box.w,
+        box.y + ((point[1] - p.g.yoff) / p.g.yreal) * box.h,
+      ];
+      const index =
+        levelEditor.hitTest(
+          project,
+          event.clientX - bounds.left,
+          event.clientY - bounds.top,
+        ) ?? levelEditor.selectedIndex();
+      try {
+        if (!levelEditor.setPoint(index, p.point)) return;
+      } catch (error) {
+        status(error.message, true);
+        return;
+      }
+      state.drag = {
+        canvas,
+        tool: "level-points",
+        index,
+        pointerId: event.pointerId,
+      };
+      canvas.setPointerCapture(event.pointerId);
+      event.preventDefault();
+      return;
+    }
     if ($("tool").value === "polygon") {
       state.polygon.push(p.point);
       dirty();
@@ -701,6 +763,15 @@ for (const id of ["raw", "result"]) {
     }
     const d = state.drag;
     if (!d || d.canvas !== canvas || !p) return;
+    if (d.tool === "level-points") {
+      if (event.pointerId !== d.pointerId) return;
+      try {
+        levelEditor.setPoint(d.index, p.point);
+      } catch (error) {
+        status(error.message, true);
+      }
+      return;
+    }
     if (d.tool === "navigate") {
       state.pan = [
         d.pan[0] + event.clientX - d.x,
@@ -719,7 +790,14 @@ for (const id of ["raw", "result"]) {
     render();
   });
   const end = () => {
-    if (state.drag && state.drag.tool !== "navigate") {
+    if (state.drag?.tool === "level-points") {
+      const next = levelEditor.snapshot().points.findIndex((p) => p === null);
+      if (next >= 0) {
+        $("level-point").value = String(next);
+        $("level-point").dispatchEvent(new Event("change"));
+      }
+    }
+    if (state.drag && !["navigate", "level-points"].includes(state.drag.tool)) {
       dirty();
       selectionLabel();
     }
@@ -727,6 +805,7 @@ for (const id of ["raw", "result"]) {
   };
   canvas.addEventListener("pointerup", end);
   canvas.addEventListener("pointercancel", end);
+  canvas.addEventListener("lostpointercapture", end);
 }
 function renderProfile(profile, endpoints) {
   $("profile").replaceChildren();
@@ -900,6 +979,7 @@ $("reset-view").onclick = () => {
 };
 for (const id of ["palette", "shared", "display-min", "display-max", "view"])
   $(id).onchange = () => {
+    if (id === "view" && $("view").value !== "processed") levelEditor?.cancel();
     state.rasters = {};
     render();
   };
@@ -1856,3 +1936,126 @@ export function getAnalysisSnapshot() {
     statistics: state.response.statistics,
   });
 }
+
+function levelContext() {
+  const r = state.response;
+  if (!r?.recipe) return null;
+  return {
+    source_key: JSON.stringify({
+      request: body(),
+      source: r.recipe.source,
+      output: r.recipe.output.sha256,
+    }),
+    geometry: structuredClone(r.recipe.output.geometry),
+  };
+}
+function recordedLevelPoints() {
+  const r = state.response,
+    context = levelContext();
+  if (!context) return null;
+  let g = structuredClone(r.recipe.source.geometry),
+    recorded = null;
+  for (const step of r.history || []) {
+    if (step.name === "three_point")
+      recorded = {
+        operation: { name: step.name, params: structuredClone(step.params) },
+        context: {
+          source_key: context.source_key,
+          geometry: structuredClone(g),
+        },
+      };
+    if (step.name === "crop") {
+      const [x0, y0, x1, y1] = step.details.pixel_bounds,
+        dx = g.xreal / g.shape[1],
+        dy = g.yreal / g.shape[0];
+      g = {
+        ...g,
+        shape: [y1 - y0, x1 - x0],
+        xreal: (x1 - x0) * dx,
+        yreal: (y1 - y0) * dy,
+        xoff: g.xoff + x0 * dx,
+        yoff: g.yoff + y0 * dy,
+      };
+    }
+  }
+  return recorded;
+}
+function clearLevelPreview() {
+  ++levelRequest;
+  const saved = levelPreview;
+  levelPreview = null;
+  if (saved) {
+    state.rasters = {};
+    if (saved.sequence === state.sequence) {
+      $("download").disabled = saved.downloadDisabled;
+      $("export").disabled = saved.exportDisabled;
+    }
+  }
+}
+levelEditor = mountThreePointEditor({
+  host: $("three-point-host"),
+  onChange: () => {
+    clearLevelPreview();
+    render();
+  },
+  onStart: () => {
+    if (!levelContext() || $("download").disabled) {
+      status(
+        "Recalculate the current surface before starting a point draft.",
+        true,
+      );
+      return;
+    }
+    $("view").value = "processed";
+    $("tool").value = "level-points";
+    state.rasters = {};
+    levelEditor.start(levelContext());
+  },
+  preview: async (operation) => {
+    clearLevelPreview();
+    const requestId = ++levelRequest,
+      sequence = state.sequence,
+      context = levelContext();
+    if (!context || $("download").disabled)
+      throw Error("Recalculate before previewing leveling.");
+    const request = body();
+    request.operations.push(operation);
+    const result = await api("/api/analyze", request);
+    if (
+      requestId !== levelRequest ||
+      sequence !== state.sequence ||
+      context.source_key !== levelContext()?.source_key ||
+      !levelEditor.isActive()
+    )
+      throw Error("Point preview was superseded by a workspace change.");
+    levelPreview = {
+      result,
+      operation: structuredClone(operation),
+      source_key: context.source_key,
+      sequence,
+      downloadDisabled: $("download").disabled,
+      exportDisabled: $("export").disabled,
+    };
+    $("download").disabled = true;
+    $("export").disabled = true;
+    $("view").value = "processed";
+    state.rasters = {};
+    render();
+  },
+  apply: async (operation) => {
+    if (
+      !levelPreview ||
+      levelPreview.source_key !== levelContext()?.source_key ||
+      JSON.stringify(levelPreview.operation) !== JSON.stringify(operation)
+    )
+      throw Error("Preview these exact points before applying.");
+    levelEditor.cancel();
+    state.operations.push(structuredClone(operation));
+    await analyze();
+    if ($("download").disabled)
+      throw Error(
+        "Leveling could not be committed. Review the analysis error.",
+      );
+  },
+});
+levelEditor.sync(levelContext(), recordedLevelPoints());

@@ -2,6 +2,12 @@
 export const helpTopics = Object.freeze(
   [
     {
+      id: "three-point-leveling",
+      title: "Level a surface using three chosen points",
+      target: "three-point-start",
+      text: "1. Import a supported image channel, choose the intended processing and selection, and recalculate. In Data & processing, open Three-point leveling and Start three-point draft.\n2. Click three noncollinear points on a map. Drag a numbered marker to move it, or select a point to replace it. Coordinates use the stored lateral unit; enter exact X/Y values and choose a sampling radius, then Update coordinates. Footprints show the sampled disk, including excluded pixels; only usable selected samples contribute.\n3. Preview plane to inspect a temporary leveled map. Measurements still describe the committed recipe; saving/capturing the analysis is disabled while the draft preview is shown. Invalid points or unusable samples must be corrected before applying.\n4. Apply previewed plane records only three-point leveling. Set minimum to zero remains a separate operation. Cancel draft discards the preview and leaves the committed analysis unchanged.\n5. Save and strictly replay the recipe. Recorded points reappear read-only; starting a new draft or changing source cannot silently reuse old points. Choosing representative points is a scientific decision, not an automatic leveling rule.",
+    },
+    {
       id: "roughness-workflow",
       title: "How do I measure surface roughness?",
       target: "tab-measurements",
@@ -216,6 +222,7 @@ export const helpSections = Object.freeze(
       topic_ids: [
         "profiles-plateaus",
         "roughness-workflow",
+        "three-point-leveling",
         "texture",
         "quality",
         "segmentation",
