@@ -1,3 +1,4 @@
+import { modelOrigin, contentSecurityPolicy } from "./server-policy.mjs";
 import { createServer } from "node:http";
 import { watch } from "node:fs";
 import { readFile, stat, realpath } from "node:fs/promises";
@@ -6,6 +7,8 @@ import { resolve, extname, sep } from "node:path";
 const root = fileURLToPath(new URL("../", import.meta.url)),
   port = Number(process.env.PORT ?? 4173),
   host = "127.0.0.1";
+const providerOrigin = modelOrigin(process.env.AFM_MODEL_ORIGIN);
+const policy = contentSecurityPolicy(providerOrigin);
 const liveReload = process.env.AFM_LIVE_RELOAD === "1";
 const subscribers = new Set();
 let revision = Date.now(),
@@ -51,6 +54,18 @@ const server = createServer(async (req, res) => {
     }
     const url = new URL(req.url, "http://localhost"),
       path = decodeURIComponent(url.pathname);
+    if (path === "/__afm_config.json") {
+      res.writeHead(200, {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+      });
+      res.end(
+        req.method === "HEAD"
+          ? undefined
+          : JSON.stringify({ model_origin: providerOrigin }),
+      );
+      return;
+    }
     if (liveReload && path === "/__afm_dev_reload.js") {
       res.writeHead(200, {
         "Content-Type": "text/javascript; charset=utf-8",
@@ -118,8 +133,7 @@ const server = createServer(async (req, res) => {
       "Content-Length": bytes.length,
       "Cache-Control": "no-cache",
       "X-Content-Type-Options": "nosniff",
-      "Content-Security-Policy":
-        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+      "Content-Security-Policy": policy,
     });
     res.end(req.method === "HEAD" ? undefined : bytes);
   } catch {

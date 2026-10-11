@@ -9,7 +9,7 @@ The function rejects the entire report if any integrity check fails:
 - Every journal record must have continuous sequence numbers, matching tool versions, the correct previous-record hash, a valid canonical content hash, and a matching journal head.
 - The plan must match `validatePlan` normalization and its SHA-256 over **JSON.stringify(normalizedPlan)**. Manifest step IDs and order must match the plan.
 - Each completed step must contain a successful record identical to its journal entry and an artifact whose ID, SHA-256, version, canonical content and normalized call agree. Step references are resolved only through preceding verified artifacts.
-- Completed analysis results must agree with the verified call's source identity, source/channel identity, output geometry and units. Analyze calls also bind their exact operations, selection, profile, plateaus and reference. Replay results must be explicitly marked replay-verified.
+- Completed analysis results must agree with the verified call's source identity, source/channel identity, output geometry and units. Analyze calls also bind their exact operations, selection, profile, plateaus and reference. Replay results must be explicitly marked replay-verified and contain exactly the recipe of a preceding verified analysis artifact in the same manifest. A replay-only manifest referencing an artifact outside the manifest lacks the necessary evidence and is rejected.
 - Statistics must be finite, pixel counts must match image dimensions, and area must agree with valid pixel count and calibration. Unknown units remain unknown.
 
 Artifact and journal hashes use the existing runtime `canonicalJSON` definition: sorted object keys, preserved array order, UTF-8 JSON. The serializer rejects nonfinite, cyclic and non-JSON data. The existing serializer is exported rather than replaced by a separate hash implementation.
@@ -31,14 +31,8 @@ Markdown includes plan/journal hashes, step statuses, source hashes, exact recor
 The returned report is detached from its inputs. It contains:
 
 ```js
-{
-  schema_version: (1,
-    plan_sha256,
-    journal_head_sha256,
-    claims,
-    warnings,
-    markdown);
-}
+const { schema_version, plan_sha256, journal_head_sha256, claims, warnings, markdown } =
+  await createEvidenceReport({ manifest, journal });
 ```
 
 Run `node --test tests/evidence-report.test.mjs`. Tests exercise real sessions, plans and analysis outputs, failed/canceled plans, unknown units, deterministic Markdown, artifact and journal tampering, source/unit/geometry inconsistencies even after hashes are recomputed, and replay step references.

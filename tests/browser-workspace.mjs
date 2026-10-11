@@ -14,7 +14,7 @@ page.on("console", (message) => {
   if (message.type() === "error") errors.push(message.text());
 });
 async function visiblePanel(name) {
-  for (const other of ["measurements", "acquisition", "batch"]) {
+  for (const other of ["measurements", "acquisition", "batch", "assistant"]) {
     assert.equal(
       await page.locator("#panel-" + other).isVisible(),
       other === name,
@@ -55,11 +55,11 @@ try {
     true,
   );
   await page.keyboard.press("End");
-  await visiblePanel("batch");
+  await visiblePanel("assistant");
   await page.keyboard.press("ArrowRight");
   await visiblePanel("measurements");
   await page.keyboard.press("ArrowLeft");
-  await visiblePanel("batch");
+  await visiblePanel("assistant");
   await page.keyboard.press("Home");
   await visiblePanel("measurements");
   assert.deepEqual(

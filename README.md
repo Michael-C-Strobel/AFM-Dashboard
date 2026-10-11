@@ -12,6 +12,10 @@ npm run dev
 
 Open **http://127.0.0.1:4173/web/**. There is no installation or build step. Node serves static files only. You can instead serve `web/` and `data/` with another static server on localhost or HTTPS; opening `index.html` directly through `file://` will not provide the worker/module environment. The development server binds only to loopback.
 
+For automatic browser refresh during development, run `AFM_LIVE_RELOAD=1 npm run dev`. It watches HTML, CSS and JavaScript in `web/`; imported session data is cleared on reload, so download runs before editing code.
+
+The demo's network policy permits local requests only by default. Optional model planning will require an explicit provider origin at startup, for example `AFM_MODEL_ORIGIN=https://api.openai.com npm run dev` or `AFM_MODEL_ORIGIN=http://127.0.0.1:11434 npm run dev`. This permits that exact origin in the browser policy; it does not configure a model, send a request or store a credential. Other static hosts must configure their own CSP and the provider must allow browser CORS.
+
 The supplied `.gwy` measurements appear in the file selector. Use **Import local files** for native GWYP, supported NanoScope binary images, calibrated Igor v5 image waves, and the supported JPK TIFF image subset. Detection uses file contents, including numbered Bruker extensions such as `.001`. Browser limits are 64 MiB per file and 256 MiB of source bytes per session; reload to clear the session. These byte limits do not estimate total working memory.
 
 ## First analysis
