@@ -1,5 +1,10 @@
 import { apiFetch } from "./api.js";
 import { runBatch } from "./batch.js";
+import {
+  createHistogramReadout,
+  createProfileReadout,
+  mountMeasurementReadout,
+} from "./measurement-readout.js";
 ("use strict");
 const $ = (id) => document.getElementById(id);
 const state = {
@@ -338,7 +343,7 @@ function renderAll() {
       " · Mean difference: " +
       format(r.comparison.mean_difference, s.z_unit)
     : "Enable reference comparison to evaluate the processed surface against the selected reference.";
-  renderProfile(r.profile);
+  renderProfile(r.profile, r.recipe?.profile);
   renderHistogram(s.histogram, s.z_unit);
   renderStep(r.step);
   selectionLabel();
@@ -723,7 +728,7 @@ for (const id of ["raw", "result"]) {
   canvas.addEventListener("pointerup", end);
   canvas.addEventListener("pointercancel", end);
 }
-function renderProfile(profile) {
+function renderProfile(profile, endpoints) {
   $("profile").replaceChildren();
   if (!profile?.distance?.length) {
     const text = document.createElement("p");
@@ -785,6 +790,19 @@ function renderProfile(profile) {
     "Distance along profile",
   );
   $("profile").append(svg);
+  const model = createProfileReadout(profile, endpoints);
+  mountMeasurementReadout({
+    svg,
+    target: $("profile"),
+    id: "profile-readout",
+    model,
+    plot: { x: 65, y: 15, width: 415, height: 150 },
+    format,
+    yAt: (index) => {
+      const height = model.sample(index).height;
+      return height === null ? null : y(height);
+    },
+  });
 }
 function save(blob, name) {
   const url = URL.createObjectURL(blob),
@@ -1242,6 +1260,14 @@ function renderHistogram(histogram, unit) {
     "Selected height · counts per bin",
   );
   target.append(svg);
+  mountMeasurementReadout({
+    svg,
+    target,
+    id: "histogram-readout",
+    model: createHistogramReadout(histogram, unit),
+    plot: { x: 55, y: 15, width: 420, height: 150 },
+    format,
+  });
 }
 
 function renderSupport() {
