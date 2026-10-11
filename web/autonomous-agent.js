@@ -5,9 +5,11 @@ import { validateToolCall } from "./tool-contracts.js";
 import { canonicalJSON } from "./tool-session.js";
 import { createEvidenceReport } from "./evidence-report.js";
 import { createModelEvidence } from "./model-evidence.js";
+import { createModelObservations } from "./model-observations.js";
 import { sha256 } from "./engine.js";
 const terminal = new Set([
   "evidence_returned",
+  "observations_returned",
   "needs_input",
   "failed",
   "budget_exhausted",
@@ -282,7 +284,9 @@ export function createAutonomousAgent({
         started_at: new Date().toISOString(),
       });
       let bundle = null,
-        evidence = null;
+        evidence = null,
+        observationBundle = null,
+        observations = null;
       const history = [];
       await publish();
       for (let n = 1; n <= rounds; n++) {
@@ -298,7 +302,7 @@ export function createAutonomousAgent({
         };
         state.rounds.push(round);
         await publish();
-        const prompt = `Goal: ${c.goal}\nRound ${n}/${rounds}; tool calls remaining ${calls - state.calls}. Previous run status: ${state.rounds.slice(0, -1).findLast((r) => r.manifest)?.manifest.status ?? "none"}. ${evidence ? "Adapt the next plan using the supplied verified evidence, or return evidence claim IDs when the goal is sufficiently addressed." : "No verified surface evidence is available. Request an analysis plan first; do not claim completion."} Stay within selected sources and remaining calls; list_sources is forbidden. All artifact references must refer to earlier steps of this same plan.`;
+        const prompt = `Goal: ${c.goal}\nRound ${n}/${rounds}; tool calls remaining ${calls - state.calls}. Previous run status: ${state.rounds.slice(0, -1).findLast((r) => r.manifest)?.manifest.status ?? "none"}. ${evidence || observations ? "Adapt the next plan using supplied verified surface evidence and diagnostic observations, or return available evidence claim IDs or observation IDs. Observations are recorded descriptive summaries, not independent proof of goal completion." : "No verified evidence or observations are available. Request an analysis plan first, using surface or diagnostic tools as appropriate; do not claim completion."} Stay within selected sources and remaining calls; list_sources is forbidden. All artifact references must refer to earlier steps of this same plan.`;
         if (!(await gate())) return await finish("stopped");
         abort = new AbortController();
         let rejectAbort;
@@ -332,6 +336,9 @@ export function createAutonomousAgent({
                 prompt,
                 sourceContexts: copy(c.sourceContexts),
                 ...(bundle ? { evidenceBundle: copy(bundle) } : {}),
+                ...(observationBundle
+                  ? { observationBundle: copy(observationBundle) }
+                  : {}),
                 history: copy(history),
                 signal: abort.signal,
                 onAudit: captureAudit,
@@ -364,6 +371,26 @@ export function createAutonomousAgent({
           round.proposal = proposal;
           round.status = "needs_input";
           return await finish("needs_input");
+        }
+        if (proposal.kind === "observations") {
+          if (
+            Object.keys(proposal).length !== 2 ||
+            !observations ||
+            !Array.isArray(proposal.observation_ids) ||
+            proposal.observation_ids.length < 1 ||
+            proposal.observation_ids.length > 16 ||
+            new Set(proposal.observation_ids).size !==
+              proposal.observation_ids.length ||
+            proposal.observation_ids.some(
+              (id) =>
+                !observations.observations.some((o) => o.observation_id === id),
+            )
+          )
+            throw Error();
+          round.proposal = proposal;
+          round.observations = copy(observations);
+          round.status = "observations_returned";
+          return await finish("observations_returned");
         }
         if (proposal.kind === "evidence") {
           if (
@@ -437,6 +464,33 @@ export function createAutonomousAgent({
         if (ids.length) {
           bundle = { manifest: round.manifest, journal, step_ids: ids };
           evidence = await createModelEvidence(bundle, c.sourceContexts);
+        }
+        const observationIds = round.manifest.steps
+          .filter(
+            (step) =>
+              step.status === "complete" &&
+              [
+                "check_quality",
+                "segment_surface",
+                "measure_texture",
+                "analyze_sensitivity",
+              ].includes(step.resolved_call?.name),
+          )
+          .map((step) => step.id);
+        if (observationIds.length) {
+          const nextBundle = {
+            manifest: round.manifest,
+            journal,
+            step_ids: observationIds,
+          };
+          const projected = await createModelObservations(
+            nextBundle,
+            c.sourceContexts,
+          );
+          if (secretIn(projected, key)) throw Error();
+          observations = projected;
+          observationBundle = nextBundle;
+          round.observations = copy(projected);
         }
         const content = JSON.stringify({ kind: "plan", plan });
         if (content.length <= 8000) {
