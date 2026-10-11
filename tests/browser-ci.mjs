@@ -473,6 +473,7 @@ try {
   for (const file of [
     "./browser-agent-modes.mjs",
     "./browser-measurement-readout.mjs",
+    "./browser-model-observations.mjs",
   ]) {
     await new Promise((resolve, reject) => {
       execFile(
@@ -517,6 +518,7 @@ try {
           "mocked multi-source planning and opt-in verified evidence",
           "autonomous adaptive rounds, help agent, provider presets and pilot SOPs",
           "histogram and profile pointer/keyboard readouts",
+          "autonomous quality and texture observation feedback",
           "Assistant strict replay",
           "captured processed segmentation",
           "captured processed spatial texture",

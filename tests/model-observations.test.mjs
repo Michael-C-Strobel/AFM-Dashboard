@@ -391,6 +391,20 @@ test("tamper and independently rehashed source predecessor parameter and variant
     [2, (r) => (r.input_recipe.source.channel = "1")],
     [3, (r) => (r.parameters.window = "hann")],
     [3, (r) => (r.psd.integral = "invalid")],
+    [3, (r) => (r.geometry.z_unit = "V")],
+    [
+      4,
+      (r) =>
+        (r.variants[0].result.recipe.profile = { start: [0, 0], end: [1, 1] }),
+    ],
+    [
+      4,
+      (r) =>
+        (r.variants[0].result.recipe.plateaus = {
+          a: [0, 0, 1, 1],
+          b: [1, 1, 2, 2],
+        }),
+    ],
     [4, (r) => (r.request.variants[0].label = "Changed")],
     [4, (r) => (r.variants[0].result.recipe.source.channel = "1")],
     [

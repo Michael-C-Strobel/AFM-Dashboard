@@ -186,6 +186,11 @@ function texture(r, a, recipe) {
     })
   )
     fail();
+  if (
+    r.geometry?.xy_unit !== recipe.output.geometry.xy_unit ||
+    r.geometry?.z_unit !== recipe.output.geometry.z_unit
+  )
+    fail();
   const acf = pick(r.acf, { unit, definition: str, zero_lag: num });
   return {
     algorithm: r.algorithm,
@@ -246,7 +251,9 @@ function sensitivity(r, a, recipe) {
       if (
         !saved ||
         !same(saved.source, recipe.source) ||
-        !same(saved.reference, recipe.reference) ||
+        !["reference", "profile", "plateaus"].every((key) =>
+          same(saved[key], recipe[key]),
+        ) ||
         !same(saved.operations, definition.operations) ||
         !same(saved.selection, definition.selection)
       )

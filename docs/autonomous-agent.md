@@ -19,3 +19,5 @@ Observation summaries retain recorded units, definitions and relevant source/sup
 The reviewed planning UI still sends surface evidence only after explicit selection. The adapter’s optional observation input is separate; autonomous mode supplies it automatically within the authorized goal.
 
 Existing surface-feedback tests use real synthetic local tool sessions and mocked providers: adaptive plans, scope/hash gates, budgets, pause/stop races, retained cancellation audits and secret reflection. Browser regression exercises the shared settings, two automatic plans then evidence, budget exhaustion, stop, SOP capture, audit download and mobile layout. These earlier checks do not establish validation of the observation extension. No live provider or scientific autonomous-result quality has been certified.
+
+G02e integration validation: all 389 automated tests pass. The complete browser workflow passes Chromium 151, Firefox 141 and WebKit 26, including quality-only feedback, quality-to-texture adaptation with known synthetic values, exact observation/audit retention, unknown-ID rejection and mobile layout. Providers are mocked; analysis tools execute locally.

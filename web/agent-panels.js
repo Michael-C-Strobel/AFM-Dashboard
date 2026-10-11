@@ -190,7 +190,7 @@ export function mountAgentModes({
   autonomous.append(
     el(
       "p",
-      "Start authorizes automatic planning and tool execution on the selected channels above. Each round sends selected source metadata and verified compact surface evidence from the preceding analysis; raw images remain local. Review scientific choices and recorded results. Stop and pause take effect after any running local tool finishes.",
+      "Start authorizes automatic planning and tool execution on the selected channels above. Each round sends selected source metadata and verified compact surface evidence and quality, segmentation, texture or sensitivity summaries from completed rounds; raw images remain local. Review scientific choices and recorded results. Stop and pause take effect after any running local tool finishes.",
     ),
   );
   const sopLabel = el("label", "Optional workflow SOP"),
@@ -295,6 +295,9 @@ export function mountAgentModes({
           claims: r.report?.claims,
           warnings: r.report?.warnings,
           selected_claim_ids: r.proposal?.claim_ids,
+          observations: r.observations?.observations,
+          observation_warnings: r.observations?.warnings,
+          selected_observation_ids: r.proposal?.observation_ids,
         })),
         error: s.error,
       },
