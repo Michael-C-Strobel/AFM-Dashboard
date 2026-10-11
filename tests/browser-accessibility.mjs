@@ -76,6 +76,70 @@ const tabs = [
   "registration",
   "sensitivity",
 ];
+async function populate(page) {
+  const steps = [];
+  const tab = async (name) => page.locator("#tab-" + name).click();
+  const enabled = async (id) =>
+    page.waitForFunction((id) => !document.getElementById(id).disabled, id);
+  await tab("acquisition");
+  await page.locator("#acquisition-check").click();
+  await enabled("acquisition-export");
+  steps.push("Acquisition: explicitly checked imported synthetic source.");
+  await tab("batch");
+  await page.locator("#batch-refresh").click();
+  await page.locator("#batch-capture").click();
+  await page.locator('#batch-files input[type="checkbox"]').first().check();
+  await page.locator("#batch-start").click();
+  await enabled("batch-download");
+  steps.push(
+    "Batch: captured current recipe, selected only imported fixture, started batch.",
+  );
+  await tab("assistant");
+  await page.locator("#assistant-refresh").click();
+  await enabled("assistant-measure");
+  await page.locator("#assistant-measure").click();
+  await page.locator("#assistant-validate").click();
+  await page.locator("#assistant-run").click();
+  await enabled("assistant-download-run");
+  await enabled("assistant-report-create");
+  await page.locator("#assistant-report-create").click();
+  await enabled("assistant-report-json");
+  steps.push(
+    "Assistant: local measure starter, explicit validation/run and verified evidence; no provider.",
+  );
+  await tab("features");
+  await page.locator("#features-capture").click();
+  await page.locator("#features-threshold").fill("0");
+  await page.locator("#features-run").click();
+  await enabled("features-json");
+  steps.push(
+    "Features: captured processed analysis and explicitly segmented at threshold zero.",
+  );
+  await tab("texture");
+  await page.locator("#texture-capture").click();
+  await page.locator("#texture-run").click();
+  await enabled("texture-json");
+  steps.push(
+    "Texture: captured processed analysis and measured default mean/boxcar texture.",
+  );
+  await tab("registration");
+  await page.locator("#registration-capture-fixed").click();
+  await page.locator("#registration-capture-moving").click();
+  await page.locator("#registration-run").click();
+  await enabled("registration-json");
+  steps.push(
+    "Registration: captured same processed source twice and ran explicit zero manual translation.",
+  );
+  await tab("sensitivity");
+  await page.locator("#sensitivity-capture").click();
+  await page.locator("#sensitivity-add-mean").click();
+  await page.locator("#sensitivity-run").click();
+  await enabled("sensitivity-json");
+  steps.push(
+    "Sensitivity: captured baseline, added mean alternative and explicitly ran review.",
+  );
+  return steps;
+}
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined,
@@ -115,127 +179,142 @@ try {
     );
     await page.evaluate(axeSource);
     assert.equal(await page.evaluate(() => axe.version), "4.10.3");
-    for (const mode of ["normal", "expanded"]) {
-      if (mode === "expanded") await page.locator("#expand-inspection").click();
-      for (const tab of tabs) {
-        await page.locator("#tab-" + tab).click();
-        assert.equal(await page.locator("#panel-" + tab).isVisible(), true);
-        const semantics = await page.evaluate(() => {
-          const dialog = document.querySelector("#inspection-dialog");
-          const visible = (e) =>
-            !!e.getClientRects().length &&
-            getComputedStyle(e).visibility !== "hidden" &&
-            (!dialog.open || dialog.contains(e));
-          const selector = (e) => (e.id ? "#" + e.id : e.tagName.toLowerCase());
-          return {
-            dialog: {
-              open: dialog.open,
-              modal: dialog.matches(":modal"),
-              role: dialog.getAttribute("role"),
-              label: dialog.getAttribute("aria-label"),
-              labelledby: dialog.getAttribute("aria-labelledby"),
-              focusInside: dialog.contains(document.activeElement),
-            },
-            controls: [
-              ...document.querySelectorAll("button,select,input,textarea"),
-            ]
-              .filter(visible)
-              .map((e) => ({
-                selector: selector(e),
-                tag: e.tagName,
-                type: e.type,
-                disabled: e.disabled,
-                labels: [...(e.labels || [])].map((l) => l.textContent.trim()),
-                ariaLabel: e.getAttribute("aria-label"),
-                ariaLabelledby: e.getAttribute("aria-labelledby"),
-                text: e.textContent.trim().slice(0, 300),
-              })),
-            liveRegions: [
-              ...document.querySelectorAll(
-                '[role="status"],[role="alert"],[aria-live]',
-              ),
-            ]
-              .filter(visible)
-              .map((e) => ({
-                selector: selector(e),
-                role: e.getAttribute("role"),
-                live: e.getAttribute("aria-live"),
-                text: e.textContent.trim().slice(0, 300),
-              })),
-            headings: [...document.querySelectorAll("h1,h2,h3,h4,h5,h6")]
-              .filter(visible)
-              .map((e) => ({
-                selector: selector(e),
-                level: e.tagName,
-                text: e.textContent.trim(),
-              })),
-            landmarks: [
-              ...document.querySelectorAll(
-                'main,nav,header,footer,aside,[role="region"],[role="main"]',
-              ),
-            ]
-              .filter(visible)
-              .map((e) => ({
-                selector: selector(e),
-                tag: e.tagName,
-                role: e.getAttribute("role"),
-                label: e.getAttribute("aria-label"),
-              })),
-          };
-        });
-        if (mode === "expanded") {
-          assert.equal(semantics.dialog.modal, true);
-          assert.equal(semantics.dialog.focusInside, true);
-          assert.ok(
-            semantics.dialog.label || semantics.dialog.labelledby,
-            "Modal must have accessible naming source",
+    for (const state of ["initial", "populated"]) {
+      const populationSteps = state === "populated" ? await populate(page) : [];
+      for (const mode of ["normal", "expanded"]) {
+        if (mode === "expanded")
+          await page.locator("#expand-inspection").click();
+        for (const tab of tabs) {
+          await page.locator("#tab-" + tab).click();
+          assert.equal(await page.locator("#panel-" + tab).isVisible(), true);
+          const semantics = await page.evaluate(() => {
+            const dialog = document.querySelector("#inspection-dialog");
+            const visible = (e) =>
+              !!e.getClientRects().length &&
+              getComputedStyle(e).visibility !== "hidden" &&
+              (!dialog.open || dialog.contains(e));
+            const selector = (e) =>
+              e.id ? "#" + e.id : e.tagName.toLowerCase();
+            return {
+              dialog: {
+                open: dialog.open,
+                modal: dialog.matches(":modal"),
+                role: dialog.getAttribute("role"),
+                label: dialog.getAttribute("aria-label"),
+                labelledby: dialog.getAttribute("aria-labelledby"),
+                focusInside: dialog.contains(document.activeElement),
+              },
+              controls: [
+                ...document.querySelectorAll("button,select,input,textarea"),
+              ]
+                .filter(visible)
+                .map((e) => ({
+                  selector: selector(e),
+                  tag: e.tagName,
+                  type: e.type,
+                  disabled: e.disabled,
+                  labels: [...(e.labels || [])].map((l) =>
+                    l.textContent.trim(),
+                  ),
+                  ariaLabel: e.getAttribute("aria-label"),
+                  ariaLabelledby: e.getAttribute("aria-labelledby"),
+                  text: e.textContent.trim().slice(0, 300),
+                })),
+              liveRegions: [
+                ...document.querySelectorAll(
+                  '[role="status"],[role="alert"],[aria-live]',
+                ),
+              ]
+                .filter(visible)
+                .map((e) => ({
+                  selector: selector(e),
+                  role: e.getAttribute("role"),
+                  live: e.getAttribute("aria-live"),
+                  text: e.textContent.trim().slice(0, 300),
+                })),
+              headings: [...document.querySelectorAll("h1,h2,h3,h4,h5,h6")]
+                .filter(visible)
+                .map((e) => ({
+                  selector: selector(e),
+                  level: e.tagName,
+                  text: e.textContent.trim(),
+                })),
+              landmarks: [
+                ...document.querySelectorAll(
+                  'main,nav,header,footer,aside,[role="region"],[role="main"]',
+                ),
+              ]
+                .filter(visible)
+                .map((e) => ({
+                  selector: selector(e),
+                  tag: e.tagName,
+                  role: e.getAttribute("role"),
+                  label: e.getAttribute("aria-label"),
+                })),
+            };
+          });
+          if (mode === "expanded") {
+            assert.equal(semantics.dialog.modal, true);
+            assert.equal(semantics.dialog.focusInside, true);
+            assert.ok(
+              semantics.dialog.label || semantics.dialog.labelledby,
+              "Modal must have accessible naming source",
+            );
+          }
+          const axeResult = await page.evaluate(async () =>
+            axe.run(document, {
+              resultTypes: [
+                "violations",
+                "incomplete",
+                "passes",
+                "inapplicable",
+              ],
+            }),
           );
-        }
-        const axeResult = await page.evaluate(async () =>
-          axe.run(document, {
-            resultTypes: ["violations", "incomplete", "passes", "inapplicable"],
-          }),
-        );
-        // Chromium computed accessibility tree provides names, including referenced/wrapping labels.
-        const cdp = await page.context().newCDPSession(page);
-        const ax = await cdp.send("Accessibility.getFullAXTree");
-        await cdp.detach();
-        const view = {
-          width,
-          mode,
-          tab,
-          semantics,
-          accessibilityTree: ax.nodes,
-          axe: axeResult,
-        };
-        report.views.push(view);
-        await writeFile(
-          join(scratch, "report.json"),
-          JSON.stringify(report, null, 2),
-        );
-        await writeFile(
-          join(scratch, "progress.md"),
-          `# Accessibility audit\n\nCompleted ${report.views.length}/32 views. Latest: ${width}px ${mode} ${tab}; ${axeResult.violations.length} violation rules. Full details: report.json.\n`,
-        );
-        console.log(
-          JSON.stringify({
+          // Chromium computed accessibility tree provides names, including referenced/wrapping labels.
+          const cdp = await page.context().newCDPSession(page);
+          const ax = await cdp.send("Accessibility.getFullAXTree");
+          await cdp.detach();
+          const view = {
+            state,
+            populationSteps,
             width,
             mode,
             tab,
-            rules: axeResult.violations.map((v) => ({
-              id: v.id,
-              count: v.nodes.length,
-              targets: v.nodes.map((n) => n.target),
-            })),
-          }),
-        );
-      }
-      if (mode === "expanded") {
-        await page.keyboard.press("Escape");
-        assert.equal(
-          await page.locator("#inspection-dialog").evaluate((e) => e.open),
-          false,
-        );
+            semantics,
+            accessibilityTree: ax.nodes,
+            axe: axeResult,
+          };
+          report.views.push(view);
+          await writeFile(
+            join(scratch, "report.json"),
+            JSON.stringify(report, null, 2),
+          );
+          await writeFile(
+            join(scratch, "progress.md"),
+            `# Accessibility audit\n\nCompleted ${report.views.length}/64 views. Latest: ${width}px ${state} ${mode} ${tab}; ${axeResult.violations.length} violation rules. Full details: report.json.\n`,
+          );
+          console.log(
+            JSON.stringify({
+              width,
+              state,
+              mode,
+              tab,
+              rules: axeResult.violations.map((v) => ({
+                id: v.id,
+                count: v.nodes.length,
+                targets: v.nodes.map((n) => n.target),
+              })),
+            }),
+          );
+        }
+        if (mode === "expanded") {
+          await page.keyboard.press("Escape");
+          assert.equal(
+            await page.locator("#inspection-dialog").evaluate((e) => e.open),
+            false,
+          );
+        }
       }
     }
     await page.close();
@@ -248,7 +327,7 @@ try {
         ),
       )
       .map((r) => ({
-        view: `${v.width}/${v.mode}/${v.tab}`,
+        view: `${v.width}/${v.state}/${v.mode}/${v.tab}`,
         id: r.id,
         count: r.nodes.length,
         targets: r.nodes.map((n) => n.target),
@@ -261,7 +340,7 @@ try {
   );
   await writeFile(
     join(scratch, "progress.md"),
-    `# Accessibility audit complete\n\n32 views; ${wcag.length} WCAG rule/view violations and ${wcag.reduce((n, r) => n + r.count, 0)} node occurrences. See report.json for exact selectors, contrast findings, computed accessibility trees, live regions, headings and landmarks. Automated evidence only; no screen-reader certification.\n`,
+    `# Accessibility audit complete\n\n64 views; ${wcag.length} WCAG rule/view violations and ${wcag.reduce((n, r) => n + r.count, 0)} node occurrences. See report.json for exact selectors, contrast findings, computed accessibility trees, live regions, headings and landmarks. Automated evidence only; no screen-reader certification.\n`,
   );
   console.log(
     JSON.stringify({
