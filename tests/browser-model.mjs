@@ -139,7 +139,7 @@ try {
     () => !document.querySelector("#assistant-measure").disabled,
   );
   const initial = await journal();
-  await page.locator(".model-panel summary").click();
+  await page.locator(".model-panel summary").first().click();
   await page
     .locator("#model-endpoint")
     .fill("https://provider.example/v1/chat/completions");

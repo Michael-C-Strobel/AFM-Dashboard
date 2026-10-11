@@ -33,6 +33,13 @@
         </div>
       </div>
       <div class="header-actions">
+        <a
+          id="documentation-link"
+          href="./help.html"
+          target="_blank"
+          rel="noopener"
+          >Documentation</a
+        >
         <span class="badge">SOURCE → RECIPE → EVIDENCE</span
         ><button
           id="toggle-inspector"
@@ -153,7 +160,6 @@
             <p class="eyebrow">02 / SURFACE VIEWPORT</p>
             <h1 id="title">Your measurement, in context.</h1>
           </div>
-          <button id="refresh">Recalculate</button>
         </div>
         <div id="status" role="status" aria-live="polite">
           Loading measurements…
@@ -246,13 +252,18 @@
         <section class="inspection-dock" aria-label="Analysis inspection">
           <div class="inspection-actions">
             <span>INSPECT &amp; EXPORT</span>
-            <button
-              id="expand-inspection"
-              aria-expanded="false"
-              aria-controls="inspection-dialog"
-            >
-              Expand inspection
-            </button>
+            <div class="inspection-commands">
+              <button id="refresh" aria-label="Recalculate measurements">
+                Recalculate
+              </button>
+              <button
+                id="expand-inspection"
+                aria-expanded="false"
+                aria-controls="inspection-dialog"
+              >
+                Expand inspection
+              </button>
+            </div>
           </div>
           <div
             class="inspection-tabs"

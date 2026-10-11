@@ -1,3 +1,5 @@
+import { mountAgentModes } from "./agent-panels.js";
+import { providerPresets, resolveProvider } from "./provider-presets.js";
 import { proposePlan } from "./model-planner.js";
 
 /** Model conversation stays separate from the local tool journal and execution. */
@@ -8,6 +10,8 @@ export function mountModelPanel({
   getEvidenceBundle = async () => {
     throw new Error("No verified evidence available.");
   },
+  execute,
+  getJournal,
   acceptPlan,
   isBusy,
   setBusy,
@@ -40,6 +44,17 @@ export function mountModelPanel({
     settings.append(wrapper);
     return input;
   }
+  const providerLabel = el("label", "Provider"),
+    provider = el("select");
+  provider.id = "model-provider";
+  for (const preset of providerPresets) {
+    const option = el("option", preset.label);
+    option.value = preset.id;
+    provider.append(option);
+  }
+  provider.value = "custom";
+  providerLabel.append(provider);
+  settings.append(providerLabel);
   const endpoint = field(
     "Chat Completions endpoint",
     "endpoint",
@@ -53,6 +68,12 @@ export function mountModelPanel({
     "password",
     "Never included in exports",
   );
+  provider.onchange = () => {
+    const preset = providerPresets.find((p) => p.id === provider.value);
+    endpoint.value = preset.endpoint;
+    endpoint.readOnly = provider.value !== "custom";
+    model.placeholder = preset.modelHint;
+  };
   const clearKey = el("button", "Clear credential");
   clearKey.id = "model-clear-key";
   clearKey.onclick = () => {
@@ -235,7 +256,9 @@ export function mountModelPanel({
     status.textContent = message;
     status.classList.toggle("error", error);
   };
+  let agentModes = null;
   function sync() {
+    agentModes?.sync();
     const options = getEvidenceOptions();
     if (evidenceRunId !== (options?.run_id ?? null)) {
       evidenceRunId = options?.run_id ?? null;
@@ -266,6 +289,7 @@ export function mountModelPanel({
           contextDescription(getContext())
         : "Inspect a channel to use the single-source default.";
     for (const input of [
+      provider,
       endpoint,
       model,
       key,
@@ -451,6 +475,35 @@ export function mountModelPanel({
       sync();
     }
   };
+  async function getConnection() {
+    await configReady;
+    const connection = resolveProvider(provider.value, {
+      endpoint: endpoint.value,
+      model: model.value,
+    });
+    if (
+      serverConfig !== undefined &&
+      new URL(connection.endpoint).origin !== serverConfig?.model_origin
+    )
+      throw new Error(
+        "This host does not permit that provider origin. Configure AFM_MODEL_ORIGIN and restart the server.",
+      );
+    return { ...connection, apiKey: key.value };
+  }
+  agentModes = mountAgentModes({
+    host,
+    getConnection,
+    getSources: () =>
+      selectedSources.length
+        ? structuredClone(selectedSources)
+        : getContext()
+          ? [getContext()]
+          : [],
+    execute,
+    getJournal,
+    isBusy,
+    setBusy,
+  });
   sync();
   return { sync };
 }

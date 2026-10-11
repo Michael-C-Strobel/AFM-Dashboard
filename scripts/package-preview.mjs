@@ -133,7 +133,7 @@ export async function packagePreview(out) {
   const prefix = `afm-dashboard-${version}-preview`,
     entries = Object.create(null);
   for (const name of (await readdir(resolve(root, "web"))).sort()) {
-    if (/^[A-Za-z0-9_.-]+\.(?:js|css|html)$/.test(name))
+    if (/^[A-Za-z0-9_.-]+\.(?:js|css|html|png)$/.test(name))
       entries["web/" + name] = await sourceBytes("web/" + name);
   }
   for (const name of runtimeScripts)

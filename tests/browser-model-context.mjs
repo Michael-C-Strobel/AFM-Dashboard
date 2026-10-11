@@ -186,7 +186,7 @@ try {
   await page.waitForFunction(
     () => !document.querySelector("#assistant-measure").disabled,
   );
-  await page.locator(".model-panel summary").click();
+  await page.locator(".model-panel summary").first().click();
   await page.locator("#model-endpoint").fill(origin + "/__mock_model");
   await page.locator("#model-name").fill("mock");
   const journal = () =>

@@ -125,6 +125,11 @@ try {
   await page.waitForFunction(() =>
     document.querySelector("#status").textContent.includes("Import a local"),
   );
+  assert.equal(await page.locator("#documentation-link").isVisible(), true);
+  assert.equal(
+    await page.locator("#documentation-link").getAttribute("href"),
+    "./help.html",
+  );
   await page.locator("#tab-assistant").click();
   await page.locator(".model-panel summary").first().click();
   for (const preset of ["openai", "gemini", "groq"]) {
@@ -147,6 +152,7 @@ try {
   await page.locator("#model-name").fill("mock");
   await page.locator("#model-key").fill(secret);
   await page.locator("#help-agent > summary").click();
+  assert.equal(await page.locator(".inspection-actions #refresh").count(), 1);
   const initialJournal = (await journal()).records.length;
   async function askHelp() {
     await page.locator("#help-question").fill("How do I import a file?");
@@ -186,6 +192,18 @@ try {
   const guide = await browser.newPage();
   await guide.goto(new URL("help.html#import-support", base).href);
   assert.equal(await guide.locator("#import-support").count(), 1);
+  assert.deepEqual(
+    await guide.locator("main > section > h2").allTextContents(),
+    ["General", "Agents and automation", "Common workflows"],
+  );
+  assert.equal(await guide.locator("figure img").count(), 2);
+  for (const photo of await guide.locator("figure img").all()) {
+    await photo.scrollIntoViewIfNeeded();
+    await photo.evaluate((img) => img.decode());
+    assert.ok(await photo.evaluate((img) => img.naturalWidth > 0));
+  }
+  assert.ok((await guide.locator("#profiles-plateaus ol li").count()) >= 6);
+  assert.ok((await guide.locator("#texture ol li").count()) >= 6);
   await guide.close();
 
   const fixture = join(scratch, "agent-synthetic.gwy");
@@ -246,6 +264,10 @@ try {
   );
   assert.equal(audit.journal.records.length, beforeAuto + 2);
 
+  await page.locator("#autonomous-sop").selectOption("height-roughness");
+  await page
+    .locator("#autonomous-deviations")
+    .fill("Use the original values without leveling for this pilot test.");
   mode = "bounded";
   round = 0;
   await page.locator("#autonomous-rounds").fill("1");
@@ -258,6 +280,11 @@ try {
   const bounded = await download("#autonomous-download", "bounded.json");
   assert.equal(bounded.goal.rounds.length, 1);
   assert.equal(bounded.goal.calls, 1);
+  assert.match(
+    bounded.goal.goal,
+    /SOP height-roughness \/ version 0.1.0 \/ status pilot/,
+  );
+  assert.match(bounded.goal.goal, /without leveling/);
   assert.equal((await journal()).records.length, beforeAuto + 3);
 
   mode = "pending";

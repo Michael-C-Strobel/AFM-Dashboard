@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import {
   helpTopics,
+  helpSections,
   helpContext,
   resolveHelpTopics,
 } from "../web/help-knowledge.js";
@@ -161,5 +162,20 @@ test("help module has no DOM measurement or network dependency", async () => {
     helpTopics
       .find((t) => t.id === "sensitivity")
       .text.includes("not independent-replicate uncertainty"),
+  );
+});
+
+test("guide sections cover every topic exactly once with stable navigation", () => {
+  assert.deepEqual(
+    helpSections.map((s) => s.title),
+    ["General", "Agents and automation", "Common workflows"],
+  );
+  const ids = helpSections.flatMap((s) => s.topic_ids);
+  assert.equal(new Set(ids).size, ids.length);
+  assert.deepEqual([...ids].sort(), helpTopics.map((t) => t.id).sort());
+  assert.ok(
+    helpSections.every(
+      (s) => Object.isFrozen(s) && Object.isFrozen(s.topic_ids),
+    ),
   );
 });

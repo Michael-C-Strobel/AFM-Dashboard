@@ -79,3 +79,40 @@
 #model-conversation a {
   overflow-wrap: anywhere;
 }
+.model-panel select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+#help-agent {
+  border-left-color: #14736b;
+  background: #eef7f4;
+}
+#help-agent summary {
+  color: #135b55;
+}
+#autonomous-agent {
+  border-left-color: #a66616;
+  background: #faf4e9;
+}
+#autonomous-agent summary {
+  color: #784711;
+}
+#help-conversation {
+  max-height: 340px;
+  overflow: auto;
+  padding-left: 22px;
+}
+#help-conversation p,
+#help-status,
+#autonomous-status {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+#autonomous-agent pre {
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}

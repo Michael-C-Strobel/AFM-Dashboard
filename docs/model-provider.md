@@ -45,3 +45,9 @@ The UI retains at most 16 request audits, with the current conversation bounded 
 All 315 numerical/integration tests pass after integration, including 38 focused model/evidence tests. `tests/browser-ci.mjs` now also runs `tests/browser-model-context.mjs` against its own isolated server, with a same-origin intercepted mock provider. Chromium 151, Firefox 141 and WebKit 26 pass legacy fallback, explicit two-source planning/execution, mixed-identity rejection, opt-in verified claims, no automatic execution, audit retention, history reset, citation links that open/focus exact artifacts, and rejection before network dispatch after an evidence source is removed.
 
 The dedicated Chromium context test optionally accepts `AXE_CORE_PATH`. Axe 4.10.3 found zero violations in both populated desktop evidence and mobile context views after making opened artifact/argument panes keyboard-scrollable. One desktop and two mobile incomplete rules still require manual review; this is not a screen-reader certification. Existing single-source model browser checks also pass. No real provider was contacted.
+
+## Autonomous and help modes
+
+The shared connection now includes [provider presets](provider-compatibility.md) and a custom full completion URL. Session-only keys and the exact host-origin gate apply to reviewed planning, [autonomous analysis](autonomous-agent.md) and the separate [help agent](help-agent.md). The toolbar **Documentation** link opens the guide and pilot SOPs without requiring a provider.
+
+`proposePlan` accepts optional `mode: 'reviewed' | 'autonomous'` (reviewed default). Autonomous instructions reflect the user's bounded execution authorization; schema/source/evidence gates remain identical. Optional `onAudit(snapshot)` receives detached credential-free request provenance before dispatch and the final audit, enabling cancellation records in the goal controller. The adapter itself still executes no tools.

@@ -470,6 +470,26 @@ try {
       },
     );
   });
+  await new Promise((resolve, reject) => {
+    execFile(
+      process.execPath,
+      [fileURLToPath(new URL("./browser-agent-modes.mjs", import.meta.url))],
+      {
+        env: { ...process.env, AFM_BASE_URL: `http://127.0.0.1:${port}/web/` },
+        timeout: 120000,
+        maxBuffer: 1048576,
+      },
+      (error, stdout, stderr) =>
+        error
+          ? reject(
+              new Error(
+                `Agent modes browser workflow failed: ${stdout} ${stderr}`,
+                { cause: error },
+              ),
+            )
+          : resolve(),
+    );
+  });
   assert.deepEqual(errors, []);
   console.log(
     JSON.stringify(
@@ -487,6 +507,7 @@ try {
           "recipe download/upload/replay",
           "portable recipe save/upload/strict replay",
           "mocked multi-source planning and opt-in verified evidence",
+          "autonomous adaptive rounds, help agent, provider presets and pilot SOPs",
           "Assistant strict replay",
           "captured processed segmentation",
           "captured processed spatial texture",

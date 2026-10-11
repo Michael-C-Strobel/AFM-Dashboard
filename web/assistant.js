@@ -600,6 +600,8 @@ $("report-markdown").onclick = () => {
 
 modelPanel = mountModelPanel({
   host: document.getElementById("assistant-model-host"),
+  execute: tool,
+  getJournal: () => api("/api/tool-journal"),
   isBusy: () => busy,
   setBusy: (value) => {
     busy = value;

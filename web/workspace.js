@@ -75,3 +75,35 @@ dialog.addEventListener("close", () => {
   restoreScroll();
   expand.focus({ preventScroll: true });
 });
+
+// Documentation deep links reveal the containing panel without changing analysis.
+function revealDocumentationTarget() {
+  let id;
+  try {
+    id = decodeURIComponent(location.hash.slice(1));
+  } catch {
+    return;
+  }
+  if (!id) return;
+  const target = document.getElementById(id);
+  if (!target) return;
+  const panel = target.closest('[role="tabpanel"]');
+  const tab = panel
+    ? document.getElementById(panel.getAttribute("aria-labelledby"))
+    : target.matches('[role="tab"]')
+      ? target
+      : null;
+  if (tab && tabs.includes(tab)) activate(tab);
+  for (let node = target.parentElement; node; node = node.parentElement)
+    if (node.tagName === "DETAILS") node.open = true;
+  const inspector = target.closest("#data-inspector");
+  if (inspector && getComputedStyle(inspector).display === "none")
+    toggle.click();
+  target.scrollIntoView({ block: "center" });
+  target.focus({ preventScroll: true });
+}
+window.addEventListener("hashchange", revealDocumentationTarget);
+window.addEventListener("DOMContentLoaded", revealDocumentationTarget, {
+  once: true,
+});
+if (document.readyState !== "loading") revealDocumentationTarget();

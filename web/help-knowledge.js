@@ -2,6 +2,36 @@
 export const helpTopics = Object.freeze(
   [
     {
+      id: "roughness-workflow",
+      title: "How do I measure surface roughness?",
+      target: "tab-measurements",
+      text: "1. Import a height channel and check units, calibration/support warnings and masks.\n2. Measure the original full surface or an explicitly chosen ROI as a baseline. Record valid/excluded counts and area.\n3. Choose and justify leveling for the sample and question; there is no universal correct preset. Apply the recorded operations and recalculate on the same selection.\n4. Compare Sa/Sq, range, counts and processing against the baseline. Sa is mean absolute deviation and Sq is RMS deviation from the selected mean. Processing and selection can change both.\n5. Review acquisition diagnostics without treating candidate boundaries as proven defects. Save the recipe, export analysis and strictly replay it on the same source bytes. For a structured starting point, read the height-roughness pilot SOP below.",
+    },
+    {
+      id: "help-agent",
+      title: "Ask the help agent",
+      target: "tab-assistant",
+      text: "In Assistant, configure the shared provider settings, then open Help agent and ask an interface or workflow question. No measurement needs to be loaded. The model receives curated guide topics, pilot SOPs, your question and bounded conversation history. It has no tools and cannot inspect or alter measurements. Follow its documentation citations or Show control buttons; citations do not guarantee every model statement is correct. Cancel help aborts a request; Download help audit retains the conversation without credentials.",
+    },
+    {
+      id: "autonomous",
+      title: "Run a bounded autonomous analysis",
+      target: "tab-assistant",
+      text: "In Assistant, configure the provider above, inspect/select source channels, open Autonomous analysis, enter a goal and set round/tool limits. Start goal authorizes automatic plans and local execution. Subsequent rounds receive verified compact surface evidence and may adapt operations. Pause/Stop wait for a running local tool; Resume continues a paused run. A clarification requires a new goal with the missing choices. Evidence returned means the model selected recorded claims, not independent certification that the scientific goal is achieved. Download goal audit retains rounds, manifests and journal. Existing reviewed plans remain separately available.",
+    },
+    {
+      id: "providers",
+      title: "Connect a model provider",
+      target: "tab-assistant",
+      text: "Open Ask for a plan to access shared connection settings. Choose OpenAI, Google Gemini compatibility, Groq compatibility, or Custom Chat Completions endpoint, then supply the exact model ID and your session-only API key. Custom accepts a full HTTPS or loopback HTTP completion URL. Native Anthropic Messages is not this protocol. The host must allow the provider origin with AFM_MODEL_ORIGIN; browser CORS and JSON-object support are required. No real provider has been certified. Clear credential erases the key field; credentials are not saved in persistent browser storage. Help and analysis share these settings but maintain separate conversations and audits.",
+    },
+    {
+      id: "workflow-sops",
+      title: "Use a versioned pilot SOP",
+      target: "tab-assistant",
+      text: "In Autonomous analysis, optionally select height-roughness or chemist-reference SOP version 0.1.0. Read prerequisites, procedure, quality checks, outputs and limitations before starting. Supply required scientific choices and explicit deviations. The exact SOP guidance, ID/version and your choices enter the recorded goal; additional deviations belong in step rationales. These are pilot workflows, not universal scientific validation. Reference reconstruction requires supplied fit points and both source identities; a model must ask when required choices are missing.",
+    },
+    {
       id: "import-support",
       title: "Import files and check support",
       target: "import-trigger",
@@ -27,9 +57,9 @@ export const helpTopics = Object.freeze(
     },
     {
       id: "profiles-plateaus",
-      title: "Measure profiles and step height",
+      title: "How do I measure the height of a feature?",
       target: "coordinate-profile",
-      text: "Choose Line profile and draw endpoints, or enter exact coordinates in Measurements and select Set profile. For step height, set an ROI and Use current ROI as plateau A; select another ROI for plateau B. Plateaus are measured independently of the global ROI, while exclusions still apply. Recalculate to update results. Pixel spreads are descriptive, not confidence intervals.",
+      text: "1. Import the measurement and select a height channel. Check XY/Z units and support warnings; height is relative to a chosen reference surface, not necessarily the image minimum.\n2. Review and record appropriate leveling before measuring. Preserve the original and do not smooth merely to improve the result.\n3. In Measurements, choose Line profile to cross the feature and surrounding surface, or enter exact profile coordinates and Set profile. Recalculate to inspect the shape and choose representative plateau regions.\n4. Draw a rectangle on the reference surface and Use current ROI as plateau A. Draw another on the feature and assign plateau B. Avoid boundary pixels unless they are intentionally part of the question.\n5. Recalculate. Step height is mean(B) minus mean(A), in the stored Z unit. A negative result means B is lower than A. Plateau regions are independent of the global ROI; masks and exclusions still apply. Check each plateau's valid count and spread.\n6. Save the recipe and analysis export with the selections and processing. Pixel spreads are descriptive, not confidence intervals. A curved feature may require a different explicitly justified height definition; this tool measures a difference between two regional means.",
     },
     {
       id: "quality",
@@ -51,9 +81,9 @@ export const helpTopics = Object.freeze(
     },
     {
       id: "texture",
-      title: "Measure spatial texture",
+      title: "How do I run texture analysis?",
       target: "tab-texture",
-      text: "In Texture, capture a completed processed analysis, choose explicit detrending and window settings, then measure. The selected domain must be a complete rectangle without internal missing or excluded pixels. PSD and linear autocorrelation plots show recorded bin means; TAR retains full numerical arrays. Log colors and display normalization do not change evidence. Zero-energy normalized ACF is unavailable; zero padding adds frequency samples, not physical resolution.",
+      text: "1. Select a calibrated height channel, review import warnings and record any leveling. Define the physical question before removing long-wavelength structure.\n2. Choose a complete rectangular analysis region. Texture currently requires no internal missing or excluded pixels; do not fill missing values just to pass this check. Recalculate the processed surface.\n3. Open Texture and capture the completed processed analysis. The capture remains fixed when the main viewer later changes.\n4. Choose explicit detrending (none, mean or plane) and window (boxcar or Hann), then measure. These choices affect the spectrum and must accompany any comparison.\n5. Inspect calibrated spatial-frequency axes, PSD cuts and linear autocorrelation. A spectral peak describes a spatial scale; it does not identify a material or prove a mechanism. Zero-energy normalized ACF is unavailable. Zero padding adds frequency samples, not physical resolution.\n6. Export the verified report and TAR for full numerical arrays and replay provenance. Plot log colors and display normalization do not change the evidence. Keep source bytes and recorded settings with the results.",
     },
     {
       id: "registration",
@@ -83,7 +113,7 @@ export const helpTopics = Object.freeze(
       id: "navigation",
       title: "Navigate inspection panels",
       target: "expand-inspection",
-      text: "Use the inspection tabs; Left/Right arrows move between tabs and Home/End select the first/last. Expand inspection opens the current controls in a native modal; Escape or Return to viewer closes it. On a narrow screen, Data & processing reveals source and pipeline controls. Navigation and display colors do not change measurements.",
+      text: "Recalculate sits in the inspection toolbar beside the measurement panels and stays available when expanded. Use the inspection tabs; Left/Right arrows move between tabs and Home/End select the first/last. Expand inspection opens the current controls in a native modal; Escape or Return to viewer closes it. On a narrow screen, Data & processing reveals source and pipeline controls. Navigation and display colors do not change measurements.",
     },
     {
       id: "limitations",
@@ -152,3 +182,50 @@ export function resolveHelpTopics(ids) {
   }
   return result;
 }
+
+/** User-facing guide structure shared with the help agent. */
+export const helpSections = Object.freeze(
+  [
+    {
+      id: "general",
+      title: "General",
+      description:
+        "Open measurements, understand units and support, navigate the workspace, and save reproducible results.",
+      topic_ids: [
+        "import-support",
+        "units-calibration",
+        "processing",
+        "selection",
+        "recipes-export",
+        "navigation",
+        "limitations",
+      ],
+    },
+    {
+      id: "agents",
+      title: "Agents and automation",
+      description:
+        "Choose between reviewed plans, bounded autonomous execution and tool-free interface help. Configure provider access and retain audits.",
+      topic_ids: ["providers", "assistant", "autonomous", "help-agent"],
+    },
+    {
+      id: "workflows",
+      title: "Common workflows",
+      description:
+        "Follow practical procedures for feature height, roughness, texture and other frequent AFM tasks. Versioned pilot SOPs appear at the end.",
+      topic_ids: [
+        "profiles-plateaus",
+        "roughness-workflow",
+        "texture",
+        "quality",
+        "segmentation",
+        "registration",
+        "sensitivity",
+        "batch",
+        "workflow-sops",
+      ],
+    },
+  ].map((section) =>
+    Object.freeze({ ...section, topic_ids: Object.freeze(section.topic_ids) }),
+  ),
+);

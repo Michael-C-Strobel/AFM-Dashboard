@@ -2,6 +2,8 @@
 
 A local AFM viewer and reproducible surface-analysis workbench built with plain HTML and JavaScript. Measurements are parsed and processed in a browser worker; local imports are not uploaded. No framework, runtime packages, model connection, or Python server is required. A Rust engine can be added if measured workloads justify it.
 
+The main toolbar’s **Documentation** link opens the [in-app guide and pilot SOPs](web/help.html), also available as [repository help](docs/help.md).
+
 ## Run
 
 With Node.js 20 or later:
@@ -77,7 +79,9 @@ Add `--reference PATH` when required by the baseline; use new output directories
 
 Open **Assistant**, refresh loaded sources, then choose a starter or expand **Ask for a plan**. Local starters require no model. Review the arguments, validate the plan, and select **Run reviewed plan**. Completed steps expose recipes and artifacts; **Verify evidence report** produces linked numeric claims and Markdown/JSON exports, including partial results after a failure or cancellation.
 
-Optional model planning requires the provider origin configured above plus its full Chat Completions endpoint, model ID and optional API key in the panel. Use **Add current channel** to select up to eight source/channel contexts. Requests transmit your messages and those metadata; optionally select up to four verified surface-result steps to include compact recorded claims. Raw image arrays, recipes and journals stay local. The model may ask a clarification, draft a plan, or select exact evidence claims with artifact links; execution remains a separate explicit action. Credentials stay in memory and are excluded from conversation exports. Provider CORS and JSON-mode support are required; only mocked provider responses have been tested. See [model configuration and audit](docs/model-provider.md), [local plans](docs/assistant-plans.md), and [evidence verification](docs/evidence-reports.md).
+Optional model features require the provider origin configured above. Choose an OpenAI, Gemini or Groq preset, or a custom full Chat Completions endpoint, then enter its model ID and session-only API key. Use **Add current channel** to select up to eight source/channel contexts. Requests transmit your messages and those metadata; optionally select up to four verified surface-result steps to include compact recorded claims. Raw image arrays, recipes and journals stay local. The model may ask a clarification, draft a plan, or select exact evidence claims with artifact links; reviewed-mode execution remains a separate explicit action. Credentials stay in memory and are excluded from conversation exports. Provider CORS and JSON-mode support are required; only mocked provider responses have been tested. See [model configuration and audit](docs/model-provider.md), [local plans](docs/assistant-plans.md), and [evidence verification](docs/evidence-reports.md).
+
+**Autonomous analysis** starts a bounded goal once, then proposes and executes plans automatically, passing verified surface evidence into subsequent rounds. Select sources, set round/tool limits, optionally select a pilot SOP and specify scientific choices/deviations, then Start goal. Pause/Stop act between local tools. Download the goal audit to retain requests, plans, artifacts and journal. Budget exhaustion is not goal completion. **Help agent** uses the same connection to explain the interface and pilot SOPs; it receives no selected measurements and has no tools. See [autonomous mode](docs/autonomous-agent.md), [help agent](docs/help-agent.md), [provider compatibility](docs/provider-compatibility.md), and [pilot SOPs](docs/workflow-sops.md).
 
 ## Local preview package
 

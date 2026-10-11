@@ -625,3 +625,26 @@ test("sensitivity proposals bind source and use only prior recipe artifacts", as
     proposed.steps[1].call.arguments = previous;
   }
 });
+
+test("JSON-escaped credentials in prompt or source context reject before dispatch", async () => {
+  for (const apiKey of ['secret"quote', "secret\\slash"]) {
+    let count = 0;
+    const fetchImpl = async () => {
+      count++;
+      return response(wrap());
+    };
+    await assert.rejects(
+      proposePlan(options({ apiKey, prompt: "Echo " + apiKey, fetchImpl })),
+    );
+    await assert.rejects(
+      proposePlan(
+        options({
+          apiKey,
+          sourceContext: { ...source(), title: apiKey },
+          fetchImpl,
+        }),
+      ),
+    );
+    assert.equal(count, 0);
+  }
+});

@@ -971,3 +971,40 @@ details {
 body.inspection-expanded {
   overflow: hidden;
 }
+
+#documentation-link {
+  color: #e4ebf8;
+  font-size: 12px;
+  padding: 7px 9px;
+  border: 1px solid #61728c;
+  text-decoration: none;
+}
+#documentation-link:hover,
+#documentation-link:focus-visible {
+  background: #334256;
+  text-decoration: underline;
+}
+@media (max-width: 760px) {
+  header {
+    height: auto;
+    min-height: 58px;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  .header-actions {
+    gap: 8px;
+  }
+  #documentation-link {
+    font-size: 11px;
+    padding: 6px;
+  }
+}
+
+.inspection-commands {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AFM Dashboard guide</title>
+    <link rel="stylesheet" href="model-panel.css" />
+    <style>
+      body {
+        font:
+          16px/1.6 system-ui,
+          sans-serif;
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1.2rem;
+        color: #17303c;
+        background: #f6fafb;
+      }
+      section {
+        margin: 2rem 0;
+      }
+      a {
+        color: #005d81;
+      }
+      p {
+        white-space: pre-wrap;
+      }
+      #help-topics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 1.5rem 0;
+      }
+      #help-topics a {
+        padding: 10px 14px;
+        border: 1px solid #8eaeb6;
+        background: #e5f0f2;
+      }
+      section > h2 {
+        padding-top: 20px;
+        border-top: 3px solid #257c89;
+      }
+      #agents > h2 {
+        border-color: #665aac;
+      }
+      #workflows > h2 {
+        border-color: #aa751f;
+      }
+      article {
+        margin: 2rem 0;
+        scroll-margin-top: 20px;
+      }
+      article li {
+        margin: 0.6rem 0;
+      }
+      figure {
+        margin: 1.5rem 0;
+      }
+      figure img {
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #8eaeb6;
+      }
+      figcaption {
+        font-size: 0.88rem;
+        color: #405765;
+      }
+    </style>
+    <script type="module" src="help-page.js"></script>
+  </head>
+  <body>
+    <a href="./">Return to AFM Dashboard</a>
+    <h1>AFM Dashboard guide</h1>
+    <p>
+      Interface instructions for local analysis. Keep original measurements and
+      export recipes with your results.
+    </p>
+    <nav aria-label="Guide topics" id="help-topics"></nav>
+    <main id="help-content"></main>
+  </body>
+</html>
