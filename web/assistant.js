@@ -1,12 +1,15 @@
 import { apiFetch } from "./api.js";
 import { validatePlan, runPlan } from "./tool-plans.js";
+import { createEvidenceReport } from "./evidence-report.js";
 
 const $ = (id) => document.getElementById("assistant-" + id);
 let busy = false,
   inspected = null,
   validated = null,
   manifest = null,
-  cancel = false;
+  cancel = false,
+  evidence = null,
+  evidenceRun = null;
 const controls = [
   "refresh",
   "source",
@@ -34,6 +37,10 @@ function sync() {
     !busy || !manifest || manifest.status !== "running" || cancel;
   $("download-plan").disabled = !$("plan").value.trim();
   $("download-run").disabled = !manifest;
+  $("report-create").disabled =
+    busy || !manifest || manifest.status === "running";
+  $("report-json").disabled = !evidence;
+  $("report-markdown").disabled = !evidence;
 }
 async function api(path, body) {
   const response = await apiFetch(
@@ -364,6 +371,8 @@ function renderResults() {
       const detail = element("details"),
         summary = element("summary", "Artifact " + artifact.id),
         pre = element("pre", JSON.stringify(artifact, null, 2));
+      const anchor = "artifact-" + artifact.sha256;
+      if (!document.getElementById(anchor)) detail.id = anchor;
       detail.append(summary, pre);
       row.append(actions, detail);
     }
@@ -377,6 +386,9 @@ $("run").onclick = async () => {
   busy = true;
   cancel = false;
   manifest = null;
+  evidence = null;
+  evidenceRun = null;
+  renderEvidence();
   sync();
   try {
     manifest = await runPlan(snapshot, {
@@ -438,4 +450,138 @@ $("download-journal").onclick = async () => {
     status(error.message, true);
   }
 };
+
+function renderEvidence() {
+  const root = $("report");
+  root.replaceChildren();
+  if (!evidence) return;
+  root.append(element("h3", "Evidence report · " + evidenceRun.title));
+  root.append(
+    element(
+      "p",
+      "Run " + evidenceRun.status + " · plan SHA-256 " + evidence.plan_sha256,
+      "assistant-report-identity",
+    ),
+  );
+  root.append(
+    element(
+      "p",
+      "Artifact and journal integrity verification is not a signature or calibration certification. These recorded numeric results do not establish independent sample counts, confidence intervals, or defect identities.",
+      "assistant-report-notice",
+    ),
+  );
+  const wrapper = element("div", undefined, "assistant-report-table");
+  const table = element("table"),
+    caption = element("caption", "Verified numeric claims");
+  table.append(caption);
+  const head = element("thead"),
+    header = element("tr");
+  for (const title of [
+    "Step",
+    "Metric",
+    "Value",
+    "Unit",
+    "Definition",
+    "Evidence",
+  ]) {
+    const cell = element("th", title);
+    cell.scope = "col";
+    header.append(cell);
+  }
+  head.append(header);
+  table.append(head);
+  const body = element("tbody");
+  for (const claim of evidence.claims) {
+    const row = element("tr");
+    row.dataset.sourceSha256 = claim.source_sha256;
+    row.dataset.channel = claim.channel;
+    for (const value of [
+      claim.step_id,
+      claim.metric,
+      String(claim.value),
+      claim.unit ?? "unknown",
+      claim.definition,
+    ])
+      row.append(element("td", value));
+    const cell = element("td"),
+      link = element("a", claim.step_id + " artifact");
+    link.href = "#artifact-" + claim.artifact_id.slice(9);
+    link.title = claim.artifact_id;
+    link.onclick = (event) => {
+      event.preventDefault();
+      const target = document.getElementById(
+        link.getAttribute("href").slice(1),
+      );
+      if (target) {
+        target.open = true;
+        target.querySelector("summary").focus();
+        target.scrollIntoView({ block: "nearest" });
+      }
+    };
+    cell.append(link);
+    row.append(cell);
+    body.append(row);
+  }
+  table.append(body);
+  wrapper.append(table);
+  root.append(wrapper);
+  if (!evidence.claims.length)
+    root.append(
+      element(
+        "p",
+        "No numeric analysis claims were produced by completed verified analysis steps.",
+      ),
+    );
+  root.append(element("h3", "Recorded warnings"));
+  const warnings = element("ul");
+  for (const warning of evidence.warnings)
+    warnings.append(element("li", warning));
+  if (evidence.warnings.length) root.append(warnings);
+  else root.append(element("p", "No additional recorded warnings."));
+}
+$("report-create").onclick = async () => {
+  if (busy || !manifest || manifest.status === "running") return;
+  busy = true;
+  sync();
+  const snapshot = structuredClone(manifest);
+  status(
+    "Verifying plan, journal, artifact identities, and numeric provenance…",
+  );
+  try {
+    evidence = await createEvidenceReport({
+      manifest: snapshot,
+      journal: await api("/api/tool-journal"),
+    });
+    evidenceRun = { title: snapshot.plan.title, status: snapshot.status };
+    renderEvidence();
+    status(
+      "Evidence report verified for " +
+        snapshot.plan.title +
+        ". Integrity verification does not certify calibration.",
+    );
+  } catch (error) {
+    evidence = null;
+    evidenceRun = null;
+    renderEvidence();
+    status("Evidence verification failed: " + error.message, true);
+  } finally {
+    busy = false;
+    sync();
+  }
+};
+$("report-json").onclick = () => {
+  if (evidence) save(evidence, "afm-evidence-report.json");
+};
+$("report-markdown").onclick = () => {
+  if (!evidence) return;
+  const url = URL.createObjectURL(
+    new Blob([evidence.markdown], { type: "text/markdown;charset=utf-8" }),
+  );
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "afm-evidence-report.md";
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+
 sync();

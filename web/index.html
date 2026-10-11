@@ -556,6 +556,25 @@
                 No plan prepared.
               </p>
               <div id="assistant-results" aria-label="Plan results"></div>
+              <div
+                class="toolbar assistant-actions"
+                aria-label="Evidence report actions"
+              >
+                <button id="assistant-report-create" disabled>
+                  Build evidence report
+                </button>
+                <button id="assistant-report-markdown" disabled>
+                  Download report Markdown
+                </button>
+                <button id="assistant-report-json" disabled>
+                  Download report JSON
+                </button>
+              </div>
+              <section
+                id="assistant-report"
+                aria-label="Verified evidence report"
+                aria-live="polite"
+              ></section>
               <p class="hint">
                 This session is ephemeral: download evidence before closing.
                 Limits: 16 steps and 1 MiB per plan; 256 tool calls and 32 MiB

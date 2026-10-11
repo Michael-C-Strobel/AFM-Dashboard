@@ -153,6 +153,63 @@ try {
     "recipe.json",
   );
   assert.equal(recipe.output.sha256, analyzed.recipe.output.sha256);
+
+  await page.locator("#assistant-report-create").click();
+  await page.waitForFunction(
+    () =>
+      !document.querySelector("#assistant-report-json").disabled ||
+      document.querySelector("#assistant-status").classList.contains("error"),
+  );
+  assert.equal(
+    await page.locator("#assistant-report-json").isDisabled(),
+    false,
+    await page.locator("#assistant-status").textContent(),
+  );
+  const report = await download(
+    page.locator("#assistant-report-json"),
+    "report.json",
+  );
+  assert.equal(report.claims.length, 16);
+  assert.equal(report.plan_sha256, manifest.plan_sha256);
+  assert.equal(await page.locator("#assistant-report tbody tr").count(), 16);
+  for (const claim of report.claims) {
+    assert.equal(claim.source_sha256, originalRecipe.source.sha256);
+    assert.equal(claim.channel, "0");
+    assert.equal(
+      claim.unit,
+      ["valid_count", "excluded_count"].includes(claim.metric)
+        ? "pixels"
+        : claim.metric === "area"
+          ? "(m)²"
+          : "m",
+    );
+    const target = "#artifact-" + claim.artifact_id.slice(9);
+    assert.equal(await page.locator(target).count(), 1);
+    assert.ok(
+      (await page
+        .locator('#assistant-report a[href="' + target + '"]')
+        .count()) > 0,
+    );
+  }
+  const firstLink = page.locator("#assistant-report a").first();
+  const destination = await firstLink.getAttribute("href");
+  await firstLink.click();
+  assert.equal(
+    await page.locator(destination).evaluate((node) => node.open),
+    true,
+  );
+  const markdownEvent = page.waitForEvent("download");
+  await page.locator("#assistant-report-markdown").click();
+  const markdownPath = join(scratch, "report.md");
+  await (await markdownEvent).saveAs(markdownPath);
+  const markdown = await readFile(markdownPath, "utf8");
+  assert.equal(markdown, report.markdown);
+  assert.ok(markdown.includes(destination));
+  assert.match(
+    await page.locator("#assistant-report").textContent(),
+    /not a signature or calibration certification/,
+  );
+
   const evidence = await download(
     page.locator("#assistant-download-journal"),
     "journal.json",
@@ -176,6 +233,15 @@ try {
   stale.steps[1].call.arguments.source_sha256 = "0".repeat(64);
   await page.locator("#assistant-plan").fill(JSON.stringify(stale));
   assert.equal(await page.locator("#assistant-run").isDisabled(), true);
+  assert.equal(
+    await page.locator("#assistant-report tbody tr").count(),
+    16,
+    "Draft edits preserve the explicitly labeled prior run report",
+  );
+  assert.match(
+    await page.locator("#assistant-report").textContent(),
+    new RegExp(manifest.plan_sha256),
+  );
   const beforeEdit = (await journal()).records.length;
   await page.locator("#assistant-validate").click();
   assert.equal(
@@ -189,6 +255,32 @@ try {
     page.locator("#assistant-download-run"),
     "failed.json",
   );
+  assert.equal(
+    await page.locator("#assistant-report tbody tr").count(),
+    0,
+    "Starting a run clears stale report claims",
+  );
+  assert.equal(
+    await page.locator("#assistant-report-create").isDisabled(),
+    false,
+  );
+  await page.locator("#assistant-report-create").click();
+  await page.waitForFunction(
+    () =>
+      !document.querySelector("#assistant-report-json").disabled ||
+      document.querySelector("#assistant-status").classList.contains("error"),
+  );
+  assert.equal(
+    await page.locator("#assistant-report-json").isDisabled(),
+    false,
+    await page.locator("#assistant-status").textContent(),
+  );
+  const failedReport = await download(
+    page.locator("#assistant-report-json"),
+    "failed-report.json",
+  );
+  assert.equal(failedReport.claims.length, 0);
+  assert.ok(failedReport.warnings.some((w) => w.includes("failed")));
   assert.equal(failure.status, "failed");
   assert.deepEqual(
     failure.steps.map((s) => s.status),
@@ -217,6 +309,10 @@ try {
   await page.waitForFunction(
     () => typeof globalThis.__assistantRelease === "function",
   );
+  assert.equal(
+    await page.locator("#assistant-report-create").isDisabled(),
+    true,
+  );
   assert.equal(await page.locator("#assistant-plan").isDisabled(), true);
   assert.equal(await page.locator("#assistant-refresh").isDisabled(), true);
   assert.equal(
@@ -235,6 +331,27 @@ try {
     page.locator("#assistant-download-run"),
     "canceled.json",
   );
+  assert.equal(
+    await page.locator("#assistant-report-create").isDisabled(),
+    false,
+  );
+  await page.locator("#assistant-report-create").click();
+  await page.waitForFunction(
+    () =>
+      !document.querySelector("#assistant-report-json").disabled ||
+      document.querySelector("#assistant-status").classList.contains("error"),
+  );
+  assert.equal(
+    await page.locator("#assistant-report-json").isDisabled(),
+    false,
+    await page.locator("#assistant-status").textContent(),
+  );
+  const canceledReport = await download(
+    page.locator("#assistant-report-json"),
+    "canceled-report.json",
+  );
+  assert.equal(canceledReport.claims.length, 0);
+  assert.ok(canceledReport.warnings.some((w) => w.includes("not_run")));
   assert.equal(canceled.status, "canceled");
   assert.deepEqual(
     canceled.steps.map((s) => s.status),
