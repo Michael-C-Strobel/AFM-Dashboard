@@ -9,9 +9,11 @@
       href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23164c48%22%2F%3E%3Ctext%20x%3D%2212%22%20y%3D%2244%22%20font-family%3D%22sans-serif%22%20font-size%3D%2236%22%20fill%3D%22white%22%3EA%3C%2Ftext%3E%3C%2Fsvg%3E"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./segmentation-ui.css" />
     <link rel="stylesheet" href="./assistant.css" />
     <link rel="stylesheet" href="./model-panel.css" />
     <script type="module" src="./app.js"></script>
+    <script type="module" src="./segmentation-ui.js"></script>
     <script type="module" src="./assistant.js"></script>
     <script type="module" src="./workspace.js"></script>
   </head>
@@ -275,6 +277,15 @@
               tabindex="-1"
             >
               Assistant
+            </button>
+            <button
+              id="tab-features"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-features"
+              tabindex="-1"
+            >
+              Features
             </button>
             <span class="dock-label" aria-hidden="true"
               >03 / INSPECT & EXPORT</span
@@ -586,6 +597,129 @@
                 measurement uncertainty. Acquisition candidates are not defect
                 classifications.
               </p>
+            </section>
+          </div>
+          <div
+            id="panel-features"
+            role="tabpanel"
+            aria-labelledby="tab-features"
+            tabindex="0"
+            hidden
+          >
+            <section class="features-panel" aria-labelledby="features-title">
+              <div class="features-heading">
+                <h2 id="features-title">Threshold regions</h2>
+                <span>PROCESSED SURFACE / EXPLICIT THRESHOLD</span>
+              </div>
+              <p class="hint">
+                Capture an analyzed surface, then choose a threshold in its
+                stored vertical units. Regions describe connected selected
+                pixels; they are not particle identifications.
+              </p>
+              <button id="features-capture">
+                Capture current processed analysis
+              </button>
+              <p id="features-source" class="hint">
+                No snapshot captured. Recalculate the main viewer before
+                capturing.
+              </p>
+              <p id="features-warnings" role="status"></p>
+              <div class="toolbar features-options">
+                <label
+                  >Threshold <span id="features-unit">(stored Z units)</span
+                  ><input
+                    id="features-threshold"
+                    type="number"
+                    step="any"
+                    placeholder="Required"
+                /></label>
+                <label
+                  >Direction<select id="features-direction">
+                    <option value="above">At or above (≥)</option>
+                    <option value="below">At or below (≤)</option>
+                  </select></label
+                >
+                <label
+                  >Connectivity<select id="features-connectivity">
+                    <option value="4">4 neighbors</option>
+                    <option value="8">8 neighbors</option>
+                  </select></label
+                >
+                <label
+                  >Minimum pixels<input
+                    id="features-min"
+                    type="number"
+                    min="1"
+                    max="4194304"
+                    step="1"
+                    value="1"
+                /></label>
+                <label
+                  >Boundary regions<select id="features-boundary">
+                    <option value="include">Include</option>
+                    <option value="exclude">Exclude</option>
+                  </select></label
+                >
+                <button id="features-run" disabled>
+                  Segment captured surface
+                </button>
+              </div>
+              <p id="features-status" role="status" aria-live="polite">
+                No segmentation requested.
+              </p>
+              <div class="features-preview">
+                <canvas
+                  id="features-canvas"
+                  aria-label="Captured surface and threshold region labels"
+                ></canvas>
+              </div>
+              <p id="features-legend" class="hint">
+                Grayscale: captured values. Colored pixels: connected regions.
+                Preview uses calibrated physical aspect ratio and pixel-cell
+                bounds.
+              </p>
+              <p id="features-hover" class="readout">
+                Capture a surface to inspect region pixels.
+              </p>
+              <div class="toolbar">
+                <label class="check"
+                  ><input type="checkbox" id="features-excluded" /> Show
+                  excluded regions</label
+                >
+                <button id="features-json" disabled>
+                  Download segmentation JSON
+                </button>
+                <button id="features-tsv" disabled>Download regions TSV</button>
+                <button id="features-prev" disabled>Previous regions</button
+                ><button id="features-next" disabled>Next regions</button>
+              </div>
+              <p id="features-counts" class="hint"></p>
+              <p class="hint">
+                Area is projected pixel area; width and height are bounding-box
+                extents. Excursion is max − threshold (above) or threshold − min
+                (below), in the stored vertical unit.
+              </p>
+              <div class="features-table">
+                <table>
+                  <caption>
+                    Connected region measurements
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Region</th>
+                      <th scope="col">Pixels</th>
+                      <th scope="col">Area</th>
+                      <th scope="col">Width</th>
+                      <th scope="col">Height</th>
+                      <th scope="col">Mean</th>
+                      <th scope="col">Excursion</th>
+                      <th scope="col">Edges</th>
+                      <th scope="col">Status / reasons</th>
+                    </tr>
+                  </thead>
+                  <tbody id="features-rows"></tbody>
+                </table>
+              </div>
             </section>
           </div>
         </section>
