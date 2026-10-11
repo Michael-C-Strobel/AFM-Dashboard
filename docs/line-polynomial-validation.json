@@ -1,0 +1,1762 @@
+{
+  "schema_version": 1,
+  "kind": "independent_line_polynomial_validation",
+  "generated_at": "2026-10-11T23:10:43.942Z",
+  "method": "Independent NumPy numpy.linalg.lstsq; no application imports in Python; selected-position normalized pixel coordinates; full finite-line correction",
+  "tolerance": "1e-15 + 1e-9 * maxabs(reference finite processed values)",
+  "fixture_definition": "17x13 calibrated anisotropic grid; line-dependent polynomial degree 0–3; deterministic sinusoidal noise and stepped feature; see generator code hash",
+  "environment": {
+    "node": "v20.20.2",
+    "platform": "linux",
+    "architecture": "x64",
+    "cpu": "Intel(R) Xeon(R) CPU E5-2667 v3 @ 3.20GHz",
+    "reference": {
+      "python": "3.11.15 | packaged by conda-forge | (main, Mar  5 2026, 16:45:40) [GCC 14.3.0]",
+      "executable": "python",
+      "numpy": "2.4.6",
+      "platform": "Linux-6.8.0-136-generic-x86_64-with-glibc2.35"
+    }
+  },
+  "code": [
+    {
+      "name": "web/engine.js",
+      "sha256": "54afe04aa913c5d7fa3f9bb616d0cb085d2699891953775cbf1ec683772cf5db"
+    },
+    {
+      "name": "scripts/validate-line-polynomial.mjs",
+      "sha256": "ccb461739790ca1935cebdbb97f968d29f7351bb5b5ecd09b22fc6e50dfa5051"
+    },
+    {
+      "name": "scripts/line-polynomial-reference.py",
+      "sha256": "19dceb243990bba77bb3717e27d9af56e504490edcdbfa38414c23155d2a7598"
+    }
+  ],
+  "request_sha256": "23a292b036f7b366caf99f3a65285b98183085fd62375e6d5108e3863b3b848e",
+  "summary": {
+    "cases": 30,
+    "passed": 24,
+    "rejected": 6
+  },
+  "limitations": [
+    "Synthetic numerical agreement only; no instrument calibration or scientific background-choice validation.",
+    "Independent reference uses the same documented selection semantics and normalization basis but a different least-squares implementation.",
+    "Fixed absolute tolerance may dominate nearly zero residuals.",
+    "No ill-conditioned large-offset stress or performance certification."
+  ],
+  "results": [
+    {
+      "id": "rows-0-polynomial",
+      "parameters": {
+        "axis": "rows",
+        "degree": 0
+      },
+      "scenario": "polynomial",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "43f45f29d8e1ebc8e62439c9ec5dbd6b6114fc31d925c518d0e72dc396f5396f",
+      "source_after_sha256": "43f45f29d8e1ebc8e62439c9ec5dbd6b6114fc31d925c518d0e72dc396f5396f",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 6.617444900424222e-24,
+      "max_absolute_error": 6.617444900424222e-24,
+      "tolerance": 1e-15,
+      "selected_counts": [
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "skipped_lines": [],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-0-feature_roi_exclusion",
+      "parameters": {
+        "axis": "rows",
+        "degree": 0
+      },
+      "scenario": "feature_roi_exclusion",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.0000024,
+          -0.0000023,
+          0.0000084,
+          0.000005399999999999999
+        ],
+        "exclude_polygons": [
+          [
+            [
+              0.0000044,
+              -0.000003
+            ],
+            [
+              0.0000056,
+              -0.000003
+            ],
+            [
+              0.0000056,
+              0.000006099999999999999
+            ],
+            [
+              0.0000044,
+              0.000006099999999999999
+            ]
+          ]
+        ]
+      },
+      "source_sha256": "7af74843375c2c4820cdc5813888b74762f97527b3b38abcf157088fa8a2977c",
+      "source_after_sha256": "7af74843375c2c4820cdc5813888b74762f97527b3b38abcf157088fa8a2977c",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 2.2629778677985593e-8,
+      "max_absolute_error": 4.963083675318166e-24,
+      "tolerance": 1.0226297786779857e-15,
+      "selected_counts": [
+        0,
+        12,
+        11,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        0
+      ],
+      "skipped_lines": [
+        0,
+        12
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-0-nonfinite_empty_line",
+      "parameters": {
+        "axis": "rows",
+        "degree": 0
+      },
+      "scenario": "nonfinite_empty_line",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "718819ac24a50d17173f7ccc54d09f3ecd9e92e8667ed5a5035f72f9590227a9",
+      "source_after_sha256": "718819ac24a50d17173f7ccc54d09f3ecd9e92e8667ed5a5035f72f9590227a9",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 218,
+      "nonfinite_count": 3,
+      "max_abs_reference": 2.08234465992482e-8,
+      "max_absolute_error": 9.512577044359818e-24,
+      "tolerance": 1.0208234465992483e-15,
+      "selected_counts": [
+        16,
+        16,
+        16,
+        16,
+        17,
+        17,
+        0,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "skipped_lines": [
+        6
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-1-polynomial",
+      "parameters": {
+        "axis": "rows",
+        "degree": 1
+      },
+      "scenario": "polynomial",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "a50de13dfef296ae38d19bc343ec0c48b5d5a88a1cbb00b6e8e0a4d097652376",
+      "source_after_sha256": "a50de13dfef296ae38d19bc343ec0c48b5d5a88a1cbb00b6e8e0a4d097652376",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 1.3234889800848443e-23,
+      "max_absolute_error": 1.2407709188295415e-23,
+      "tolerance": 1e-15,
+      "selected_counts": [
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "skipped_lines": [],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-1-feature_roi_exclusion",
+      "parameters": {
+        "axis": "rows",
+        "degree": 1
+      },
+      "scenario": "feature_roi_exclusion",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.0000024,
+          -0.0000023,
+          0.0000084,
+          0.000005399999999999999
+        ],
+        "exclude_polygons": [
+          [
+            [
+              0.0000044,
+              -0.000003
+            ],
+            [
+              0.0000056,
+              -0.000003
+            ],
+            [
+              0.0000056,
+              0.000006099999999999999
+            ],
+            [
+              0.0000044,
+              0.000006099999999999999
+            ]
+          ]
+        ]
+      },
+      "source_sha256": "4ec15acd75984749e6c213f804c3ba054cc851f03b235d33cee4b95002227496",
+      "source_after_sha256": "4ec15acd75984749e6c213f804c3ba054cc851f03b235d33cee4b95002227496",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 2.3119674234539026e-8,
+      "max_absolute_error": 1.0546552810051103e-23,
+      "tolerance": 1.023119674234539e-15,
+      "selected_counts": [
+        0,
+        12,
+        11,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        0
+      ],
+      "skipped_lines": [
+        0,
+        12
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-1-nonfinite_empty_line",
+      "parameters": {
+        "axis": "rows",
+        "degree": 1
+      },
+      "scenario": "nonfinite_empty_line",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "eada9f41000728f7fd1f9d5c40b61de8ffbfb16877653b46b316201937283f88",
+      "source_after_sha256": "eada9f41000728f7fd1f9d5c40b61de8ffbfb16877653b46b316201937283f88",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 218,
+      "nonfinite_count": 3,
+      "max_abs_reference": 2.129334895011903e-8,
+      "max_absolute_error": 2.3161057151484775e-23,
+      "tolerance": 1.021293348950119e-15,
+      "selected_counts": [
+        16,
+        16,
+        16,
+        16,
+        17,
+        17,
+        0,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "skipped_lines": [
+        6
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-1-underdetermined",
+      "parameters": {
+        "axis": "rows",
+        "degree": 1
+      },
+      "scenario": "underdetermined",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.000002,
+          -0.000003,
+          0.0000024,
+          0.000006099999999999999
+        ],
+        "exclude_polygons": []
+      },
+      "source_sha256": "94097a02e5aa4c6094e3df66de8a88093f7f8a9dda702ddc431a758c94891fb8",
+      "source_after_sha256": "94097a02e5aa4c6094e3df66de8a88093f7f8a9dda702ddc431a758c94891fb8",
+      "source_unchanged": true,
+      "status": "rejected",
+      "engine_reason": "rows line 0: Too few selected pixels for line polynomial degree 1.",
+      "reference_reason": "Underdetermined line"
+    },
+    {
+      "id": "rows-2-polynomial",
+      "parameters": {
+        "axis": "rows",
+        "degree": 2
+      },
+      "scenario": "polynomial",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "ecda0bd026fb6daf9837542a5f2add170b924cdc5c65302590b53a4928e2c24a",
+      "source_after_sha256": "ecda0bd026fb6daf9837542a5f2add170b924cdc5c65302590b53a4928e2c24a",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 1.3234889800848443e-23,
+      "max_absolute_error": 1.1580528575742387e-23,
+      "tolerance": 1e-15,
+      "selected_counts": [
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "skipped_lines": [],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-2-feature_roi_exclusion",
+      "parameters": {
+        "axis": "rows",
+        "degree": 2
+      },
+      "scenario": "feature_roi_exclusion",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.0000024,
+          -0.0000023,
+          0.0000084,
+          0.000005399999999999999
+        ],
+        "exclude_polygons": [
+          [
+            [
+              0.0000044,
+              -0.000003
+            ],
+            [
+              0.0000056,
+              -0.000003
+            ],
+            [
+              0.0000056,
+              0.000006099999999999999
+            ],
+            [
+              0.0000044,
+              0.000006099999999999999
+            ]
+          ]
+        ]
+      },
+      "source_sha256": "7bf1cf55dae6625069de56a6c9e7a9b642ca1f1dd021b5f0c69dd35fe2f4dcac",
+      "source_after_sha256": "7bf1cf55dae6625069de56a6c9e7a9b642ca1f1dd021b5f0c69dd35fe2f4dcac",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 2.3579859470226448e-8,
+      "max_absolute_error": 2.2333876538931747e-23,
+      "tolerance": 1.0235798594702264e-15,
+      "selected_counts": [
+        0,
+        12,
+        11,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        0
+      ],
+      "skipped_lines": [
+        0,
+        12
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-2-nonfinite_empty_line",
+      "parameters": {
+        "axis": "rows",
+        "degree": 2
+      },
+      "scenario": "nonfinite_empty_line",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "723c5944d449d9c80ebdfb10a4dab9eb461a8ebb18cd4574cd0fa0ed202ed738",
+      "source_after_sha256": "723c5944d449d9c80ebdfb10a4dab9eb461a8ebb18cd4574cd0fa0ed202ed738",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 218,
+      "nonfinite_count": 3,
+      "max_abs_reference": 2.1806041831207583e-8,
+      "max_absolute_error": 2.150669592637872e-23,
+      "tolerance": 1.0218060418312077e-15,
+      "selected_counts": [
+        16,
+        16,
+        16,
+        16,
+        17,
+        17,
+        0,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "skipped_lines": [
+        6
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-2-underdetermined",
+      "parameters": {
+        "axis": "rows",
+        "degree": 2
+      },
+      "scenario": "underdetermined",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.000002,
+          -0.000003,
+          0.0000028,
+          0.000006099999999999999
+        ],
+        "exclude_polygons": []
+      },
+      "source_sha256": "0346232e3c9f801fb78f79b0a26ef77ad06d528969d34bf0555c7e1154cdbe45",
+      "source_after_sha256": "0346232e3c9f801fb78f79b0a26ef77ad06d528969d34bf0555c7e1154cdbe45",
+      "source_unchanged": true,
+      "status": "rejected",
+      "engine_reason": "rows line 0: Too few selected pixels for line polynomial degree 2.",
+      "reference_reason": "Underdetermined line"
+    },
+    {
+      "id": "rows-3-polynomial",
+      "parameters": {
+        "axis": "rows",
+        "degree": 3
+      },
+      "scenario": "polynomial",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "7c75a41c54819d2098c5aafd4370ec30fedd523df4683ae4a5d6ac6eaa2419b5",
+      "source_after_sha256": "7c75a41c54819d2098c5aafd4370ec30fedd523df4683ae4a5d6ac6eaa2419b5",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 2.6469779601696886e-23,
+      "max_absolute_error": 3.143286327701505e-23,
+      "tolerance": 1e-15,
+      "selected_counts": [
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "skipped_lines": [],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-3-feature_roi_exclusion",
+      "parameters": {
+        "axis": "rows",
+        "degree": 3
+      },
+      "scenario": "feature_roi_exclusion",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.0000024,
+          -0.0000023,
+          0.0000084,
+          0.000005399999999999999
+        ],
+        "exclude_polygons": [
+          [
+            [
+              0.0000044,
+              -0.000003
+            ],
+            [
+              0.0000056,
+              -0.000003
+            ],
+            [
+              0.0000056,
+              0.000006099999999999999
+            ],
+            [
+              0.0000044,
+              0.000006099999999999999
+            ]
+          ]
+        ]
+      },
+      "source_sha256": "39f1e40366fe2c1b46a658dfba5f48e673cb1cbfabda2634d57f7518045988b4",
+      "source_after_sha256": "39f1e40366fe2c1b46a658dfba5f48e673cb1cbfabda2634d57f7518045988b4",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 2.7570408602300895e-8,
+      "max_absolute_error": 2.6469779601696886e-23,
+      "tolerance": 1.027570408602301e-15,
+      "selected_counts": [
+        0,
+        12,
+        11,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        0
+      ],
+      "skipped_lines": [
+        0,
+        12
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-3-nonfinite_empty_line",
+      "parameters": {
+        "axis": "rows",
+        "degree": 3
+      },
+      "scenario": "nonfinite_empty_line",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "869dba00dd7b897650514fb45f8c4237a6d4e22ff2ac4f0ed345b5b9c55e44ac",
+      "source_after_sha256": "869dba00dd7b897650514fb45f8c4237a6d4e22ff2ac4f0ed345b5b9c55e44ac",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 218,
+      "nonfinite_count": 3,
+      "max_abs_reference": 2.5778537531995907e-8,
+      "max_absolute_error": 2.0679515313825692e-23,
+      "tolerance": 1.025778537531996e-15,
+      "selected_counts": [
+        16,
+        16,
+        16,
+        16,
+        17,
+        17,
+        0,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17
+      ],
+      "skipped_lines": [
+        6
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "rows-3-underdetermined",
+      "parameters": {
+        "axis": "rows",
+        "degree": 3
+      },
+      "scenario": "underdetermined",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.000002,
+          -0.000003,
+          0.0000032,
+          0.000006099999999999999
+        ],
+        "exclude_polygons": []
+      },
+      "source_sha256": "21c47ff35c921d6e71480e63ca6dc20a1b0dbc527a73bede12c457cb2ae6e23f",
+      "source_after_sha256": "21c47ff35c921d6e71480e63ca6dc20a1b0dbc527a73bede12c457cb2ae6e23f",
+      "source_unchanged": true,
+      "status": "rejected",
+      "engine_reason": "rows line 0: Too few selected pixels for line polynomial degree 3.",
+      "reference_reason": "Underdetermined line"
+    },
+    {
+      "id": "columns-0-polynomial",
+      "parameters": {
+        "axis": "columns",
+        "degree": 0
+      },
+      "scenario": "polynomial",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "ca65636ee21961d915e9aac3b84e69f2f4e32fc6ae14d7bc41d7a290b12f25b8",
+      "source_after_sha256": "ca65636ee21961d915e9aac3b84e69f2f4e32fc6ae14d7bc41d7a290b12f25b8",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 1.3234889800848443e-23,
+      "max_absolute_error": 1.3234889800848443e-23,
+      "tolerance": 1e-15,
+      "selected_counts": [
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13
+      ],
+      "skipped_lines": [],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-0-feature_roi_exclusion",
+      "parameters": {
+        "axis": "columns",
+        "degree": 0
+      },
+      "scenario": "feature_roi_exclusion",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.0000024,
+          -0.0000023,
+          0.0000084,
+          0.000005399999999999999
+        ],
+        "exclude_polygons": [
+          [
+            [
+              0.000002,
+              0.0000011999999999999995
+            ],
+            [
+              0.000008799999999999999,
+              0.0000011999999999999995
+            ],
+            [
+              0.000008799999999999999,
+              0.0000032999999999999997
+            ],
+            [
+              0.000002,
+              0.0000032999999999999997
+            ]
+          ]
+        ]
+      },
+      "source_sha256": "1ad9652d47a0302b329e8218915e80da119205a3a5eb1d028d4287ad8eaff320",
+      "source_after_sha256": "1ad9652d47a0302b329e8218915e80da119205a3a5eb1d028d4287ad8eaff320",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 2.382997435965557e-8,
+      "max_absolute_error": 8.271806125530277e-24,
+      "tolerance": 1.0238299743596557e-15,
+      "selected_counts": [
+        0,
+        8,
+        7,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        0
+      ],
+      "skipped_lines": [
+        0,
+        16
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-0-nonfinite_empty_line",
+      "parameters": {
+        "axis": "columns",
+        "degree": 0
+      },
+      "scenario": "nonfinite_empty_line",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "7193a6fa59e7ef6c130388a906f3a48cefa2b69903c63ca36847ed1da6968b09",
+      "source_after_sha256": "7193a6fa59e7ef6c130388a906f3a48cefa2b69903c63ca36847ed1da6968b09",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 218,
+      "nonfinite_count": 3,
+      "max_abs_reference": 2.1423446599248198e-8,
+      "max_absolute_error": 1.3855275260263214e-23,
+      "tolerance": 1.0214234465992484e-15,
+      "selected_counts": [
+        12,
+        12,
+        12,
+        12,
+        13,
+        13,
+        13,
+        13,
+        0,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13
+      ],
+      "skipped_lines": [
+        8
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-1-polynomial",
+      "parameters": {
+        "axis": "columns",
+        "degree": 1
+      },
+      "scenario": "polynomial",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "7e7adf1c7f621aabe644be4a77fdd6181210c59d4fc115141766c5ab6aac2c56",
+      "source_after_sha256": "7e7adf1c7f621aabe644be4a77fdd6181210c59d4fc115141766c5ab6aac2c56",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 1.6543612251060553e-23,
+      "max_absolute_error": 1.8404768629304866e-23,
+      "tolerance": 1e-15,
+      "selected_counts": [
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13
+      ],
+      "skipped_lines": [],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-1-feature_roi_exclusion",
+      "parameters": {
+        "axis": "columns",
+        "degree": 1
+      },
+      "scenario": "feature_roi_exclusion",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.0000024,
+          -0.0000023,
+          0.0000084,
+          0.000005399999999999999
+        ],
+        "exclude_polygons": [
+          [
+            [
+              0.000002,
+              0.0000011999999999999995
+            ],
+            [
+              0.000008799999999999999,
+              0.0000011999999999999995
+            ],
+            [
+              0.000008799999999999999,
+              0.0000032999999999999997
+            ],
+            [
+              0.000002,
+              0.0000032999999999999997
+            ]
+          ]
+        ]
+      },
+      "source_sha256": "08258371d3d69265831dbd5d76d154cc3d8b90979e89667c97e8b9ec7b6ce4b4",
+      "source_after_sha256": "08258371d3d69265831dbd5d76d154cc3d8b90979e89667c97e8b9ec7b6ce4b4",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 2.377039434397196e-8,
+      "max_absolute_error": 1.1787323728880644e-23,
+      "tolerance": 1.023770394343972e-15,
+      "selected_counts": [
+        0,
+        8,
+        7,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        0
+      ],
+      "skipped_lines": [
+        0,
+        16
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-1-nonfinite_empty_line",
+      "parameters": {
+        "axis": "columns",
+        "degree": 1
+      },
+      "scenario": "nonfinite_empty_line",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "a4def46b7f256bd20cb808de125c48e02060dfba554c813423b4b0811240d607",
+      "source_after_sha256": "a4def46b7f256bd20cb808de125c48e02060dfba554c813423b4b0811240d607",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 218,
+      "nonfinite_count": 3,
+      "max_abs_reference": 2.139691999269611e-8,
+      "max_absolute_error": 1.6336817097922297e-23,
+      "tolerance": 1.0213969199926963e-15,
+      "selected_counts": [
+        12,
+        12,
+        12,
+        12,
+        13,
+        13,
+        13,
+        13,
+        0,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13
+      ],
+      "skipped_lines": [
+        8
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-1-underdetermined",
+      "parameters": {
+        "axis": "columns",
+        "degree": 1
+      },
+      "scenario": "underdetermined",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.000002,
+          -0.000003,
+          0.000008799999999999999,
+          -0.0000023
+        ],
+        "exclude_polygons": []
+      },
+      "source_sha256": "4f798118262ea0e6114ca38c7c1ad8bbca83f6b67fd807e318b27064cc601d42",
+      "source_after_sha256": "4f798118262ea0e6114ca38c7c1ad8bbca83f6b67fd807e318b27064cc601d42",
+      "source_unchanged": true,
+      "status": "rejected",
+      "engine_reason": "columns line 0: Too few selected pixels for line polynomial degree 1.",
+      "reference_reason": "Underdetermined line"
+    },
+    {
+      "id": "columns-2-polynomial",
+      "parameters": {
+        "axis": "columns",
+        "degree": 2
+      },
+      "scenario": "polynomial",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "386a1f8054cae4f2487274e3be8c6f66c32c4bc1d385261d77eb3e9ec3af4e76",
+      "source_after_sha256": "386a1f8054cae4f2487274e3be8c6f66c32c4bc1d385261d77eb3e9ec3af4e76",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 2.6469779601696886e-23,
+      "max_absolute_error": 2.895132143935597e-23,
+      "tolerance": 1e-15,
+      "selected_counts": [
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13
+      ],
+      "skipped_lines": [],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-2-feature_roi_exclusion",
+      "parameters": {
+        "axis": "columns",
+        "degree": 2
+      },
+      "scenario": "feature_roi_exclusion",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.0000024,
+          -0.0000023,
+          0.0000084,
+          0.000005399999999999999
+        ],
+        "exclude_polygons": [
+          [
+            [
+              0.000002,
+              0.0000011999999999999995
+            ],
+            [
+              0.000008799999999999999,
+              0.0000011999999999999995
+            ],
+            [
+              0.000008799999999999999,
+              0.0000032999999999999997
+            ],
+            [
+              0.000002,
+              0.0000032999999999999997
+            ]
+          ]
+        ]
+      },
+      "source_sha256": "a2c9e4b4d9cb670266738084bfe29d1cabaeb9c30c57dd4e2a4365138d8ec949",
+      "source_after_sha256": "a2c9e4b4d9cb670266738084bfe29d1cabaeb9c30c57dd4e2a4365138d8ec949",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 2.4770153279084894e-8,
+      "max_absolute_error": 1.1580528575742387e-23,
+      "tolerance": 1.024770153279085e-15,
+      "selected_counts": [
+        0,
+        8,
+        7,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        0
+      ],
+      "skipped_lines": [
+        0,
+        16
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-2-nonfinite_empty_line",
+      "parameters": {
+        "axis": "columns",
+        "degree": 2
+      },
+      "scenario": "nonfinite_empty_line",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "5a8a63ed7777dd0cefee6c92bfc1fa3026b95e7b37c72e230bb1143dd485d5a1",
+      "source_after_sha256": "5a8a63ed7777dd0cefee6c92bfc1fa3026b95e7b37c72e230bb1143dd485d5a1",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 218,
+      "nonfinite_count": 3,
+      "max_abs_reference": 2.2395100937907567e-8,
+      "max_absolute_error": 4.1152235474513127e-23,
+      "tolerance": 1.0223951009379076e-15,
+      "selected_counts": [
+        12,
+        12,
+        12,
+        12,
+        13,
+        13,
+        13,
+        13,
+        0,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13
+      ],
+      "skipped_lines": [
+        8
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-2-underdetermined",
+      "parameters": {
+        "axis": "columns",
+        "degree": 2
+      },
+      "scenario": "underdetermined",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.000002,
+          -0.000003,
+          0.000008799999999999999,
+          -0.0000016000000000000001
+        ],
+        "exclude_polygons": []
+      },
+      "source_sha256": "9b140c7de599f947d41b1fa380c8b5843f4b0dd64833a1b63d21ee0a876d46f4",
+      "source_after_sha256": "9b140c7de599f947d41b1fa380c8b5843f4b0dd64833a1b63d21ee0a876d46f4",
+      "source_unchanged": true,
+      "status": "rejected",
+      "engine_reason": "columns line 0: Too few selected pixels for line polynomial degree 2.",
+      "reference_reason": "Underdetermined line"
+    },
+    {
+      "id": "columns-3-polynomial",
+      "parameters": {
+        "axis": "columns",
+        "degree": 3
+      },
+      "scenario": "polynomial",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "66dbca195b192b96be7bba33de5ab0dd18140ac2537c9234ae7e6bcf1bc55527",
+      "source_after_sha256": "66dbca195b192b96be7bba33de5ab0dd18140ac2537c9234ae7e6bcf1bc55527",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 3.639594695233322e-23,
+      "max_absolute_error": 3.639594695233322e-23,
+      "tolerance": 1e-15,
+      "selected_counts": [
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13
+      ],
+      "skipped_lines": [],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-3-feature_roi_exclusion",
+      "parameters": {
+        "axis": "columns",
+        "degree": 3
+      },
+      "scenario": "feature_roi_exclusion",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.0000024,
+          -0.0000023,
+          0.0000084,
+          0.000005399999999999999
+        ],
+        "exclude_polygons": [
+          [
+            [
+              0.000002,
+              0.0000011999999999999995
+            ],
+            [
+              0.000008799999999999999,
+              0.0000011999999999999995
+            ],
+            [
+              0.000008799999999999999,
+              0.0000032999999999999997
+            ],
+            [
+              0.000002,
+              0.0000032999999999999997
+            ]
+          ]
+        ]
+      },
+      "source_sha256": "fabf95bc1118873ce1688aa4627ad02a4e631336521ded294ca6569ada80e92e",
+      "source_after_sha256": "fabf95bc1118873ce1688aa4627ad02a4e631336521ded294ca6569ada80e92e",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 221,
+      "nonfinite_count": 0,
+      "max_abs_reference": 2.8781325153171832e-8,
+      "max_absolute_error": 3.143286327701505e-23,
+      "tolerance": 1.0287813251531718e-15,
+      "selected_counts": [
+        0,
+        8,
+        7,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        0
+      ],
+      "skipped_lines": [
+        0,
+        16
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-3-nonfinite_empty_line",
+      "parameters": {
+        "axis": "columns",
+        "degree": 3
+      },
+      "scenario": "nonfinite_empty_line",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": null,
+        "exclude_polygons": []
+      },
+      "source_sha256": "f7fe3d8f442574af0be8e59cc0d536dd635dd0aa803f9100857c56db5f2939c0",
+      "source_after_sha256": "f7fe3d8f442574af0be8e59cc0d536dd635dd0aa803f9100857c56db5f2939c0",
+      "source_unchanged": true,
+      "status": "passed",
+      "finite_count": 218,
+      "nonfinite_count": 3,
+      "max_abs_reference": 2.6372447770159985e-8,
+      "max_absolute_error": 4.7976475528075605e-23,
+      "tolerance": 1.0263724477701601e-15,
+      "selected_counts": [
+        12,
+        12,
+        12,
+        12,
+        13,
+        13,
+        13,
+        13,
+        0,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13
+      ],
+      "skipped_lines": [
+        8
+      ],
+      "mask_exact": true,
+      "nonfinite_exact": true
+    },
+    {
+      "id": "columns-3-underdetermined",
+      "parameters": {
+        "axis": "columns",
+        "degree": 3
+      },
+      "scenario": "underdetermined",
+      "geometry": {
+        "shape": [
+          13,
+          17
+        ],
+        "xreal": 0.000006799999999999999,
+        "yreal": 0.0000091,
+        "xoff": 0.000002,
+        "yoff": -0.000003,
+        "xy_unit": "m",
+        "z_unit": "m"
+      },
+      "selection": {
+        "roi": [
+          0.000002,
+          -0.000003,
+          0.000008799999999999999,
+          -9.000000000000003e-7
+        ],
+        "exclude_polygons": []
+      },
+      "source_sha256": "e5fa1c58615f0ed7abc7827e8f0e496fddd7cc4392cc3fbaf47fbf0515d8a8c1",
+      "source_after_sha256": "e5fa1c58615f0ed7abc7827e8f0e496fddd7cc4392cc3fbaf47fbf0515d8a8c1",
+      "source_unchanged": true,
+      "status": "rejected",
+      "engine_reason": "columns line 0: Too few selected pixels for line polynomial degree 3.",
+      "reference_reason": "Underdetermined line"
+    }
+  ]
+}
