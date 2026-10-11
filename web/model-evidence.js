@@ -62,7 +62,11 @@ export async function createModelEvidence(bundle, sources) {
         s.channel === source.channel,
     );
   const addWarning = (text) => {
-    if (report.warnings.includes(text)) warnings.add(text);
+    if (!report.warnings.includes(text))
+      throw new Error(
+        "Selected warning is absent from the verified evidence report.",
+      );
+    warnings.add(text);
   };
   for (const id of input.step_ids) {
     const step = input.manifest.steps.find((s) => s.id === id),
