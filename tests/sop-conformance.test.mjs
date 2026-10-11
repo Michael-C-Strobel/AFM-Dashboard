@@ -383,3 +383,213 @@ test("zero supplied runs accepts prior verified journal but rejects invalid empt
   ])
     await assert.rejects(checkSopConformance({ ...input, journal: invalid }));
 });
+
+// These arrays are generated mathematics. Fixed pair names/hashes below exercise
+// structural tuple gates ONLY; they do not assert provenance of these fixture bytes.
+async function syntheticChemist({
+  geometryEvidence = true,
+  reverse = false,
+  radius = 1,
+  provenance = "Synthetic test-only points; no real measurement approval.",
+  mismatchedGeometry = false,
+} = {}) {
+  const rawTuple = {
+    file: "sample-input.gwy",
+    source_sha256:
+      "ea0287a8afbed275d2d780f31508f89bd937796ab357f5a7d9389152e27abaab",
+    channel: "0",
+  };
+  const refTuple = {
+    file: "sample-reference.gwy",
+    source_sha256:
+      "4e72274c8ec3077857c5ab943c04efeb541c2e23c7fa07f2b8b996d2ee288dec",
+    channel: "0",
+  };
+  const channel = {
+    id: "0",
+    title: "Synthetic structural fixture",
+    width: 4,
+    height: 4,
+    xreal: 4e-6,
+    yreal: 4e-6,
+    xoff: 0,
+    yoff: 0,
+    xy_unit: "m",
+    z_unit: "m",
+    data: Float64Array.from(
+      { length: 16 },
+      (_, i) => ((i % 4) + 2 * Math.floor(i / 4) + (i % 4 >= 2 ? 1 : 0)) * 1e-9,
+    ),
+    mask: null,
+    metadata: {},
+    warnings: [
+      "Synthetic arrays; fixed tuple labels do not establish byte provenance.",
+    ],
+    log: [],
+    selections: {},
+  };
+  const raw = {
+    sha256: rawTuple.source_sha256,
+    channels: { 0: channel },
+    warnings: [],
+    unsupported: [],
+  };
+  const ref = {
+    sha256: refTuple.source_sha256,
+    channels: { 0: { ...channel, data: new Float64Array(16) } },
+    warnings: [],
+    unsupported: [],
+  };
+  let operations = [
+    {
+      name: "three_point",
+      params: {
+        points: [
+          [0.5e-6, 0.5e-6],
+          [3.5e-6, 0.5e-6],
+          [0.5e-6, 3.5e-6],
+        ],
+        radius,
+      },
+    },
+    { name: "zero_min" },
+  ];
+  if (reverse) operations.reverse();
+  let session;
+  session = createToolSession({
+    invoke: async (name, a) => {
+      let result;
+      if (name === "replay_recipe")
+        result = await replay(
+          session.artifact(a.recipe_artifact).content.result.recipe,
+          raw,
+          ref,
+          engine,
+        );
+      else
+        result = await analyze(
+          {
+            ...a,
+            reference: a.reference
+              ? { file: a.reference.file, channel: a.reference.channel }
+              : null,
+          },
+          a.file === rawTuple.file ? raw : ref,
+          a.reference ? ref : null,
+          engine,
+        );
+      return Object.fromEntries(
+        [
+          "recipe",
+          "channel",
+          "statistics",
+          "history",
+          "quality",
+          "step",
+          "profile",
+          "comparison",
+          "warnings",
+          "replay_verified",
+        ].map((k) => [k, result[k] ?? null]),
+      );
+    },
+  });
+  const step = (id, name, args) => ({ id, call: { name, arguments: args } });
+  const plan = {
+    schema_version: 1,
+    title: "Explicit synthetic structural reference SOP test",
+    steps: [
+      step("baseline", "analyze_surface", { ...rawTuple, operations: [] }),
+      ...(geometryEvidence
+        ? [
+            step("reference_geometry", "analyze_surface", {
+              ...refTuple,
+              operations: [],
+            }),
+          ]
+        : []),
+      step("processed", "analyze_surface", {
+        ...rawTuple,
+        operations,
+        reference: refTuple,
+      }),
+      step("replay", "replay_recipe", {
+        file: rawTuple.file,
+        source_sha256: rawTuple.source_sha256,
+        recipe_artifact: "$step:processed",
+      }),
+    ],
+  };
+  const manifest = await runPlan(plan, { execute: session.execute });
+  assert.equal(manifest.status, "complete");
+  const sources = [rawTuple, refTuple];
+  if (mismatchedGeometry)
+    sources[1] = {
+      ...refTuple,
+      geometry: {
+        shape: [4, 4],
+        xreal: 8e-6,
+        yreal: 4e-6,
+        xoff: 0,
+        yoff: 0,
+        xy_unit: "m",
+        z_unit: "m",
+      },
+    };
+  return {
+    record: createSopRecord("chemist-reference", {
+      approved_settings: {
+        source: rawTuple,
+        operations,
+        selection: {},
+        reference: refTuple,
+        justification:
+          "Synthetic structural test only, not an approval of real fit points.",
+        fit_point_provenance: provenance,
+      },
+    }),
+    runs: [manifest],
+    journal: session.journal(),
+    sources,
+  };
+}
+test("explicit synthetic chemist structural fixture completes records with linked reference geometry and review outstanding", async () => {
+  const input = await syntheticChemist(),
+    report = await checkSopConformance(input);
+  assert.equal(report.status, "records_complete");
+  const reference = report.checks.find((c) => c.id === "reference");
+  assert.equal(reference.status, "met");
+  assert.deepEqual(
+    reference.artifacts,
+    ["processed", "reference_geometry"].map(
+      (id) => input.runs[0].steps.find((s) => s.id === id).result.artifact.id,
+    ),
+  );
+  assert.ok(
+    report.review_required.some((s) => s.includes("reference discrepancies")),
+  );
+  assert.ok(
+    report.review_required.some((s) => s.includes("approval authenticity")),
+  );
+  assert.ok(
+    report.warnings.some((s) => s.includes("do not establish byte provenance")),
+  );
+});
+test("synthetic reference structural gates reject missing geometry, changed sequence/radius/provenance and conflicting geometry", async () => {
+  for (const options of [
+    { geometryEvidence: false },
+    { reverse: true },
+    { radius: 2 },
+    { provenance: "" },
+    { provenance: "   " },
+    { mismatchedGeometry: true },
+  ]) {
+    const report = await checkSopConformance(await syntheticChemist(options));
+    assert.equal(report.status, "incomplete", JSON.stringify(options));
+    assert.notEqual(
+      report.checks.find((c) => c.id === "reference").status,
+      "met",
+    );
+  }
+  await assert.rejects(syntheticChemist({ provenance: 7 }));
+});

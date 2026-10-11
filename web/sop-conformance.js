@@ -403,7 +403,7 @@ export async function checkSopConformance(raw) {
       "reference",
       valid ? "met" : !referenceEvidence ? "missing" : "mismatch",
       "The fixed raw/worked pair requires documented fit points, radius-1 three-point then zero-min processing and finite comparison records; no discrepancy threshold is imposed.",
-      valid ? [processed] : [],
+      valid ? [processed, referenceEvidence] : [],
     );
   }
   check(
