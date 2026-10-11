@@ -223,7 +223,7 @@ test("failed envelopes and thrown errors fail fast preserving valid returned evi
         if (throws) throw new Error("bad import");
         return {
           record: { status: "failed", error: "bad calibration" },
-          artifact: { id, kind: "failure" },
+          artifact: null,
         };
       },
     });
@@ -234,7 +234,10 @@ test("failed envelopes and thrown errors fail fast preserving valid returned evi
       ["failed", "not_run"],
     );
     assert.match(result.steps[0].error, /bad/);
-    if (!throws) assert.equal(result.steps[0].result.artifact.id, id);
+    if (!throws) {
+      assert.equal(result.steps[0].result.artifact, null);
+      assert.equal(result.steps[0].result.record.error, "bad calibration");
+    }
   }
 });
 
@@ -248,16 +251,26 @@ test("malformed envelopes and absent prerequisite artifacts fail without executi
     assert.equal(result.status, "failed");
     assert.equal(result.steps[1].status, "not_run");
   }
-  let count = 0;
-  const result = await runPlan(plan(), {
-    execute: async () => {
-      count++;
-      return { record: { status: "succeeded" }, artifact: null };
-    },
-  });
-  assert.equal(count, 1);
-  assert.equal(result.steps[1].status, "failed");
-  assert.match(result.steps[1].error, /did not produce/);
+  for (const value of [
+    { record: { status: "succeeded" }, artifact: null },
+    { record: { status: "failed", error: "failure" }, artifact: { id } },
+  ]) {
+    let count = 0;
+    const result = await runPlan(plan(), {
+      execute: async () => {
+        count++;
+        return value;
+      },
+    });
+    assert.equal(count, 1);
+    assert.equal(result.status, "failed");
+    assert.deepEqual(
+      result.steps.map((s) => s.status),
+      ["failed", "not_run"],
+    );
+    assert.match(result.steps[0].error, /inconsistent/);
+    assert.equal(result.steps[0].result, undefined);
+  }
 });
 
 test("callback rejection aborts without continuing execution", async () => {

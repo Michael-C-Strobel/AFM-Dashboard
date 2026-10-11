@@ -170,6 +170,11 @@ function envelope(raw) {
       !ARTIFACT.test(result.artifact.id))
   )
     throw new Error("Malformed tool artifact identifier.");
+  if (
+    (result.record.status === "succeeded" && result.artifact === null) ||
+    (result.record.status === "failed" && result.artifact !== null)
+  )
+    throw new Error("Tool execution status and artifact are inconsistent.");
   return result;
 }
 const message = (error) => {
