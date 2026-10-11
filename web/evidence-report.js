@@ -220,11 +220,8 @@ function analysisClaims(step, artifact, warnings) {
   }));
 }
 
-export async function createEvidenceReport({ manifest, journal }) {
-  // Validate before cloning so getters, cycles, nonfinite numbers and exotic objects cannot be silently coerced.
-  canonical(manifest);
+export async function verifyEvidenceJournal(journal) {
   canonical(journal);
-  manifest = structuredClone(manifest);
   journal = structuredClone(journal);
   requireValue(
     journal.schema_version === 1 &&
@@ -262,6 +259,16 @@ export async function createEvidenceReport({ manifest, journal }) {
     previous = hash;
   }
   requireValue(journal.head_sha256 === previous, "Journal head mismatch");
+  return journal.head_sha256;
+}
+
+export async function createEvidenceReport({ manifest, journal }) {
+  // Validate before cloning so getters, cycles, nonfinite numbers and exotic objects cannot be silently coerced.
+  canonical(manifest);
+  canonical(journal);
+  manifest = structuredClone(manifest);
+  journal = structuredClone(journal);
+  await verifyEvidenceJournal(journal);
   requireValue(
     manifest.schema_version === 1 &&
       ["running", "complete", "failed", "canceled"].includes(manifest.status),
