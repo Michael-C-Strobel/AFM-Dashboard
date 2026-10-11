@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { sopPrompt } from "../web/workflow-sops.js";
 import { createPreviewFixture } from "../scripts/preview-fixture.mjs";
 const playwright = await import(process.env.PLAYWRIGHT_MODULE || "playwright");
 const browserEngine = process.env.PLAYWRIGHT_BROWSER || "chromium";
@@ -59,12 +60,58 @@ try {
       };
     else {
       round++;
-      if (mode === "auto" && round === 3)
+      if (
+        (mode === "auto" && round === 3) ||
+        (mode === "sop-complete" && round === 2)
+      )
         response = {
           kind: "evidence",
           claim_ids: [payload.evidenceContext.claims[0].claim_id],
         };
-      else {
+      else if (mode === "sop-complete") {
+        const source = payload.sourceContexts[0];
+        const identity = {
+          file: source.file,
+          source_sha256: source.source_sha256,
+          channel: source.channel,
+        };
+        const selection = { roi: null, exclude_polygons: [] };
+        const step = (id, name, args) => ({
+          id,
+          rationale:
+            "Retain original values without leveling as explicitly approved for this synthetic SOP record check.",
+          call: { name, arguments: args },
+        });
+        response = {
+          kind: "plan",
+          plan: {
+            schema_version: 1,
+            title: "Complete pilot SOP records",
+            steps: [
+              step("baseline", "analyze_surface", {
+                ...identity,
+                operations: [],
+                selection,
+              }),
+              step("processed", "analyze_surface", {
+                ...identity,
+                operations: [],
+                selection,
+              }),
+              step("quality", "check_quality", {
+                ...identity,
+                selection,
+                boundary_sigma: 6,
+              }),
+              step("replay", "replay_recipe", {
+                file: source.file,
+                source_sha256: source.source_sha256,
+                recipe_artifact: "$step:processed",
+              }),
+            ],
+          },
+        };
+      } else {
         const source = payload.sourceContexts[0];
         response = {
           kind: "plan",
@@ -295,6 +342,99 @@ try {
   );
   assert.match(bounded.goal.goal, /without leveling/);
   assert.equal((await journal()).records.length, beforeAuto + 3);
+  const deviations =
+    "Use the original values without leveling for this pilot test.";
+  assert.deepEqual(bounded.goal.sop, {
+    id: "height-roughness",
+    version: "0.1.0",
+    guidance: sopPrompt("height-roughness"),
+    approved_settings: null,
+    deviations,
+  });
+  async function checkSop(name) {
+    const beforeRequests = requests.length,
+      beforeCalls = (await journal()).records.length;
+    await page.locator("#autonomous-sop-check").click();
+    await page.waitForFunction(() =>
+      document
+        .querySelector("#autonomous-sop-report")
+        .textContent.trim()
+        .startsWith("{"),
+    );
+    const report = JSON.parse(
+      await page.locator("#autonomous-sop-report").textContent(),
+    );
+    const exported = await download("#autonomous-download", name);
+    assert.deepEqual(exported.sop_conformance, report);
+    assert.equal(report.journal_head_sha256, exported.journal.head_sha256);
+    assert.deepEqual(
+      report.plan_sha256,
+      exported.goal.rounds
+        .filter((r) => r.manifest)
+        .map((r) => r.manifest.plan_sha256),
+    );
+    assert.ok(report.plan_sha256.every((hash) => /^[0-9a-f]{64}$/.test(hash)));
+    assert.equal(
+      requests.length,
+      beforeRequests,
+      "SOP check sends no provider request",
+    );
+    assert.equal(
+      (await journal()).records.length,
+      beforeCalls,
+      "SOP check executes no tool",
+    );
+    return { report, exported };
+  }
+  const incomplete = await checkSop("sop-incomplete.json");
+  assert.equal(incomplete.report.status, "incomplete");
+  for (const id of ["processed", "quality", "replay", "approved_settings"])
+    assert.equal(
+      incomplete.report.checks.find((c) => c.id === id)?.status,
+      "missing",
+      id,
+    );
+  await page
+    .getByText("Expected SOP settings (optional)", { exact: true })
+    .click();
+  await page.locator("#autonomous-sop-template").click();
+  const settings = JSON.parse(
+    await page.locator("#autonomous-sop-settings").inputValue(),
+  );
+  assert.deepEqual(settings.selection, { roi: null, exclude_polygons: [] });
+  assert.equal(settings.justification, "");
+  const invalidRequests = requests.length,
+    invalidCalls = (await journal()).records.length;
+  await page.locator("#autonomous-start").click();
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#autonomous-status")
+      .textContent.includes("No goal started"),
+  );
+  assert.equal(requests.length, invalidRequests);
+  assert.equal((await journal()).records.length, invalidCalls);
+  settings.justification =
+    "Original values without leveling are explicitly approved to exercise reproducible pilot records on this synthetic surface.";
+  await page.locator("#autonomous-sop-settings").fill(JSON.stringify(settings));
+  await page.locator("#autonomous-rounds").fill("2");
+  mode = "sop-complete";
+  round = 0;
+  await page.locator("#autonomous-start").click();
+  await page.waitForFunction(
+    () =>
+      document.querySelector("#autonomous-status").textContent ===
+      "Goal evidence_returned",
+  );
+  const complete = await checkSop("sop-complete.json");
+  assert.equal(complete.report.status, "records_complete");
+  assert.ok(complete.report.review_required.length);
+  assert.ok(complete.report.checks.every((c) => c.status === "met"));
+  assert.deepEqual(complete.exported.goal.sop, {
+    ...bounded.goal.sop,
+    approved_settings: settings,
+  });
+  assert.equal(complete.exported.goal.calls, 4);
+  assert.equal((await journal()).records.length, beforeAuto + 7);
 
   mode = "pending";
   const beforeCancel = requests.length;
@@ -321,7 +461,7 @@ try {
   const stopped = await download("#autonomous-download", "stopped.json");
   assert.equal(stopped.goal.calls, 0);
   assert.equal(stopped.goal.status, "stopped");
-  assert.equal((await journal()).records.length, beforeAuto + 3);
+  assert.equal((await journal()).records.length, beforeAuto + 7);
   await pendingRoute.abort().catch(() => {});
   pendingRoute = null;
   await page.setViewportSize({ width: 390, height: 844 });
@@ -337,7 +477,7 @@ try {
       scratch,
       browserEngine,
       providerRequests: requests.length,
-      automaticCalls: 3,
+      automaticCalls: 7,
       helpToolCalls: 0,
     }),
   );
