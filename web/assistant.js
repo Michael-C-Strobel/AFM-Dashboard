@@ -11,7 +11,9 @@ let busy = false,
   manifest = null,
   cancel = false,
   evidence = null,
-  evidenceRun = null;
+  evidenceRun = null,
+  verifiedEvidenceBundle = null,
+  evidenceRevision = 0;
 const controls = [
   "refresh",
   "source",
@@ -392,6 +394,8 @@ $("run").onclick = async () => {
   manifest = null;
   evidence = null;
   evidenceRun = null;
+  verifiedEvidenceBundle = null;
+  evidenceRevision++;
   renderEvidence();
   sync();
   try {
@@ -552,10 +556,10 @@ $("report-create").onclick = async () => {
     "Verifying plan, journal, artifact identities, and numeric provenance…",
   );
   try {
-    evidence = await createEvidenceReport({
-      manifest: snapshot,
-      journal: await api("/api/tool-journal"),
-    });
+    const journal = await api("/api/tool-journal");
+    evidence = await createEvidenceReport({ manifest: snapshot, journal });
+    verifiedEvidenceBundle = structuredClone({ manifest: snapshot, journal });
+    evidenceRevision++;
     evidenceRun = { title: snapshot.plan.title, status: snapshot.status };
     renderEvidence();
     status(
@@ -566,6 +570,8 @@ $("report-create").onclick = async () => {
   } catch (error) {
     evidence = null;
     evidenceRun = null;
+    verifiedEvidenceBundle = null;
+    evidenceRevision++;
     renderEvidence();
     status("Evidence verification failed: " + error.message, true);
   } finally {
@@ -619,6 +625,41 @@ modelPanel = mountModelPanel({
         ]),
       ],
     };
+  },
+  getEvidenceOptions: () => {
+    if (!evidence || !verifiedEvidenceBundle) return null;
+    return {
+      run_id:
+        evidenceRevision +
+        ":" +
+        evidence.plan_sha256 +
+        ":" +
+        evidence.journal_head_sha256,
+      steps: [...new Set(evidence.claims.map((claim) => claim.step_id))].map(
+        (id) => {
+          const claims = evidence.claims.filter(
+            (claim) => claim.step_id === id,
+          );
+          const step = verifiedEvidenceBundle.manifest.steps.find(
+            (item) => item.id === id,
+          );
+          const recipe = step?.result?.artifact?.content?.result?.recipe;
+          return {
+            id,
+            label: id,
+            claims_count: claims.length,
+            file: recipe?.source.file ?? "",
+            channel: claims[0].channel,
+            source_sha256: claims[0].source_sha256,
+          };
+        },
+      ),
+    };
+  },
+  getEvidenceBundle: async (step_ids) => {
+    if (!verifiedEvidenceBundle)
+      throw new Error("Verify the current run evidence before selecting it.");
+    return structuredClone({ ...verifiedEvidenceBundle, step_ids });
   },
   acceptPlan: (plan) => {
     $("plan").value = JSON.stringify(plan, null, 2);

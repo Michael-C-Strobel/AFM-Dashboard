@@ -40,3 +40,42 @@
   border-color: #244bcd;
   color: white;
 }
+.model-context {
+  margin: 12px 0;
+  padding: 10px;
+  border: 1px solid #aabbd2;
+}
+.model-context h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #294fa5;
+}
+#model-sources {
+  padding-left: 18px;
+}
+#model-sources p,
+#model-source-fallback {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
+#model-evidence {
+  min-width: 0;
+  border: 1px solid #aabbd2;
+  margin-top: 10px;
+}
+#model-evidence label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+#model-evidence input {
+  width: auto;
+  flex: 0 0 auto;
+}
+#model-conversation a {
+  overflow-wrap: anywhere;
+}
