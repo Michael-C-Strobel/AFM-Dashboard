@@ -23,8 +23,36 @@ export function modelOrigin(value = "") {
     );
   return url.origin;
 }
+export function modelOrigins(value = "") {
+  if (typeof value !== "string")
+    throw new Error(
+      "AFM_MODEL_ORIGINS must be a comma-separated list of exact origins.",
+    );
+  if (!value.trim()) return [];
+  return [
+    ...new Set(
+      value.split(",").map((entry) => {
+        if (!entry.trim())
+          throw new Error("AFM_MODEL_ORIGINS contains an empty origin.");
+        return modelOrigin(entry.trim());
+      }),
+    ),
+  ];
+}
 export function contentSecurityPolicy(origin = null) {
-  const allowed = origin === null ? "" : " " + modelOrigin(origin);
+  const origins = Array.isArray(origin)
+    ? origin.map((entry) => {
+        if (typeof entry !== "string" || !entry.trim())
+          throw new Error(
+            "Provider origins must be nonempty exact origin strings.",
+          );
+        return modelOrigin(entry);
+      })
+    : origin === null || origin === ""
+      ? []
+      : [modelOrigin(origin)];
+  const unique = [...new Set(origins)];
+  const allowed = unique.length ? " " + unique.join(" ") : "";
   return (
     "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self'; connect-src 'self'" +
     allowed +

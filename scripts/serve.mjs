@@ -1,4 +1,8 @@
-import { modelOrigin, contentSecurityPolicy } from "./server-policy.mjs";
+import {
+  modelOrigin,
+  modelOrigins,
+  contentSecurityPolicy,
+} from "./server-policy.mjs";
 import { createServer } from "node:http";
 import { watch } from "node:fs";
 import { readFile, stat, realpath } from "node:fs/promises";
@@ -7,8 +11,14 @@ import { resolve, extname, sep } from "node:path";
 const root = fileURLToPath(new URL("../", import.meta.url)),
   port = Number(process.env.PORT ?? 4173),
   host = "127.0.0.1";
-const providerOrigin = modelOrigin(process.env.AFM_MODEL_ORIGIN);
-const policy = contentSecurityPolicy(providerOrigin);
+const providerOrigins = [
+  ...new Set([
+    ...modelOrigins(process.env.AFM_MODEL_ORIGINS),
+    ...[modelOrigin(process.env.AFM_MODEL_ORIGIN)].filter(Boolean),
+  ]),
+];
+const providerOrigin = providerOrigins[0] ?? null;
+const policy = contentSecurityPolicy(providerOrigins);
 const liveReload = process.env.AFM_LIVE_RELOAD === "1";
 const subscribers = new Set();
 let revision = Date.now(),
@@ -63,7 +73,10 @@ const server = createServer(async (req, res) => {
       res.end(
         req.method === "HEAD"
           ? undefined
-          : JSON.stringify({ model_origin: providerOrigin }),
+          : JSON.stringify({
+              model_origins: providerOrigins,
+              model_origin: providerOrigin,
+            }),
       );
       return;
     }
