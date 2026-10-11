@@ -33,6 +33,19 @@ node scripts/segment.mjs --recipe artifacts/automatic/recipe.json \
 
 The threshold above is a command example, not a recommended threshold for this sample. See [measurement definitions and limits](docs/segmentation.md) and [reproducible segmentation exports](docs/segmentation-workflows.md).
 
+## Measure spatial texture
+
+In **Texture**, capture the processed analysis, choose detrending (`none`, `mean`, `plane`) and a PSD window (`boxcar`, periodic `hann`), then measure. Inspect calibrated two-sided PSD, linear autocorrelation and X/Y cuts. Display normalization and log colors do not change the evidence. Plots show labeled bin means; the TAR download retains full-resolution little-endian float64 arrays, axes, hashes and the captured recipe.
+
+```sh
+node scripts/texture.mjs --recipe artifacts/automatic/recipe.json \
+  --input data/sample-input.gwy \
+  --reference data/sample-reference.gwy \
+  --out artifacts/spatial-texture --detrend mean --window hann
+```
+
+The selected domain must be a complete rectangle without internal missing/masked pixels. Zero-energy surfaces have no normalized ACF. Finite scan area and leveling affect estimates; no fitted correlation length is claimed. See [definitions and limits](docs/texture.md) and [exports and measured resource costs](docs/texture-workflows.md).
+
 ## Reviewed analysis plans
 
 Open **Assistant**, refresh loaded sources, then choose a starter or expand **Ask for a plan**. Local starters require no model. Review the arguments, validate the plan, and select **Run reviewed plan**. Completed steps expose recipes and artifacts; **Verify evidence report** produces linked numeric claims and Markdown/JSON exports, including partial results after a failure or cancellation.

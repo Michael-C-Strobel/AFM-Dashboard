@@ -1,6 +1,6 @@
-# Spatial texture measurement contract (implementation in progress)
+# Spatial texture measurement contract
 
-This contract defines the next M04 implementation; it does not advertise an already available tool. Existing image processing and recipe identities remain unchanged. Texture measurements will consume a captured recipe through strict replay and record their own code identity.
+This contract defines the M04 numerical implementation. Existing image processing and recipe identities remain unchanged. Texture measurements consume a captured recipe through strict replay and record their own code identity. See [core definitions](texture.md) and [reproducible exports](texture-workflows.md).
 
 ## Sampling and supported domain
 

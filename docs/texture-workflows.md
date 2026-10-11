@@ -24,3 +24,19 @@ Each JSON overview has at most 256 bins per axis; directional cuts have at most 
 `report_sha256` hashes UTF-8 `JSON.stringify(report)` before the hash property is appended, preserving property order. Raster hashes cover exact exported bytes. Code identity records individual file hashes and the hash of UTF-8 source texts joined with one newline in this order: `fft.js`, `texture.js`, `texture-service.js`, `engine.js`. There is no new timestamp; the original recipe timestamp is retained. Import warnings remain visible. Integrity checks are not signatures or calibration certification.
 
 The browser-compatible `textureRecipe(request, source, reference, engineIdentity, codeIdentity)` returns `{report, rasters}`; `textureBundle(result)` produces a deterministic TAR. The caller supplies code identity from its executing source files. Full arrays remain outside JSON. Verify with `node --test tests/texture-service.test.mjs`.
+
+## Measured resource budget
+
+Run `node --expose-gc scripts/benchmark-texture.mjs 512` for a reproducible synthetic measurement; supported benchmark sizes are 128, 512, 1024 and the rejection case 1025. Output is JSON with code hashes, timing, memory snapshots and the Parseval discrepancy. The benchmark uses calibrated sinusoidal samples plus deterministic noise, mean detrending and periodic Hann. It includes strict recipe replay, numerical computation, hashing and overview generation, but excludes file decoding and browser rendering.
+
+Single fresh-process observations on Node v20.20.2, Xeon E5-2667 v3 (24 logical CPUs), Linux:
+
+| Source shape | Texture + evidence | JSON / TAR generation | Peak process RSS | Compact report / TAR |
+| ------------ | -----------------: | --------------------: | ---------------: | -------------------: |
+| 128²         |             347 ms |            31 / 57 ms |          109 MiB |       4.33 / 7.82 MB |
+| 512²         |           1,668 ms |            30 / 74 ms |          241 MiB |      4.51 / 31.79 MB |
+| 1024²        |           6,613 ms |           32 / 140 ms |          466 MiB |     4.73 / 107.76 MB |
+
+These are observations, not browser guarantees. The 512² and 1024² code identity was `aa0c5272fea613d0476435913466e9c6e044354713df5a6c6bbe09bfa4b5db64`; the 128² run preceded added estimator-description fields and warnings (`457882096ee276a389c11eb76dda208e638a7937d77b962814c9c52b7804f7f5`), with unchanged formulas. Relative Parseval discrepancies were below `1e-13`. A 1025² square requires 4096² padded cells and rejects the 4,194,304-cell budget before spectral allocation. Rectangular inputs are limited by their actual padded product.
+
+Retain this allocation gate. Large exports temporarily retain full numerical arrays and archive copies; source-byte import limits do not bound analysis memory. JavaScript remains the implementation for this bounded workload; larger domains or lower latency need separate measurements and a revised memory strategy before considering a Rust backend.

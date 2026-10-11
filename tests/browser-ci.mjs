@@ -283,6 +283,24 @@ try {
   assert.equal(segmented.report.counts.accepted_pixels, 3);
   near(segmented.report.regions[0].area, 3e-12);
   assert.deepEqual(segmented.labels, [0, 0, 0, 1, 1, 1]);
+  await page.locator("#tab-texture").click();
+  await page.locator("#texture-capture").click();
+  await page.locator("#texture-run").click();
+  await page.waitForFunction(
+    () =>
+      !document.querySelector("#texture-json").disabled ||
+      document.querySelector("#texture-status.error"),
+  );
+  assert.equal(
+    await page.locator("#texture-status.error").count(),
+    0,
+    await page.locator("#texture-status").textContent(),
+  );
+  const texture = (await download("#texture-json", "texture.json")).value;
+  assert.equal(texture.input_recipe.output.sha256, restored.output.sha256);
+  assert.equal(texture.kind, "spatial_texture");
+  near(texture.psd.integral, texture.psd.expected_mean_square, 1e-30);
+  assert.equal(texture.acf.overview.width, 5);
   await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(
     await page.evaluate(
@@ -294,6 +312,11 @@ try {
   await page.keyboard.press("ArrowRight");
   assert.equal(
     await page.locator("#tab-features").getAttribute("aria-selected"),
+    "true",
+  );
+  await page.keyboard.press("ArrowRight");
+  assert.equal(
+    await page.locator("#tab-texture").getAttribute("aria-selected"),
     "true",
   );
   await page.keyboard.press("ArrowRight");
@@ -323,6 +346,7 @@ try {
           "recipe download/upload/replay",
           "Assistant strict replay",
           "captured processed segmentation",
+          "captured processed spatial texture",
           "keyboard tabs",
           "mobile overflow",
         ],
