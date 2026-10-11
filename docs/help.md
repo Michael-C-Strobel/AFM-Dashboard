@@ -1,32 +1,52 @@
 # Using the AFM workspace
 
-**Start with Import local files**, then choose a source and channel. Read **Import support**, warnings and channel metadata before measuring. Supported formats are image subsets, not blanket instrument compatibility. Check the [supported-input matrix](supported-inputs.md); unknown units remain unknown.
+Open **Documentation** in the main toolbar for the [in-app guide](../web/help.html) and complete pilot SOPs without a model connection. This repository guide follows the same workspace controls.
 
-## View and measure
+## General
 
-Select an **Operation**, then **Add operation & apply**. Review History, use **Undo**, or **Reset pipeline**. Processing preserves original measurements. Robust leveling is a starting point requiring scientific review; the chemist preset is available only for its identified source/channel.
+Start with **Import local files**, then select a source and channel. Read **Import support**, warnings and channel metadata before measuring. The [supported-input matrix](supported-inputs.md) describes specific image subsets, not blanket instrument compatibility. Check lateral and vertical units; unknown units remain unknown, and an electrical channel is not a height measurement.
 
-Use **Selection tool** for an ROI, profile or exclusion polygon. In **Measurements**, **Enter exact selection coordinates** provides a keyboard alternative in source base units. Recalculate after edits. To measure a step, save one ROI as **plateau A**, then another as **plateau B**. Plateaus are independent of the global ROI; exclusions still apply. Pixel spreads are not confidence intervals.
+Processing preserves original measurements. Choose an **Operation**, then **Add operation & apply**; review History, **Undo**, or **Reset pipeline**. Select an ROI, line profile or exclusion polygon with **Selection tool**. In **Measurements**, **Enter exact selection coordinates** provides a keyboard alternative in source base units. Use **Recalculate** after selection edits. Imported masks and nonfinite pixels are excluded from measurements.
 
-Inspection tabs support Left/Right and Home/End keys. **Expand inspection** opens a larger modal; Escape returns to the viewer. On narrow screens, **Data & processing** reveals source and pipeline controls.
+Use Left/Right and Home/End to navigate inspection tabs. **Expand inspection** opens a larger modal; Escape returns to the viewer. On narrow screens, **Data & processing** reveals source and pipeline controls.
 
-## Choose an analysis
+**Save recipe** retains the legacy format; **Save portable recipe** verifies a captured analysis and adds reorder-safe checksums. **Load recipe** accepts either format and requires the matching inputs and code for strict replay. **Export analysis TAR** contains results and provenance, not the original measurement bytes. Keep the raw files separately and download work before reloading: imports and unfinished work are session-only. See [recipe guidance](recipe-interchange.md).
 
-- **Acquisition quality:** run the check on the original channel and inspect [diagnostic candidates](quality.md). Candidates are not identified defects.
-- **Batch:** capture a completed recipe, refresh the file list, select inputs, check compatibility and start. Each input gets a new recipe; [download records before reload](browser-batch.md).
-- **Features:** capture processed analysis, review threshold/unit/connectivity rules, then segment. Inspect [accepted and excluded regions](segmentation-workflows.md).
-- **Texture:** capture, choose detrending/window and measure a complete valid rectangle. [Numerical TAR exports](texture-workflows.md) retain full arrays beyond the displayed bin means.
-- **Registration:** capture fixed and moving surfaces, choose an explicit translation/search and review [overlap, ties and residuals](registration-workflows.md). No deformation is inferred.
-- **Sensitivity:** capture a baseline, review alternative processing/selections and run. Inspect failures and changed pixel populations; [alternative spread is not calibration uncertainty](sensitivity-workflows.md).
+## Agents and automation
 
-## Save evidence and review automation
+Configure the shared connection under **Ask for a plan** in **Assistant**: choose a [provider preset or custom endpoint](provider-compatibility.md), enter an explicit model ID and, when required, a session-only API key. The host must permit the provider origin and the provider must permit browser CORS. Presets do not certify a live connection; credentials are excluded from audit downloads.
 
-**Save recipe** retains legacy format. **Save portable recipe** verifies a captured analysis and adds reorder-safe checksums. **Load recipe** accepts either format up to 1 MiB; replay requires exact inputs and matching code. [Portable recipe guidance](recipe-interchange.md) explains migration. **Export analysis TAR** includes results and provenance, not original measurement bytes.
+- **Help agent** answers interface questions and links to guide topics and controls. It can work without a measurement and cannot execute analysis. Its requests contain your question and curated help, not measurement data. [Help details](help-agent.md).
+- **Reviewed planning:** refresh/inspect sources, explicitly select permitted channels, and optionally select verified compact evidence. Review a proposed plan's exact arguments, validate, then explicitly run. Proposals do not execute automatically. Plans operate independently of the viewer pipeline. [Planning and context](model-provider.md).
+- **Autonomous analysis:** enter a goal and scientific constraints, select channels and round/tool limits, then **Start goal** to authorize iterative local execution within those bounds. **Pause** waits after a running tool; **Resume** continues; **Stop** cancels a provider request and prevents later calls. A running numerical operation finishes and stays recorded. [Autonomous controls and limits](autonomous-agent.md).
 
-In **Assistant**, refresh sources, choose a starter, inspect arguments, validate and explicitly run. Plans operate independently of the viewer pipeline. [Verify evidence](evidence-reports.md) and download the plan, journal and artifacts. Optional [model planning](model-provider.md) sends selected metadata and only opted-in compact evidence; it never executes proposals automatically. Recorded model-selected claims are not new scientific inference.
+Optional [pilot SOPs](workflow-sops.md) guide a goal. Read the chosen version and supply required choices and deviations; these are retained in the goal audit. SOP selection is not a scientific conformance certificate. Download goal/help/conversation audits, plan runs, the tool journal and result artifacts before reload or replacement. [Verified evidence reports](evidence-reports.md) retain source and artifact identities; model-selected evidence is not a new measurement or proof that a goal is scientifically achieved.
 
-Imports and unfinished work are session-only. Download evidence before reloading. Compatibility warnings, descriptive statistics and successful replay do not certify calibration or interpretation.
+## Common workflows
 
-## Deterministic help context
+### Relative feature or step height
 
-`web/help-knowledge.js` exposes curated topic IDs, titles, instructions and existing interface targets. `helpContext({tab})` accepts an exact DOM tab ID (for example `tab-texture`), prioritizes relevant topics and returns detached plain JSON below 32 KiB. Unknown tab values become null. It reads no DOM content or measurements. `resolveHelpTopics(ids)` accepts 1–8 unique known IDs and returns detached topics; no provider or execution behavior is included.
+1. Select a calibrated height channel and inspect the feature. If leveling is needed, justify and record it first; retain an original-values baseline.
+2. Draw a line profile across the reference surface and feature, then **Recalculate**. Use the profile to inspect shape and choose representative flat regions; a peak in the profile is not the two-plateau measurement.
+3. Draw a rectangular ROI on the reference surface. Select **Use current ROI as plateau A**.
+4. Draw a non-overlapping ROI on the feature's plateau. Select **Use current ROI as plateau B**, then **Recalculate**.
+5. Read **Two-plateau step height**: **mean B minus mean A**, in the stored vertical unit. Review both means, standard deviations and valid pixel counts. Plateau rectangles are independent of the global ROI; imported masks, nonfinite values and exclusion polygons still apply. Within-region spread is not measurement uncertainty. Save the recipe and results.
+
+For connected regions rather than two plateaus, open **Features**, capture processed analysis and review an explicit threshold before segmentation. Its excursion is relative to that threshold, not automatically relative to the surrounding substrate. Region area is projected pixel area; labels do not establish particle or defect identity. See [feature workflow](segmentation-workflows.md) and [measurement definitions](segmentation.md).
+
+### Roughness with original and processed results
+
+1. Select the source/channel and record units, masks and analysis selection. Measure original values and save that baseline.
+2. Choose appropriate leveling explicitly; review its parameters and apply it. Keep the selection comparable, or record why it changed.
+3. Review processed Sa/Sq, range, selected area and valid/excluded counts. Sa/Sq are relative to the selected mean; processing and selection can change them.
+4. Use **Check acquisition** for diagnostics on the original channel. Review candidates in context rather than treating them as defects. Save both analyses and strictly replay the processed recipe. The [roughness pilot SOP](workflow-sops.md) and [quality guide](quality.md) describe these checks.
+
+### Spatial texture: PSD and autocorrelation
+
+1. Finish processing and **Recalculate**. Choose a valid rectangular domain at least 2 × 2 pixels; internal masked/nonfinite pixels or polygon holes cause rejection rather than silent filling.
+2. In **Texture**, select **Capture processed analysis**. This retains the completed recipe and selection; later viewer edits do not change the capture. Recapture to use another surface.
+3. Choose **Detrend** (None, Subtract mean, or Subtract plane) and **PSD window** (Boxcar or Periodic Hann), then **Measure captured texture**. These preprocessing choices are additional to the captured pipeline and are recorded.
+4. Inspect PSD frequency axes, ACF lag axes, directional cuts, units, warnings, PSD integral versus expected mean square, and zero-lag ACF. Display bins/cuts average recorded bins; the log option changes only the PSD display. Normalized ACF is unavailable for zero-energy data. Edge lags have fewer overlapping pairs; leveling and finite image area affect interpretation.
+5. Download texture JSON for the report and **Download full numerical TAR** for full arrays and replay provenance. Changing texture settings requires another measurement. See [texture exports](texture-workflows.md) and [estimator definitions](texture.md); no automatic correlation-length or material identification is claimed.
+
+For other tasks, follow [batch processing](browser-batch.md), [translation registration](registration-workflows.md), or [analysis sensitivity](sensitivity-workflows.md). Sensitivity alternatives describe dependence on processing choices, not independent samples or confidence intervals.
