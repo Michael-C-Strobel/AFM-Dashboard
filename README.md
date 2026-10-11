@@ -86,7 +86,7 @@ Optional model planning requires the provider origin configured above plus its f
 3. Compare original and processed images. Choose a reference file and channel, then enable comparison to inspect the chemist’s output, another compatible loaded measurement, or the residual map. Independent color scales are the default; enable shared scales for a common numerical mapping.
 4. Draw an ROI, exclusion polygon, or line profile, then recalculate. Exact-coordinate inputs provide a keyboard alternative. Coordinates and display limits use stored units, usually metres; labels use readable SI prefixes.
 5. Save two separate ROIs as plateaus A and B to measure their mean-height difference and descriptive spreads. Plateau measurements use their own regions, independently of the global statistics ROI.
-6. Save a recipe or export the analysis TAR. Replay the recipe with the same input files and application version.
+6. Save a recipe or export the analysis TAR. **Save portable recipe** adds verified canonical checksums that survive JSON object-key reordering; **Load recipe** accepts both formats. Replay requires the same input files and application version. See [portable recipe migration and verification](docs/recipe-interchange.md).
 
 An analysis ROI controls fitting and statistics. If it excludes a recorded three-point leveling point, that operation is rejected. Gaussian filtering excludes masked/nonfinite pixels and drawn exclusion polygons; the ROI does not truncate its kernel. Source arrays are never edited.
 

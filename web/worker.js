@@ -226,6 +226,31 @@ async function dispatch(type, payload) {
     };
   }
   if (type === "registry") return operationRegistry();
+  if (type === "replay" || type === "recipe-document") {
+    if (
+      type === "recipe-document" &&
+      (!payload ||
+        Object.keys(payload).length !== 1 ||
+        !Object.hasOwn(payload, "recipe"))
+    )
+      throw new Error("Portable recipe export requires exactly recipe.");
+    const { decodeRecipeInput, migrateRecipe, replayRecipeInput } =
+      await import("./recipe-interchange.js");
+    const { recipe } = await decodeRecipeInput(payload.recipe);
+    const source = get(payload.file ?? recipe.source?.file);
+    const reference = recipe.reference ? get(recipe.reference.file) : null;
+    const engine = await identityFor(source.format);
+    return type === "recipe-document"
+      ? migrateRecipe(recipe, source, reference, engine)
+      : replayRecipeInput(
+          payload.recipe,
+          source,
+          reference,
+          engine,
+          payload.file ?? null,
+        );
+  }
+
   if (type === "sensitivity" || type === "sensitivity-export") {
     const {
       sensitivityReport,
@@ -344,7 +369,7 @@ async function dispatch(type, payload) {
   }
 
   const source = get(
-    ["replay", "segment", "texture", "texture-export"].includes(type)
+    ["segment", "texture", "texture-export"].includes(type)
       ? (payload.file ?? payload.recipe?.source?.file)
       : payload.file,
   );
@@ -512,16 +537,6 @@ async function dispatch(type, payload) {
       return value;
     });
     return output;
-  }
-  if (type === "replay") {
-    const recipe = payload.recipe;
-    return replay(
-      recipe,
-      get(payload.file ?? recipe.source?.file),
-      recipe.reference ? get(recipe.reference.file) : null,
-      engine,
-      payload.file,
-    );
   }
   const result = await analyze(
     payload,

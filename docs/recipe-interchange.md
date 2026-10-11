@@ -2,6 +2,12 @@
 
 Portable v2 documents wrap a complete legacy numerical recipe with canonical recipe/document SHA-256 checksums. They preserve timestamps, runtime, geometry, operation order, selections and all other values. Object keys may be reordered recursively without changing the checksums; arrays remain ordered. This format provides integrity checks, not author authentication or calibration certification.
 
+## Browser save and load
+
+After analysis, choose **Save portable recipe** to strictly replay the captured result and download `afm-recipe-v2.json`. **Save recipe** continues to export schema 1. **Load recipe** accepts either format and restores the verified operations, selection, profile, plateau bounds and reference. Dirty or loading analyses cannot be exported. Uploaded recipe files are limited to 1 MiB. Portable export retains its captured analysis if the viewer changes while verification runs.
+
+Portable documents are supported at browser recipe loading and CLI recipe-input boundaries. Internal analysis/derived-tool API requests and saved reports continue to use schema-1 recipes. This version does not migrate historical report, plan or journal hashes, or provide cross-engine numerical compatibility.
+
 ## Migrate and verify
 
 ```sh

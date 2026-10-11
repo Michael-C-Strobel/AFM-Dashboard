@@ -179,10 +179,24 @@ export async function apiFetch(path, options = {}) {
       if (body.recipe?.reference) await ensure(body.recipe.reference.file);
       return Response.json(await call("segment", body));
     }
-    if (route === "/api/replay") {
-      await ensure(body.file ?? body.recipe?.source?.file);
-      if (body.recipe.reference) await ensure(body.recipe.reference.file);
-      return await surfaceResponse("replay", body);
+    if (route === "/api/replay" || route === "/api/recipe-document") {
+      if (
+        route === "/api/recipe-document" &&
+        (options.method?.toUpperCase() !== "POST" ||
+          !body ||
+          Object.keys(body).length !== 1 ||
+          !Object.hasOwn(body, "recipe"))
+      )
+        throw new Error(
+          "Portable recipe export requires POST with exactly recipe.",
+        );
+      const { decodeRecipeInput } = await import("./recipe-interchange.js");
+      const { recipe } = await decodeRecipeInput(body.recipe);
+      await ensure(body.file ?? recipe.source?.file);
+      if (recipe.reference) await ensure(recipe.reference.file);
+      return route === "/api/replay"
+        ? await surfaceResponse("replay", body)
+        : Response.json(await call("recipe-document", body));
     }
     if (!["/api/analyze", "/api/export"].includes(route))
       throw new Error("Unknown local analysis route.");

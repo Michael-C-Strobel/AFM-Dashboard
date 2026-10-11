@@ -234,6 +234,31 @@ try {
     restored.output.measurement_sha256,
     processed.output.measurement_sha256,
   );
+  const portableDownload = await download(
+    "#download-portable",
+    "portable.json",
+  );
+  assert.equal(portableDownload.value.schema_version, 2);
+  assert.equal(
+    portableDownload.value.recipe.output.sha256,
+    processed.output.sha256,
+  );
+  const portableReplay = await replay(portableDownload.value);
+  assert.equal(portableReplay.replay_verified, true);
+  assert.equal(
+    portableReplay.interchange.document_sha256,
+    portableDownload.value.document_sha256,
+  );
+  await page.locator("#upload").setInputFiles(portableDownload.path);
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#status")
+      .textContent.includes("Recipe replay complete"),
+  );
+  const portableRestored = (
+    await download("#download", "portable-restored.json")
+  ).value;
+  assert.deepEqual(portableRestored, portableDownload.value.recipe);
   await page.locator("#tab-batch").focus();
   await page.keyboard.press("ArrowRight");
   assert.equal(
@@ -439,6 +464,7 @@ try {
           "calibrated statistics",
           "operation",
           "recipe download/upload/replay",
+          "portable recipe save/upload/strict replay",
           "Assistant strict replay",
           "captured processed segmentation",
           "captured processed spatial texture",
