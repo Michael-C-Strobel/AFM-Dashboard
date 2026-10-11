@@ -7,8 +7,9 @@ import {
   AUTOMATIC_PRESET,
   CHEMIST_PRESET,
 } from "../web/service.js";
-import { geometry, sha256 } from "../web/engine.js";
+import { sha256 } from "../web/engine.js";
 import { loadSource, engineIdentity, saveResult, sourcePath } from "./io.mjs";
+import { makeBatchRequest } from "../web/batch.js";
 const usage = `AFM Dashboard — headless local analysis
 
 node scripts/afm.mjs analyze INPUT.gwy --preset automatic|chemist|none --channel 0 --out artifacts/run [--reference TARGET.gwy]
@@ -130,6 +131,10 @@ try {
       throw new Error(
         "Batch template uses a different engine. Regenerate it first.",
       );
+    if (recipe.reference != null)
+      throw new Error(
+        "Batch templates must not contain a reference comparison. Disable comparison and save a new template.",
+      );
     await mkdir(opts.out, { recursive: true });
     const checkpoint = resolve(opts.out, "batch.json");
     let previous = {};
@@ -150,16 +155,11 @@ try {
       records.push(record);
       try {
         const source = await loadSource(input),
-          channel = source.channels[String(recipe.source.channel)];
-        if (
-          identityFor(source) !== recipe.engine.sha256 ||
-          !channel ||
-          channel.title !== recipe.source.title ||
-          JSON.stringify(geometry(channel)) !==
-            JSON.stringify(recipe.source.geometry)
-        )
-          throw new Error(
-            "Channel geometry/units differ from template. Review selections and create a compatible recipe.",
+          request = makeBatchRequest(
+            recipe,
+            source,
+            identityFor(source),
+            basename(input),
           );
         const out = resolve(
           opts.out,
@@ -210,14 +210,7 @@ try {
         }
         if (record.status !== "complete") {
           const result = await analyze(
-            {
-              file: basename(input),
-              channel: recipe.source.channel,
-              operations: recipe.operations,
-              selection: recipe.selection,
-              profile: recipe.profile,
-              plateaus: recipe.plateaus,
-            },
+            request,
             source,
             null,
             identityFor(source),

@@ -135,6 +135,8 @@ async function dispatch(type, payload) {
       engine,
       payload.file,
     );
+    // Keep the captured run record after independently verifying its numerical replay.
+    result.recipe = structuredClone(payload.recipe);
     return exportBundle(result);
   }
   if (type === "quality") {
