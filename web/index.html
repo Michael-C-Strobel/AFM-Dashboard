@@ -10,10 +10,12 @@
     />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./segmentation-ui.css" />
+    <link rel="stylesheet" href="./texture-ui.css" />
     <link rel="stylesheet" href="./assistant.css" />
     <link rel="stylesheet" href="./model-panel.css" />
     <script type="module" src="./app.js"></script>
     <script type="module" src="./segmentation-ui.js"></script>
+    <script type="module" src="./texture-ui.js"></script>
     <script type="module" src="./assistant.js"></script>
     <script type="module" src="./workspace.js"></script>
   </head>
@@ -286,6 +288,15 @@
               tabindex="-1"
             >
               Features
+            </button>
+            <button
+              id="tab-texture"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-texture"
+              tabindex="-1"
+            >
+              Texture
             </button>
             <span class="dock-label" aria-hidden="true"
               >03 / INSPECT & EXPORT</span
@@ -720,6 +731,133 @@
                   <tbody id="features-rows"></tbody>
                 </table>
               </div>
+            </section>
+          </div>
+          <div
+            id="panel-texture"
+            role="tabpanel"
+            aria-labelledby="tab-texture"
+            tabindex="0"
+            hidden
+          >
+            <section class="texture-panel" aria-labelledby="texture-title">
+              <div class="texture-heading">
+                <div>
+                  <h2 id="texture-title">Spatial texture</h2>
+                  <p class="hint">
+                    Two-sided spectral density · linear autocorrelation
+                  </p>
+                </div>
+                <span>CALIBRATED / REPLAYED</span>
+              </div>
+              <button id="texture-capture">Capture processed analysis</button>
+              <p id="texture-source" class="readout">
+                Capture a completed analysis to retain its recipe and selection.
+              </p>
+              <div class="toolbar texture-options">
+                <label
+                  >Detrend<select id="texture-detrend">
+                    <option value="none">None</option>
+                    <option value="mean" selected>Subtract mean</option>
+                    <option value="plane">Subtract plane</option>
+                  </select></label
+                >
+                <label
+                  >PSD window<select id="texture-window">
+                    <option value="boxcar">Boxcar</option>
+                    <option value="hann">Periodic Hann</option>
+                  </select></label
+                >
+                <button id="texture-run" disabled>
+                  Measure captured texture
+                </button>
+              </div>
+              <p class="hint">
+                Uses the captured ROI and exclusions. The valid domain must be a
+                complete rectangle of at least 2 × 2 pixels; internal holes are
+                rejected.
+              </p>
+              <p id="texture-status" role="status" aria-live="polite">
+                No texture measurement requested.
+              </p>
+              <div
+                id="texture-summary"
+                class="texture-summary"
+                aria-label="Texture measurement summary"
+              ></div>
+              <p id="texture-warnings" role="status"></p>
+              <div class="toolbar texture-display">
+                <label class="check"
+                  ><input id="texture-log" type="checkbox" checked disabled />
+                  Log PSD colors and cuts (display only)</label
+                >
+                <label class="check"
+                  ><input id="texture-normalized" type="checkbox" disabled />
+                  Normalized ACF (display only)</label
+                >
+              </div>
+              <figure class="texture-figure">
+                <figcaption>Power spectral density · two-sided</figcaption>
+                <canvas
+                  id="texture-psd"
+                  role="img"
+                  aria-label="Calibrated PSD bin-mean overview"
+                  aria-describedby="texture-psd-legend"
+                ></canvas>
+                <p id="texture-psd-legend" class="hint">
+                  Measure a captured surface to view the PSD.
+                </p>
+              </figure>
+              <figure class="texture-figure">
+                <figcaption>Linear autocorrelation · signed lags</figcaption>
+                <canvas
+                  id="texture-acf"
+                  role="img"
+                  aria-label="Calibrated autocorrelation bin-mean overview"
+                  aria-describedby="texture-acf-legend"
+                ></canvas>
+                <p id="texture-acf-legend" class="hint">
+                  ACF uses the unwindowed detrended surface.
+                </p>
+              </figure>
+              <figure class="texture-figure texture-cut">
+                <figcaption>PSD directional cuts</figcaption>
+                <canvas
+                  id="texture-psd-cuts"
+                  role="img"
+                  aria-label="X and Y PSD cuts through zero frequency"
+                  aria-describedby="texture-psd-cut-legend"
+                ></canvas>
+                <p id="texture-psd-cut-legend" class="hint">
+                  Cobalt: X at Y = 0. Amber: Y at X = 0. Recorded cut bins are
+                  averaged.
+                </p>
+              </figure>
+              <figure class="texture-figure texture-cut">
+                <figcaption>ACF directional cuts</figcaption>
+                <canvas
+                  id="texture-acf-cuts"
+                  role="img"
+                  aria-label="X and Y ACF cuts through zero lag"
+                  aria-describedby="texture-acf-cut-legend"
+                ></canvas>
+                <p id="texture-acf-cut-legend" class="hint">
+                  Cobalt: X at Y = 0. Amber: Y at X = 0. Recorded cut bins are
+                  averaged.
+                </p>
+              </figure>
+              <div class="toolbar">
+                <button id="texture-json" disabled>Download texture JSON</button
+                ><button id="texture-tar" disabled>
+                  Download full numerical TAR
+                </button>
+              </div>
+              <p class="hint">
+                JSON contains reduced overviews, recorded bin boundaries and
+                directional cuts. TAR contains full-resolution float64 arrays,
+                recipe, units and hashes; source measurement bytes are not
+                included.
+              </p>
             </section>
           </div>
         </section>
