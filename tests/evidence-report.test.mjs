@@ -330,3 +330,88 @@ test("non-analysis artifacts never become numeric scientific claims", async () =
   assert.equal(r.claims.length, 0);
   assert.match(r.markdown, /No numeric analysis claims/);
 });
+
+test("rehashed replay recipes must exactly match the preceding verified recipe", async () => {
+  const raw = plan();
+  raw.steps.push({
+    id: "replay",
+    call: {
+      name: "replay_recipe",
+      arguments: {
+        file: "source.gwy",
+        source_sha256: hash,
+        recipe_artifact: "$step:measure",
+      },
+    },
+  });
+  const base = await make({ raw });
+  for (const change of [
+    (r) => {
+      r.recipe.source.channel = "1";
+      r.channel.id = "1";
+    },
+    (r) => {
+      r.recipe.source.title = "Other surface";
+      r.channel.title = "Other surface";
+    },
+    (r) => {
+      r.recipe.source.geometry.z_unit = "V";
+      r.recipe.output.geometry.z_unit = "V";
+      r.channel.z_unit = "V";
+      r.statistics.z_unit = "V";
+    },
+    (r) => {
+      r.recipe.operations = [{ name: "mean", params: {} }];
+    },
+    (r) => {
+      r.recipe.selection = { roi: [0, 0, 1, 1], mask: "ignore" };
+    },
+    (r) => {
+      r.recipe.output.sha256 = "b".repeat(64);
+    },
+    (r) => {
+      r.recipe.profile = [
+        [0, 0],
+        [1, 1],
+      ];
+    },
+  ]) {
+    const input = structuredClone(base);
+    change(input.manifest.steps[1].result.artifact.content.result);
+    await resignArtifact(input, 1);
+    await assert.rejects(createEvidenceReport(input), /Replay recipe differs/);
+  }
+});
+
+test("literal replay references require the referenced artifact evidence in the manifest", async () => {
+  const raw = plan();
+  raw.steps.push({
+    id: "replay",
+    call: {
+      name: "replay_recipe",
+      arguments: {
+        file: "source.gwy",
+        source_sha256: hash,
+        recipe_artifact: "$step:measure",
+      },
+    },
+  });
+  const input = await make({ raw });
+  input.manifest.plan.steps[1].call.arguments.recipe_artifact =
+    input.manifest.steps[0].result.artifact.id;
+  input.manifest.plan_sha256 = await sha256(
+    encode.encode(JSON.stringify(input.manifest.plan)),
+  );
+  assert.equal((await createEvidenceReport(input)).claims.length, 16);
+  // The journal still proves both records, but omitting the first artifact leaves
+  // no recipe content against which the replay can be checked.
+  input.manifest.plan.steps.shift();
+  input.manifest.steps.shift();
+  input.manifest.plan_sha256 = await sha256(
+    encode.encode(JSON.stringify(input.manifest.plan)),
+  );
+  await assert.rejects(
+    createEvidenceReport(input),
+    /lacks a preceding verified analysis artifact/,
+  );
+});

@@ -404,6 +404,23 @@ export async function createEvidenceReport({ manifest, journal }) {
       same(artifact.content.call, record.call),
       "Artifact call differs from journal",
     );
+    if (record.call.name === "replay_recipe") {
+      const reference = [...verified.values()].find(
+        (candidate) => candidate.id === record.call.arguments.recipe_artifact,
+      );
+      requireValue(
+        reference &&
+          ["analyze_surface", "replay_recipe"].includes(
+            reference.content.call.name,
+          ) &&
+          plain(reference.content.result?.recipe),
+        "Replay recipe lacks a preceding verified analysis artifact",
+      );
+      requireValue(
+        same(artifact.content.result?.recipe, reference.content.result.recipe),
+        "Replay recipe differs from its referenced analysis artifact",
+      );
+    }
     verified.set(step.id, artifact);
     if (["analyze_surface", "replay_recipe"].includes(record.call.name))
       claims.push(...analysisClaims(step, artifact, warnings));
