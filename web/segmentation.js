@@ -48,6 +48,7 @@ function parameters(options) {
     ![4, 8].includes(p.connectivity) ||
     !Number.isSafeInteger(p.min_pixels) ||
     p.min_pixels < 1 ||
+    p.min_pixels > MAX_PIXELS ||
     !["include", "exclude"].includes(p.boundary)
   )
     throw new Error(

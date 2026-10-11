@@ -4,7 +4,7 @@
 
 ## Options and selection
 
-`threshold` is required and finite, in the channel's stored vertical unit. Other accepted options are `direction: 'above' | 'below'` (default `above`), `connectivity: 4 | 8` (default 4), `min_pixels` (positive integer, default 1), `boundary: 'include' | 'exclude'` (default `include`), and the existing engine `selection` object. Unknown fields and invalid options fail explicitly.
+`threshold` is required and finite, in the channel's stored vertical unit. Other accepted options are `direction: 'above' | 'below'` (default `above`), `connectivity: 4 | 8` (default 4), `min_pixels` (integer 1–4,194,304, default 1), `boundary: 'include' | 'exclude'` (default `include`), and the existing engine `selection` object. Unknown fields and invalid options fail explicitly.
 
 Threshold membership is inclusive: `value >= threshold` or `value <= threshold`. Imported masks, nonfinite pixels, ROI exclusions and exclusion polygons are removed before connectivity is evaluated. No valid pixels is an error; a valid selection with no foreground produces empty tables and zero labels.
 

@@ -177,6 +177,7 @@ test("unknown options missing thresholds and invalid settings reject", () => {
     { threshold: 1, connectivity: 6 },
     { threshold: 1, min_pixels: 0 },
     { threshold: 1, min_pixels: 1.5 },
+    { threshold: 1, min_pixels: 4194305 },
     { threshold: 1, boundary: "maybe" },
     { threshold: 1, selection: { roi: [1, 1, 0, 0] } },
   ])
