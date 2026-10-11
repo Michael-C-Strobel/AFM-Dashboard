@@ -3,6 +3,7 @@ import { engineSources } from "./identity.js";
 import { sha256, operationRegistry } from "./engine.js";
 import { analyze, replay } from "./service.js";
 import { exportBundle } from "./archive.js";
+import { makeBatchRequest } from "./batch.js";
 import { qualityReport, findTracePairs } from "./quality.js";
 const sources = new Map();
 let total = 0;
@@ -98,6 +99,44 @@ async function dispatch(type, payload) {
       : payload.file,
   );
   const engine = await identityFor(source.format);
+  if (type === "batch-check" || type === "batch-run") {
+    const request = makeBatchRequest(
+      payload.template,
+      source,
+      engine,
+      payload.file,
+    );
+    const channel = source.channels[String(request.channel)];
+    const info = {
+      file: payload.file,
+      source_sha256: source.sha256,
+      support: source.support ?? null,
+      warnings: [
+        ...new Set([...(source.warnings ?? []), ...(channel.warnings ?? [])]),
+      ],
+    };
+    if (type === "batch-check") return { ...info, compatible: true };
+    const result = await analyze(request, source, null, engine);
+    return {
+      ...info,
+      warnings: [...new Set([...info.warnings, ...(result.warnings ?? [])])],
+      output_sha256: result.recipe.output.sha256,
+      recipe: result.recipe,
+      statistics: result.statistics,
+    };
+  }
+  if (type === "batch-export") {
+    if (payload.recipe?.reference)
+      throw new Error("Batch exports cannot include reference comparisons.");
+    const result = await replay(
+      payload.recipe,
+      source,
+      null,
+      engine,
+      payload.file,
+    );
+    return exportBundle(result);
+  }
   if (type === "quality") {
     const channel = source.channels[payload.channel];
     if (!channel) throw new Error("Input channel not found.");

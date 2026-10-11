@@ -93,6 +93,19 @@ export async function apiFetch(path, options = {}) {
       await ensure(file);
       return Response.json(await call("channels", { file }));
     }
+    if (
+      ["/api/batch-check", "/api/batch-run", "/api/batch-export"].includes(
+        route,
+      )
+    ) {
+      await ensure(body.file);
+      const result = await call(route.slice(5), body);
+      return route === "/api/batch-export"
+        ? new Response(result, {
+            headers: { "Content-Type": "application/x-tar" },
+          })
+        : Response.json(result);
+    }
     if (route === "/api/quality") {
       await ensure(body.file);
       return Response.json(await call("quality", body));
