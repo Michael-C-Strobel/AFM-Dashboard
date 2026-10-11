@@ -636,3 +636,52 @@ test("real planner cancellation retains exact prepared credential-free request a
   );
   assert.ok(!JSON.stringify(stopped).includes("private-key"));
 });
+
+test("SOP records are captured before dispatch and reject altered guidance or unselected settings", async () => {
+  const { createSopRecord } = await import("../web/sop-conformance.js");
+  const record = createSopRecord("height-roughness", {
+    deviations: "Original values deliberately retained.",
+  });
+  let proposals = 0;
+  const agent = () =>
+    createAutonomousAgent({
+      propose: async () => {
+        proposals++;
+        return {
+          proposal: {
+            kind: "clarification",
+            question: "Which scientific comparison is required?",
+          },
+          audit: { status: "clarification" },
+        };
+      },
+      execute: async () => {
+        throw Error("Unexpected execution");
+      },
+      getJournal: () => {
+        throw Error("Unexpected journal read");
+      },
+    });
+  const captured = await agent().start({ ...settings(), sop: record });
+  assert.equal(captured.status, "needs_input");
+  assert.deepEqual(captured.sop, record);
+  assert.equal(proposals, 1);
+  for (const changed of [
+    { ...record, guidance: "altered" },
+    { ...record, version: "999" },
+    createSopRecord("height-roughness", {
+      approved_settings: {
+        source: { file: "other.gwy", source_sha256: hash, channel: "0" },
+        operations: [],
+        selection: {},
+        justification: "Known source",
+      },
+    }),
+  ]) {
+    assert.equal(
+      (await agent().start({ ...settings(), sop: changed })).status,
+      "failed",
+    );
+    assert.equal(proposals, 1);
+  }
+});

@@ -1,3 +1,4 @@
+import { createSopRecord, checkSopConformance } from "./sop-conformance.js";
 import { workflowSops, sopPrompt } from "./workflow-sops.js";
 import { askHelp } from "./help-agent.js";
 import { createAutonomousAgent } from "./autonomous-agent.js";
@@ -224,6 +225,47 @@ export function mountAgentModes({
   );
   deviations.rows = 2;
   deviations.maxLength = 1000;
+  const expectedDetails = el("details");
+  expectedDetails.append(el("summary", "Expected SOP settings (optional)"));
+  expectedDetails.append(
+    el(
+      "p",
+      "Record the source, operations and selection you approve before starting. These JSON settings are sent with the goal and checked against the resulting records. Leave blank to report this requirement as missing. Scientific suitability still needs review.",
+    ),
+  );
+  const expected = field(
+    expectedDetails,
+    "Approved settings JSON",
+    "autonomous-sop-settings",
+  );
+  expected.rows = 5;
+  expected.maxLength = 12000;
+  const template = button(
+    expectedDetails,
+    "Start from selected source",
+    "autonomous-sop-template",
+  );
+  template.onclick = () => {
+    const source = getSources()[0];
+    if (!source) return;
+    expected.value = JSON.stringify(
+      {
+        source: {
+          file: source.file,
+          source_sha256: source.source_sha256,
+          channel: source.channel,
+        },
+        operations: [],
+        selection: { roi: null, exclude_polygons: [] },
+        reference: null,
+        justification: "",
+        fit_point_provenance: "",
+      },
+      null,
+      2,
+    );
+  };
+  autonomous.append(expectedDetails);
   const goal = field(
     autonomous,
     "Analysis goal and scientific constraints",
@@ -261,7 +303,8 @@ export function mountAgentModes({
     pause = button(actions, "Pause", "autonomous-pause"),
     resume = button(actions, "Resume", "autonomous-resume"),
     stop = button(actions, "Stop", "autonomous-stop"),
-    download = button(actions, "Download goal audit", "autonomous-download");
+    download = button(actions, "Download goal audit", "autonomous-download"),
+    checkSop = button(actions, "Check SOP records", "autonomous-sop-check");
   const status = el("p", "No autonomous goal started.");
   status.id = "autonomous-status";
   status.setAttribute("role", "status");
@@ -271,9 +314,36 @@ export function mountAgentModes({
   output.tabIndex = 0;
   output.setAttribute("aria-label", "Autonomous progress and evidence");
   autonomous.append(output);
+  const sopOutput = el("pre");
+  sopOutput.id = "autonomous-sop-report";
+  sopOutput.tabIndex = 0;
+  sopOutput.setAttribute("aria-label", "SOP record checks and required review");
+  autonomous.append(sopOutput);
   let agent = null,
     active = false,
-    snapshot = null;
+    snapshot = null,
+    conformance = null;
+  checkSop.onclick = async () => {
+    if (isBusy() || !snapshot?.sop) return;
+    setBusy(true);
+    sync();
+    try {
+      conformance = await checkSopConformance({
+        record: snapshot.sop,
+        runs: snapshot.rounds.filter((r) => r.manifest).map((r) => r.manifest),
+        journal: await getJournal(),
+        sources: snapshot.sources,
+      });
+      sopOutput.textContent = JSON.stringify(conformance, null, 2);
+    } catch {
+      conformance = null;
+      sopOutput.textContent =
+        "SOP records could not be verified. Keep the goal audit and review its source, recipe and journal records.";
+    } finally {
+      setBusy(false);
+      sync();
+    }
+  };
   const update = (s) => {
     snapshot = s;
     status.textContent = "Goal " + s.status;
@@ -326,8 +396,27 @@ export function mountAgentModes({
       status.textContent = "Use round limits 1–8 and tool limits 1–64.";
       return;
     }
+    let sopRecord;
+    if (sop.value) {
+      try {
+        sopRecord = createSopRecord(sop.value, {
+          approved_settings: expected.value.trim()
+            ? JSON.parse(expected.value)
+            : null,
+          deviations: deviations.value.trim(),
+        });
+      } catch {
+        status.textContent =
+          "Check the approved settings JSON: include source, operations, selection and a nonempty justification. No goal started.";
+        return;
+      }
+    }
     const goalText = [
       sop.value ? sopPrompt(sop.value) : "",
+      sopRecord?.approved_settings
+        ? "User-approved SOP settings: " +
+          JSON.stringify(sopRecord.approved_settings)
+        : "",
       deviations.value.trim()
         ? "User-specified choices/deviations: " + deviations.value.trim()
         : "",
@@ -343,6 +432,8 @@ export function mountAgentModes({
         "Goal, SOP and deviations exceed 6000 characters; shorten the goal or deviations.";
       return;
     }
+    conformance = null;
+    sopOutput.textContent = "";
     active = true;
     setBusy(true);
     sync();
@@ -356,6 +447,7 @@ export function mountAgentModes({
           sourceContexts: structuredClone(getSources()),
           maxRounds,
           maxCalls,
+          ...(sopRecord ? { sop: sopRecord } : {}),
         }),
       );
     } catch {
@@ -374,7 +466,12 @@ export function mountAgentModes({
     if (!snapshot) return;
     try {
       save(
-        { schema_version: 1, goal: snapshot, journal: await getJournal() },
+        {
+          schema_version: 1,
+          goal: snapshot,
+          journal: await getJournal(),
+          ...(conformance ? { sop_conformance: conformance } : {}),
+        },
         "afm-autonomous-audit.json",
       );
     } catch {
@@ -391,6 +488,8 @@ export function mountAgentModes({
       goal,
       sop,
       deviations,
+      expected,
+      template,
       rounds,
       calls,
       start,
@@ -403,6 +502,7 @@ export function mountAgentModes({
     resume.disabled = !active;
     stop.disabled = !active;
     download.disabled = !snapshot;
+    checkSop.disabled = busy || !snapshot?.sop;
   }
   sync();
   return { sync };

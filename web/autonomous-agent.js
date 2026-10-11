@@ -1,4 +1,5 @@
 /** Bounded automatic orchestration; evidence returned is not certified goal achievement. */
+import { createSopRecord } from "./sop-conformance.js";
 import { proposePlan } from "./model-planner.js";
 import { validatePlan, runPlan } from "./tool-plans.js";
 import { validateToolCall } from "./tool-contracts.js";
@@ -243,6 +244,7 @@ export function createAutonomousAgent({
         "sourceContexts",
         "maxRounds",
         "maxCalls",
+        "sop",
       ];
       for (const k of Reflect.ownKeys(settings)) {
         const d = Object.getOwnPropertyDescriptor(settings, k);
@@ -276,6 +278,26 @@ export function createAutonomousAgent({
       )
         throw Error();
       sources(c.sourceContexts);
+      if (c.sop !== undefined) {
+        const record = createSopRecord(c.sop.id, {
+          approved_settings: c.sop.approved_settings,
+          deviations: c.sop.deviations,
+        });
+        if (canonicalJSON(record) !== canonicalJSON(c.sop)) throw Error();
+        for (const tuple of [
+          record.approved_settings?.source,
+          record.approved_settings?.reference,
+        ].filter(Boolean))
+          if (
+            !c.sourceContexts.some((source) =>
+              ["file", "source_sha256", "channel"].every(
+                (k) => source[k] === tuple[k],
+              ),
+            )
+          )
+            throw Error();
+        state.sop = record;
+      }
       Object.assign(state, {
         goal: c.goal,
         sources: c.sourceContexts,

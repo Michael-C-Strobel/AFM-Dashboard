@@ -21,6 +21,7 @@ const digest = (value) => createHash("sha256").update(value).digest("hex");
 const json = (value) => Buffer.from(JSON.stringify(value, null, 2) + "\n");
 const runtimeScripts = [
   "afm",
+  "check-sop",
   "io",
   "compare",
   "quality",

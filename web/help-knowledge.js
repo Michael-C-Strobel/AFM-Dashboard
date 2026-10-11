@@ -29,7 +29,7 @@ export const helpTopics = Object.freeze(
       id: "workflow-sops",
       title: "Use a versioned pilot SOP",
       target: "tab-assistant",
-      text: "In Autonomous analysis, optionally select height-roughness or chemist-reference SOP version 0.1.0. Read prerequisites, procedure, quality checks, outputs and limitations before starting. Supply required scientific choices and explicit deviations. The exact SOP guidance, ID/version and your choices enter the recorded goal; additional deviations belong in step rationales. These are pilot workflows, not universal scientific validation. Reference reconstruction requires supplied fit points and both source identities; a model must ask when required choices are missing.",
+      text: "In Autonomous analysis, optionally select height-roughness or chemist-reference SOP version 0.1.0. Read prerequisites, procedure, quality checks, outputs and limitations before starting. Supply required scientific choices and explicit deviations. Optionally record Expected SOP settings as JSON before starting, including exact processing, selection and a justification. The exact SOP guidance, ID/version and your choices enter the recorded goal; additional deviations belong in step rationales. After the run, Check SOP records verifies baseline, processing, diagnostic and replay evidence without executing tools. Missing settings or artifacts remain incomplete. Download goal audit includes the checks; records_complete still requires scientific and approval review. These are pilot workflows, not universal scientific validation. Reference reconstruction requires supplied fit points and both source identities; a model must ask when required choices are missing.",
     },
     {
       id: "import-support",

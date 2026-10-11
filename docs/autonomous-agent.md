@@ -10,7 +10,7 @@ Terminal states distinguish `evidence_returned`, `observations_returned`, `needs
 
 ## Pilot SOPs
 
-Select a [versioned pilot SOP](workflow-sops.md), read its instructions and supply required choices and deviations. Its exact instructions, ID/version, user choices and goal are captured together in the audit. Additional deviations must appear in plan rationales. SOPs guide the model; they are not a separate formal conformance checker. Reference reconstruction requires explicit reviewed fit points. No universal leveling rule or scientific acceptance threshold is inferred.
+Select a [versioned pilot SOP](workflow-sops.md), read its instructions and supply required choices and deviations. Its exact instructions, ID/version, user choices and goal are captured together in the audit. Additional deviations must appear in plan rationales. Use **Expected SOP settings** before starting to record exact processing and selection choices. After execution, **Check SOP records** verifies baseline, processed output, required diagnostics and replay against the journal; the downloadable audit retains this report. Missing records remain incomplete, and even complete records require scientific and approval review. Reference reconstruction requires explicit reviewed fit points. No universal leveling rule or scientific acceptance threshold is inferred.
 
 ## Current boundaries and checks
 
