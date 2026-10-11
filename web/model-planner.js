@@ -276,6 +276,7 @@ export async function proposePlan({
     request: JSON.parse(body),
     sourceContext: curated,
     proposal: null,
+    proposal_plan_sha256: null,
     error: null,
   };
   const controller = new AbortController();
@@ -372,6 +373,14 @@ export async function proposePlan({
         responseJSON.model == null ? null : text(responseJSON.model, 200, 1),
       responseId =
         responseJSON.id == null ? null : text(responseJSON.id, 512, 1);
+    const planHash =
+      proposal.kind === "plan"
+        ? await Promise.race([
+            sha256(new TextEncoder().encode(JSON.stringify(proposal.plan))),
+            aborted,
+          ])
+        : null;
+    audit.proposal_plan_sha256 = planHash;
     audit.status = proposal.kind === "plan" ? "proposed" : "clarification";
     audit.returned_model = returnedModel;
     audit.response_id = responseId;

@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { webcrypto, createHash } from "node:crypto";
 import { proposePlan } from "../web/model-planner.js";
+import { runPlan } from "../web/tool-plans.js";
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
 const source = () => ({
   file: "sample.gwy",
@@ -478,4 +479,48 @@ test("invalid history roles sizes fields and credentials reject before requestin
       ),
       /Invalid/,
     );
+});
+
+test("proposal plan hash joins unchanged execution and remains null without a plan", async () => {
+  const proposed = await proposePlan(options());
+  const manifest = await runPlan(proposed.proposal.plan, {
+    execute: async () => ({
+      record: { status: "succeeded" },
+      artifact: { id: "artifact:" + "c".repeat(64) },
+    }),
+  });
+  assert.equal(proposed.audit.proposal_plan_sha256, manifest.plan_sha256);
+  assert.equal(
+    proposed.audit.proposal_plan_sha256,
+    createHash("sha256")
+      .update(JSON.stringify(proposed.proposal.plan))
+      .digest("hex"),
+  );
+  const revised = structuredClone(proposed.proposal.plan);
+  revised.title = "Reviewed and revised";
+  const revisedManifest = await runPlan(revised, {
+    execute: async () => ({
+      record: { status: "succeeded" },
+      artifact: { id: "artifact:" + "c".repeat(64) },
+    }),
+  });
+  assert.notEqual(
+    proposed.audit.proposal_plan_sha256,
+    revisedManifest.plan_sha256,
+  );
+  const clarification = await proposePlan(
+    options({
+      fetchImpl: async () =>
+        response(
+          wrap({ kind: "clarification", question: "Which background?" }),
+        ),
+    }),
+  );
+  const failed = await proposePlan(
+    options({
+      fetchImpl: async () => new Response("failure", { status: 500 }),
+    }),
+  );
+  assert.equal(clarification.audit.proposal_plan_sha256, null);
+  assert.equal(failed.audit.proposal_plan_sha256, null);
 });
