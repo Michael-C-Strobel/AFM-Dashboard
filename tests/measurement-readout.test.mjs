@@ -192,7 +192,9 @@ test("mounted readout uses inverse screen CTM, captured drag and keyboard withou
     plot: { x: 55, y: 15, width: 420, height: 150 },
     format,
   });
-  const output = target.children[0];
+  const output = target.children[0],
+    marker = svg.children[0];
+  assert.equal(marker.getAttribute("visibility"), "hidden");
   assert.equal(svg.getAttribute("role"), "group");
   assert.equal(svg.getAttribute("aria-describedby"), "histogram-readout");
   assert.equal(output.dataset.index, "0");
@@ -206,14 +208,20 @@ test("mounted readout uses inverse screen CTM, captured drag and keyboard withou
   svg.listeners.pointerdown(event);
   assert.equal(output.dataset.index, "2");
   assert.equal(svg.captured, 1);
+  assert.equal(marker.getAttribute("visibility"), "visible");
   assert.equal(output.getAttribute("aria-live"), "off");
   svg.listeners.pointermove({ ...event, clientX: 100 + 2 * 1000 });
   assert.equal(output.dataset.index, "3");
   svg.listeners.pointerup({ ...event, type: "pointerup" });
   assert.equal(svg.captured, null);
+  svg.listeners.pointerleave();
+  assert.equal(marker.getAttribute("visibility"), "hidden");
   svg.listeners.keydown({ key: "Home", preventDefault() {} });
   assert.equal(output.dataset.index, "0");
   assert.equal(output.getAttribute("aria-live"), "polite");
+  assert.equal(marker.getAttribute("visibility"), "visible");
+  svg.listeners.blur();
+  assert.equal(marker.getAttribute("visibility"), "hidden");
   svg.listeners.keydown({ key: "ArrowRight", preventDefault() {} });
   assert.equal(output.dataset.index, "1");
   assert.match(output.textContent, /0 pixels/);

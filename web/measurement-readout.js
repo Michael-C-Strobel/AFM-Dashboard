@@ -165,9 +165,20 @@ export function mountMeasurementReadout({
     "Recorded analysis · move or drag across the plot. Keyboard: ←/→, Home/End. Recalculate after changing selections.";
   target.append(hint);
   let index = 0,
-    drag = null;
+    drag = null,
+    hovered = false,
+    keyboardActive = false;
+  function syncMarker() {
+    if (model.binWidth)
+      marker.setAttribute(
+        "visibility",
+        hovered || drag !== null || keyboardActive ? "visible" : "hidden",
+      );
+  }
   function show(next, keyboard = false) {
     if (next === null) return;
+    keyboardActive = keyboard;
+    syncMarker();
     index = Math.max(0, Math.min(model.count - 1, next));
     const sample = model.sample(index),
       x = plot.x + plot.width * model.position(index);
@@ -199,9 +210,22 @@ export function mountMeasurementReadout({
     point.x = event.clientX;
     point.y = event.clientY;
     const local = point.matrixTransform(ctm.inverse());
+    hovered =
+      local.x >= plot.x &&
+      local.x <= plot.x + plot.width &&
+      local.y >= plot.y &&
+      local.y <= plot.y + plot.height;
     show(model.indexAt((local.x - plot.x) / plot.width));
   }
   svg.addEventListener("pointermove", pointer);
+  svg.addEventListener("pointerleave", () => {
+    hovered = false;
+    syncMarker();
+  });
+  svg.addEventListener("blur", () => {
+    keyboardActive = false;
+    syncMarker();
+  });
   svg.addEventListener("pointerdown", (event) => {
     if (event.button !== 0) return;
     drag = event.pointerId;
@@ -216,11 +240,14 @@ export function mountMeasurementReadout({
     if (svg.hasPointerCapture(event.pointerId))
       svg.releasePointerCapture(event.pointerId);
     drag = null;
+    if (event.type === "pointercancel") hovered = false;
+    syncMarker();
   };
   svg.addEventListener("pointerup", end);
   svg.addEventListener("pointercancel", end);
   svg.addEventListener("lostpointercapture", () => {
     drag = null;
+    syncMarker();
   });
   svg.addEventListener("keydown", (event) => {
     const next = {

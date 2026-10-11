@@ -95,9 +95,14 @@ try {
     await page.keyboard.press(key);
     return readout(chart);
   }
+  const histogramCursor = page.locator("#histogram .measurement-cursor");
+  const cursorVisibility = () =>
+    histogramCursor.evaluate((n) => getComputedStyle(n).visibility);
+  assert.equal(await cursorVisibility(), "hidden");
   // Assertions below use the presented values, not screenshots or altered DOM.
   await moveTo("histogram", 55 + 420 / 64);
   const firstBin = await readout("histogram");
+  assert.equal(await cursorVisibility(), "visible");
   await page.mouse.down();
   await moveTo("histogram", 55 + (420 * 31.5) / 32);
   await page.mouse.up();
@@ -115,10 +120,20 @@ try {
     await page.locator("#histogram-readout").getAttribute("title"),
     `[${h.edges.at(-2)} m, ${h.edges.at(-1)} m]; count=${h.counts.at(-1)}`,
   );
+  await page.mouse.move(0, 0);
+  assert.equal(
+    await cursorVisibility(),
+    "hidden",
+    "Pointer focus must not retain the bin highlight",
+  );
+  assert.equal(await readout("histogram"), lastBin);
   assert.equal(await keyboard("histogram", "Home"), firstBin);
+  assert.equal(await cursorVisibility(), "visible");
   assert.equal(await keyboard("histogram", "End"), lastBin);
   assert.notEqual(await keyboard("histogram", "ArrowLeft"), lastBin);
   assert.equal(await keyboard("histogram", "ArrowRight"), lastBin);
+  await page.locator("#profile svg").focus();
+  assert.equal(await cursorVisibility(), "hidden");
   await moveTo("profile", 65);
   const firstSample = await readout("profile");
   await page.mouse.down();
