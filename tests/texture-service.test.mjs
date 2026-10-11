@@ -407,3 +407,135 @@ test("masked pixels survive replay as invalid samples and prevent texture estima
   );
   await assert.rejects(run({ source, recipe }), /complete|mask|nonfinite/i);
 });
+
+test("domain metadata records full, ROI, crop and trimmed processed coordinates in JSON and TAR", async () => {
+  const base = await analyzed(5, 4);
+  const cases = [
+    {
+      name: "full",
+      source: base.source,
+      operations: [],
+      selection: {},
+      kind: "full_processed_image",
+      pixels: [0, 0, 5, 4],
+      physical: [0, 0, 10, 12],
+    },
+    {
+      name: "roi",
+      source: base.source,
+      operations: [],
+      selection: { roi: [2, 0, 10, 9] },
+      kind: "roi",
+      pixels: [1, 0, 5, 3],
+      physical: [2, 0, 10, 9],
+    },
+    {
+      name: "crop",
+      source: base.source,
+      operations: [{ name: "crop", params: { bounds: [2, 3, 10, 12] } }],
+      selection: {},
+      kind: "cropped_image",
+      pixels: [0, 0, 4, 3],
+      physical: [2, 3, 10, 12],
+    },
+    {
+      name: "crop with roi",
+      source: base.source,
+      operations: [{ name: "crop", params: { bounds: [2, 3, 10, 12] } }],
+      selection: { roi: [4, 3, 10, 9] },
+      kind: "roi",
+      pixels: [1, 0, 4, 2],
+      physical: [4, 3, 10, 9],
+    },
+  ];
+  const trimmed = structuredClone(base.source);
+  for (let x = 0; x < 5; x++) trimmed.channels[0].data[x] = NaN;
+  for (let y = 0; y < 4; y++) trimmed.channels[0].data[y * 5] = NaN;
+  cases.push({
+    name: "invalid outer edges",
+    source: trimmed,
+    operations: [],
+    selection: {},
+    kind: "full_processed_image",
+    pixels: [1, 1, 5, 4],
+    physical: [2, 3, 10, 12],
+  });
+  cases.push({
+    name: "excluded edge",
+    source: base.source,
+    operations: [],
+    selection: {
+      exclude_polygons: [
+        [
+          [0, 0],
+          [2, 0],
+          [2, 12],
+          [0, 12],
+        ],
+      ],
+    },
+    kind: "full_processed_image",
+    pixels: [1, 0, 5, 4],
+    physical: [2, 0, 10, 12],
+  });
+  for (const item of cases) {
+    const { recipe } = await analyze(
+      {
+        file: "synthetic.gwy",
+        channel: "0",
+        operations: item.operations,
+        selection: item.selection,
+      },
+      item.source,
+      null,
+      engine,
+    );
+    const result = await run({ source: item.source, recipe });
+    const { report } = result;
+    const expected = {
+      kind: item.kind,
+      processed_geometry: structuredClone(recipe.output.geometry),
+      requested_roi: recipe.selection.roi,
+      exclude_polygon_count: recipe.selection.exclude_polygons.length,
+      effective_pixel_bounds: item.pixels,
+      effective_physical_bounds: item.physical,
+      effective_geometry: structuredClone(report.geometry),
+    };
+    assert.deepEqual(report.domain, expected, item.name);
+    assert.deepEqual(report.domain.effective_geometry.shape, [
+      item.pixels[3] - item.pixels[1],
+      item.pixels[2] - item.pixels[0],
+    ]);
+    assert.deepEqual(JSON.parse(JSON.stringify(report)).domain, expected);
+    const entries = parseTar(textureBundle(result));
+    assert.deepEqual(
+      JSON.parse(Buffer.from(entries["report.json"]).toString()).domain,
+      expected,
+    );
+    assert.deepEqual(
+      JSON.parse(Buffer.from(entries["input-recipe.json"]).toString()),
+      recipe,
+    );
+    const readme = Buffer.from(entries["README.txt"]).toString();
+    assert.match(readme, /half-open.*processed output/);
+    assert.match(readme, /retaining all crop operations/);
+    assert.match(readme, /Invalid outer rows or columns may be trimmed/);
+    assert.match(readme, /holes are rejected/);
+    const { report_sha256, ...body } = report;
+    assert.equal(report_sha256, digest(JSON.stringify(body)));
+    assert.notStrictEqual(
+      report.domain.processed_geometry,
+      report.input_recipe.output.geometry,
+    );
+    assert.notStrictEqual(report.domain.effective_geometry, report.geometry);
+    assert.notStrictEqual(
+      report.domain.effective_pixel_bounds,
+      report.source_bounds,
+    );
+    if (recipe.selection.roi)
+      assert.notStrictEqual(
+        report.domain.requested_roi,
+        report.input_recipe.selection.roi,
+      );
+  }
+});

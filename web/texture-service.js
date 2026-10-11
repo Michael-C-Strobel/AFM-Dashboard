@@ -255,6 +255,27 @@ export async function textureRecipe(
     parameters: result.parameters,
     geometry: result.geometry,
     source_bounds: result.source_bounds,
+    domain: {
+      kind:
+        inputRecipe.selection.roi !== null
+          ? "roi"
+          : inputRecipe.operations.some(
+                (operation) => operation.name === "crop",
+              )
+            ? "cropped_image"
+            : "full_processed_image",
+      processed_geometry: structuredClone(inputRecipe.output.geometry),
+      requested_roi: structuredClone(inputRecipe.selection.roi),
+      exclude_polygon_count: inputRecipe.selection.exclude_polygons.length,
+      effective_pixel_bounds: structuredClone(result.source_bounds),
+      effective_physical_bounds: [
+        result.geometry.xoff,
+        result.geometry.yoff,
+        result.geometry.xoff + result.geometry.xreal,
+        result.geometry.yoff + result.geometry.yreal,
+      ],
+      effective_geometry: structuredClone(result.geometry),
+    },
     sampling: result.sampling,
     detrend_history: result.detrend_history,
     psd: {
@@ -290,7 +311,7 @@ export async function textureRecipe(
   return { report, rasters };
 }
 export function textureReadme(report) {
-  return `AFM Dashboard spatial texture evidence\n\nInput bytes are not included. Obtain the exact source and optional reference named in input-recipe.json and verify their SHA-256 values. Strict replay verifies source, engine, geometry and processed output before measurement. Replay is not calibration certification.\n\nEach .f64 file contains row-major IEEE-754 float64 values in little-endian byte order, without a header. Dimensions and value units are recorded in report.json; offset in bytes = 8 * (row * width + column). Axis coordinates = start + index * step using each array's x_axis and y_axis, including units. PSD frequencies are cycles per lateral unit; ACF axes are signed physical lags. Full normalized ACF is omitted when zero-lag energy is zero.\n\nPSD is two-sided window-energy-normalized density. ACF is linear, overlap-normalized, and computed from unwindowed residuals. Off-zero normalized ACF can exceed unity. JSON overviews and directional cuts average the explicit half-open pixel bins; they are reduced display products, not replacement numerical arrays.\n\nVerify each raster SHA-256 against arrays metadata. To verify report_sha256, parse report.json, remove its report_sha256 property and hash UTF-8 JSON.stringify of the remaining object in recorded property order. Code SHA-256 is UTF-8 source texts of fft.js, texture.js, texture-service.js, engine.js joined by one newline in that order; individual hashes are also recorded. Hashes are integrity checks, not digital signatures.\n\nReplay with matching code:\nnode scripts/texture.mjs --recipe input-recipe.json --input SOURCE_PATH --out NEW_DIRECTORY --detrend ${report.parameters.detrend} --window ${report.parameters.window}\nAdd --reference REFERENCE_PATH if the recipe records a reference. Original measurements are never overwritten.\n`;
+  return `AFM Dashboard spatial texture evidence\n\nInput bytes are not included. Obtain the exact source and optional reference named in input-recipe.json and verify their SHA-256 values. Strict replay verifies source, engine, geometry and processed output before measurement. Replay is not calibration certification.\n\nThe domain object records the requested selection and the effective measured rectangle. processed_geometry is the replayed processed output, retaining all crop operations; effective_pixel_bounds are half-open [x0, y0, x1, y1] indices in that processed output, not the original source raster. requested_roi and effective_physical_bounds use the recorded lateral physical coordinate system and units; the effective bounds describe outer pixel edges. Invalid outer rows or columns may be trimmed to the complete valid rectangle. Internal missing, masked or excluded holes are rejected rather than filled. effective_geometry records the actual rectangle measured.\n\nEach .f64 file contains row-major IEEE-754 float64 values in little-endian byte order, without a header. Dimensions and value units are recorded in report.json; offset in bytes = 8 * (row * width + column). Axis coordinates = start + index * step using each array's x_axis and y_axis, including units. PSD frequencies are cycles per lateral unit; ACF axes are signed physical lags. Full normalized ACF is omitted when zero-lag energy is zero.\n\nPSD is two-sided window-energy-normalized density. ACF is linear, overlap-normalized, and computed from unwindowed residuals. Off-zero normalized ACF can exceed unity. JSON overviews and directional cuts average the explicit half-open pixel bins; they are reduced display products, not replacement numerical arrays.\n\nVerify each raster SHA-256 against arrays metadata. To verify report_sha256, parse report.json, remove its report_sha256 property and hash UTF-8 JSON.stringify of the remaining object in recorded property order. Code SHA-256 is UTF-8 source texts of fft.js, texture.js, texture-service.js, engine.js joined by one newline in that order; individual hashes are also recorded. Hashes are integrity checks, not digital signatures.\n\nReplay with matching code:\nnode scripts/texture.mjs --recipe input-recipe.json --input SOURCE_PATH --out NEW_DIRECTORY --detrend ${report.parameters.detrend} --window ${report.parameters.window}\nAdd --reference REFERENCE_PATH if the recipe records a reference. Original measurements are never overwritten.\n`;
 }
 export function textureBundle({ report, rasters }) {
   const entries = {
