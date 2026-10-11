@@ -33,13 +33,13 @@ This checks a small native GWYP workflow across the three browser engines. Vendo
 
 With Playwright 1.55.0 and isolated port 4177:
 
-| Engine                                                | Result                                                                                                     |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Chromium 151.0.7922.34 (existing executable override) | Passed all synthetic scientific, replay/export, keyboard and mobile assertions.                            |
-| Firefox 141.0, Playwright build 1490                  | Passed the same assertions using `/tmp/afm-cross-browser-cache`.                                           |
-| WebKit 26.0, Playwright build 2203                    | Download succeeded, but launch was blocked by missing host libraries; application behavior was not tested. |
+| Engine                                                | Result                                                                                           |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Chromium 151.0.7922.34 (existing executable override) | Passed all synthetic scientific, replay/export, keyboard and mobile assertions.                  |
+| Firefox 141.0, Playwright build 1490                  | Passed the same assertions using `/tmp/afm-cross-browser-cache`.                                 |
+| WebKit 26.0, Playwright build 2203                    | Passed the same assertions with the isolated Ubuntu library prefix and launcher described below. |
 
-WebKit reported these missing dependencies:
+The first WebKit launch reported these missing dependencies (resolved by temporary extraction below):
 
 ```text
 libgstcodecparsers-1.0.so.0
@@ -61,3 +61,48 @@ libx264.so
 ```
 
 No local system packages were installed. Browser downloads remained in the isolated temporary cache; the demo server was untouched. CI uses matching bundled Chromium rather than the local executable override.
+
+## WebKit without system installation
+
+Two dependency-download rounds supplied the missing libraries. `apt-cache policy` first verified each exact candidate from the already configured official Ubuntu 22.04 repositories. No `apt update`, package installation, `sudo`, system linker-cache update, or repository modification was performed.
+
+| Package                       | Exact version                   | Configured source                                   |
+| ----------------------------- | ------------------------------- | --------------------------------------------------- |
+| libgstreamer-plugins-bad1.0-0 | 1.20.3-0ubuntu1.1               | us.archive.ubuntu.com/ubuntu jammy-updates/universe |
+| libflite1                     | 2.2-3                           | us.archive.ubuntu.com/ubuntu jammy/universe         |
+| libavif13                     | 0.9.3-3                         | us.archive.ubuntu.com/ubuntu jammy/universe         |
+| libx264-163                   | 2:0.163.3060+git5db6aa6-2build1 | us.archive.ubuntu.com/ubuntu jammy/universe         |
+| libx264-dev                   | 2:0.163.3060+git5db6aa6-2build1 | us.archive.ubuntu.com/ubuntu jammy/universe         |
+| libdav1d5                     | 0.9.2-1                         | us.archive.ubuntu.com/ubuntu jammy/universe         |
+| libgav1-0                     | 0.17.0-1build1                  | us.archive.ubuntu.com/ubuntu jammy/universe         |
+| libaom3                       | 3.3.0-1ubuntu0.1                | us.archive.ubuntu.com/ubuntu jammy-updates/universe |
+| libyuv0                       | 0.0~git20220104.b91df1a-2       | us.archive.ubuntu.com/ubuntu jammy/universe         |
+
+Downloads used `apt-get download PACKAGE=VERSION` from `/tmp/afm-webkit-libs/packages`. Each `.deb` was extracted with `dpkg-deb -x PACKAGE.deb /tmp/afm-webkit-libs/prefix`. These versions reflect the local package index; this is a record of the successful experiment, not a requirement to downgrade another system. The second round supplied the four transitive dependencies of `libavif13`.
+
+Two launcher details mattered. Playwright 1.55.0 checks dynamically loaded x264 using global `/sbin/ldconfig -p`, which does not reflect this temporary prefix. Actual library loading was verified with `ctypes.CDLL` under the local `LD_LIBRARY_PATH`. Also, the bundled `minibrowser-wpe/MiniBrowser` shell wrapper replaces `LD_LIBRARY_PATH`. A separate `/tmp/afm-webkit-libs/run-webkit.sh` preserved the bundle's environment and added the local prefix:
+
+```sh
+#!/bin/sh
+WEBKIT_LOCAL_ROOT=/tmp/afm-cross-browser-cache/webkit-2203/minibrowser-wpe
+export WEBKIT_EXEC_PATH="$WEBKIT_LOCAL_ROOT/bin"
+export WEBKIT_INJECTED_BUNDLE_PATH="$WEBKIT_LOCAL_ROOT/lib"
+export WEBKIT_INSPECTOR_RESOURCES_PATH="$WEBKIT_LOCAL_ROOT/share"
+export WEBKIT_FORCE_COMPLEX_TEXT=1
+export LD_LIBRARY_PATH="/tmp/afm-webkit-libs/prefix/usr/lib/x86_64-linux-gnu:$WEBKIT_LOCAL_ROOT/lib:$WEBKIT_LOCAL_ROOT/sys/lib"
+exec "$WEBKIT_LOCAL_ROOT/bin/MiniBrowser" "$@"
+```
+
+After making that local wrapper executable, the passing invocation was:
+
+```sh
+LD_LIBRARY_PATH=/tmp/afm-webkit-libs/prefix/usr/lib/x86_64-linux-gnu \
+PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=1 \
+PLAYWRIGHT_MODULE=/tmp/groups-dashboard-npm-cache/_npx/fd3bca3c548369c0/node_modules/playwright/index.mjs \
+PLAYWRIGHT_BROWSERS_PATH=/tmp/afm-cross-browser-cache \
+PLAYWRIGHT_BROWSER=webkit \
+PLAYWRIGHT_EXECUTABLE=/tmp/afm-webkit-libs/run-webkit.sh \
+AFM_TEST_PORT=4177 node tests/browser-ci.mjs
+```
+
+This bypasses only the incompatible host-cache heuristic, not application or numerical checks. WebKit reported version **26.0** and passed import, calibrated measurements, strict replay/export, all scientific panels, expanded inspection/Escape, keyboard tabs and mobile overflow. No browser bundle files were edited. The hosted matrix continues to use normal `--with-deps` installation and does not require this local workaround.
