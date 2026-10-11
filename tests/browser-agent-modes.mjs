@@ -40,7 +40,12 @@ try {
     return r.abort();
   });
   await page.route("**/__afm_config.json", (r) =>
-    r.fulfill({ json: { model_origin: origin } }),
+    r.fulfill({
+      json: {
+        model_origin: "https://api.openai.com",
+        model_origins: ["https://api.openai.com", origin],
+      },
+    }),
   );
   await page.route(origin + "/__mock_model", async (route) => {
     const body = route.request().postDataJSON();
@@ -132,7 +137,10 @@ try {
                     file: source.file,
                     source_sha256: source.source_sha256,
                     channel: source.channel,
-                    operations: [],
+                    operations:
+                      mode === "auto" && round === 2
+                        ? [{ name: "mean", params: {} }]
+                        : [],
                   },
                 },
               },
@@ -273,6 +281,30 @@ try {
     () => !document.querySelector("#assistant-measure").disabled,
   );
   await page.locator("#autonomous-agent > summary").click();
+  assert.equal(
+    await page
+      .locator("#autonomous-goal")
+      .evaluate((node) =>
+        Boolean(node.closest("details")?.id === "autonomous-agent"),
+      ),
+    true,
+  );
+  await page.locator("#autonomous-start").click();
+  assert.match(
+    await page.locator("#autonomous-status").textContent(),
+    /Enter an Analysis goal/,
+  );
+  assert.equal(await page.locator("#panel-assistant").isVisible(), true);
+  assert.equal(await page.locator("#panel-measurements").isVisible(), true);
+  const sidebarBounds = await page.locator("#panel-assistant").boundingBox();
+  const mainBounds = await page.locator("main").boundingBox();
+  assert.ok(
+    sidebarBounds.x >= mainBounds.x + mainBounds.width - 1,
+    "Assistant is beside the measurement viewer",
+  );
+  const viewerSnapshot = () =>
+    page.evaluate(async () => (await import("./app.js")).getAnalysisSnapshot());
+  const viewerBefore = await viewerSnapshot();
   const reviewedBefore = await page.locator("#assistant-plan").inputValue();
   const beforeAuto = (await journal()).records.length;
   const requestStart = requests.length;
@@ -319,6 +351,66 @@ try {
     autoRequests[2].payload.evidenceContext.claims[0].claim_id,
   );
   assert.equal(audit.journal.records.length, beforeAuto + 2);
+  assert.deepEqual(
+    await viewerSnapshot(),
+    viewerBefore,
+    "Autonomous results do not automatically replace the viewer",
+  );
+  const activity = page.locator("#autonomous-activity");
+  assert.match(
+    await activity.textContent(),
+    /surface_1.*analyze_surface.*complete/,
+  );
+  assert.match(
+    await activity.textContent(),
+    /surface_2.*analyze_surface.*complete/,
+  );
+  assert.match(
+    await activity.textContent(),
+    /Measure the explicitly selected synthetic surface/,
+  );
+  assert.match(
+    await activity.textContent(),
+    /Recorded surface: Sa .* m · Sq .* m/,
+  );
+  assert.equal(await page.locator("#autonomous-output").isVisible(), false);
+  assert.equal(
+    await page
+      .locator("#autonomous-output")
+      .evaluate(
+        (node) => node.parentElement.querySelector("summary").textContent,
+      ),
+    "Technical progress record",
+  );
+  const selectedResult =
+    audit.goal.rounds[1].manifest.steps[0].result.artifact.content.result;
+  assert.notEqual(
+    selectedResult.recipe.output.sha256,
+    viewerBefore.recipe.output.sha256,
+    "Chosen processed result differs from current viewer",
+  );
+  const showButtons = activity.getByRole("button", {
+    name: "Show on dashboard",
+    exact: true,
+  });
+  assert.equal(await showButtons.count(), 2);
+  const callsBeforeShow = (await journal()).records.length;
+  await showButtons.nth(1).click();
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#autonomous-activity")
+      .textContent.includes("Recipe shown on dashboard."),
+  );
+  const shown = await viewerSnapshot();
+  assert.deepEqual(shown.recipe.source, selectedResult.recipe.source);
+  assert.deepEqual(shown.recipe.output, selectedResult.recipe.output);
+  assert.deepEqual(shown.statistics, selectedResult.statistics);
+  assert.deepEqual(shown.recipe.operations, selectedResult.recipe.operations);
+  assert.equal(
+    (await journal()).records.length,
+    callsBeforeShow,
+    "Showing a recipe does not execute another agent plan",
+  );
 
   await page.locator("#autonomous-sop").selectOption("height-roughness");
   await page
@@ -395,7 +487,9 @@ try {
       id,
     );
   await page
-    .getByText("Expected SOP settings (optional)", { exact: true })
+    .getByText("Advanced: expected SOP settings (optional JSON)", {
+      exact: true,
+    })
     .click();
   await page.locator("#autonomous-sop-template").click();
   const settings = JSON.parse(
