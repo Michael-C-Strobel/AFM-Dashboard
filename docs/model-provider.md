@@ -1,6 +1,6 @@
 # Optional model proposal adapter
 
-`web/model-planner.js` exports `proposePlan({ endpoint, model, apiKey = '', prompt, sourceContext, sourceContexts, evidenceBundle, history = [], signal, fetchImpl = fetch, timeoutMs = 60000 })`. It makes one explicit browser request and returns `{ proposal, audit }`. It never executes tools, retries, loads measurements, or changes application state. The caller must present a proposed plan for review separately from execution.
+`web/model-planner.js` exports `proposePlan({ endpoint, model, apiKey = '', prompt, sourceContext, sourceContexts, evidenceBundle, observationBundle, history = [], signal, fetchImpl = fetch, timeoutMs = 60000 })`. It makes one explicit browser request and returns `{ proposal, audit }`. It never executes tools, retries, loads measurements, or changes application state. Reviewed callers present a proposed plan before explicit execution; the separately authorized autonomous controller may execute validated plans within its bounds.
 
 Provide the full Chat Completions endpoint, using HTTPS or HTTP on `localhost`, IPv4 loopback, or `::1`. URL credentials, query strings and fragments are rejected. Requests use POST, `credentials: 'omit'`, `redirect: 'error'`, `cache: 'no-store'`, and `referrerPolicy: 'no-referrer'`. An optional key is sent only as a Bearer header, never saved by this module. Browser CORS rules still apply. Provider compatibility and availability are not assumed; no live provider test is included.
 
@@ -17,6 +17,16 @@ The prompt is limited to 8,000 characters. Optional history is capped at 12 stri
 Warnings come only from selected verified results, including support and unknown-unit warnings. Unselected steps' warnings and error messages are excluded; incomplete runs receive a generic notice. Integrity checking is not independent numerical re-analysis, author authentication or calibration certification.
 
 An evidence response contains 1–32 unique IDs from the exact transmitted claim set. Unknown IDs, additional values/free-form conclusions and evidence responses without opt-in reject. The browser renders the corresponding recorded values and artifact links itself, labeled as model-selected evidence. This does not modify a plan or run tools. It does not assert confidence intervals, independent samples or scientific interpretation.
+
+## Optional verified observations
+
+`observationBundle` accepts exactly `{manifest,journal,step_ids}` alongside an optional `evidenceBundle`. It selects 1–16 completed `check_quality`, `segment_surface`, `measure_texture` or `analyze_sensitivity` steps. The adapter snapshots inputs before awaiting verification and calls `createModelObservations`; only the resulting `observationsContext` enters the provider payload and audit. The local bundle never leaves the browser. Each observation identifies its step, tool, artifact and exact source tuple, with a typed summary and relevant warnings. Plan/journal hashes establish attribution.
+
+Source and reference tuples must be selected and agree with the verified call. Recipe-based tools must match the exact earlier analysis/replay recipe artifact within that plan, including normalized parameters. Surface claims remain independently available. Observations retain units, definitions, calibration/model assumptions, and failed sensitivity alternatives; they exclude bulk rasters, profiles, region tables, recipes, unrelated warnings and free-form failure exceptions. The projection is limited to 64 KiB UTF-8; the entire request still has the combined 256 KiB limit. Neither bound silently truncates required results or warnings. See [verified tool observations](model-observations-design.md).
+
+With supplied observations, the model may return exactly `{kind:"observations",observation_ids:[...]}` containing 1–16 distinct known IDs. No additional values or conclusions are accepted. The audit status is `observations` and `proposal_plan_sha256` is null. Observation artifact IDs do not authorize cross-plan references. These are recorded summaries, not new measurements, confidence intervals, calibration certificates or defect identities. Requests without observation input retain their existing payload/audit fields.
+
+Autonomous next rounds receive this context automatically from the latest eligible run, including quality-only runs, and may terminate as `observations_returned`. The reviewed UI continues to offer explicit surface-evidence selection only; `observationBundle` is available to adapter callers, not a new reviewed-UI selection control.
 
 ## Validation and audit
 
@@ -42,7 +52,7 @@ The UI retains at most 16 request audits, with the current conversation bounded 
 
 ## Selected-context validation
 
-All 315 numerical/integration tests pass after integration, including 38 focused model/evidence tests. `tests/browser-ci.mjs` now also runs `tests/browser-model-context.mjs` against its own isolated server, with a same-origin intercepted mock provider. Chromium 151, Firefox 141 and WebKit 26 pass legacy fallback, explicit two-source planning/execution, mixed-identity rejection, opt-in verified claims, no automatic execution, audit retention, history reset, citation links that open/focus exact artifacts, and rejection before network dispatch after an evidence source is removed.
+The earlier selected-context integration recorded 315 passing numerical/integration tests, including 38 focused model/evidence tests; those counts predate the observation extension. `tests/browser-ci.mjs` now also runs `tests/browser-model-context.mjs` against its own isolated server, with a same-origin intercepted mock provider. Chromium 151, Firefox 141 and WebKit 26 pass legacy fallback, explicit two-source planning/execution, mixed-identity rejection, opt-in verified claims, no automatic execution, audit retention, history reset, citation links that open/focus exact artifacts, and rejection before network dispatch after an evidence source is removed.
 
 The dedicated Chromium context test optionally accepts `AXE_CORE_PATH`. Axe 4.10.3 found zero violations in both populated desktop evidence and mobile context views after making opened artifact/argument panes keyboard-scrollable. One desktop and two mobile incomplete rules still require manual review; this is not a screen-reader certification. Existing single-source model browser checks also pass. No real provider was contacted.
 
