@@ -2,6 +2,7 @@ import { apiFetch } from "./api.js";
 import { getAnalysisSnapshot } from "./app.js";
 const $ = (id) => document.getElementById("texture-" + id);
 let captured = null,
+  thumbnail = null,
   result = null,
   measuredParameters = null,
   busy = false;
@@ -12,7 +13,8 @@ function status(message, error = false) {
   $("status").classList.toggle("error", error);
 }
 function sync() {
-  for (const id of ["capture", "detrend", "window"]) $(id).disabled = busy;
+  for (const id of ["capture", "scope", "detrend", "window"])
+    $(id).disabled = busy;
   $("run").disabled = busy || !captured;
   $("json").disabled = $("tar").disabled = busy || !result;
   $("log").disabled = !result;
@@ -24,6 +26,7 @@ function warn() {
     ...new Set([
       ...(result?.warnings || []),
       "Finite-area sampling and mean/plane removal affect spectral and correlation estimates. Zero padding refines frequency sampling, not physical resolution.",
+      "Small ROIs reduce the longest spatial wavelengths that can be assessed. Entire invalid outer rows or columns may be trimmed; internal holes are rejected, never filled.",
       "ACF uses the unwindowed residual. Edge lags have fewer overlapping pairs; normalized off-zero estimates can exceed one and are not clamped.",
       ...(result && !result.acf.normalized_overview
         ? ["Zero-energy residual: normalized ACF is unavailable."]
@@ -40,9 +43,15 @@ function invalidate(message) {
   warn();
   status(message);
 }
-$("capture").onclick = () => {
+$("scope").onchange = () => {
+  $("scope-review").textContent =
+    $("scope").value === "full"
+      ? "On capture: remove the ROI and rerun the same processing operations in a separate analysis. ROI-dependent leveling can change. Crop operations, imported masks and exclusion polygons remain. The viewer baseline stays unchanged. Review this choice before capturing."
+      : "Capture retains the completed viewer recipe, including its ROI and exclusions. Later viewer edits do not update this snapshot.";
+};
+$("capture").onclick = async () => {
   if (busy) return;
-  const snapshot = getAnalysisSnapshot();
+  let snapshot = getAnalysisSnapshot();
   if (!snapshot) {
     status(
       "Capture refused: current analysis is dirty, pending or unavailable. Recalculate the main viewer first.",
@@ -50,13 +59,150 @@ $("capture").onclick = () => {
     );
     return;
   }
-  // Keep only detached recipe/calibration metadata; source or processed pixels are not needed here.
-  captured = { recipe: structuredClone(snapshot.recipe) };
-  const r = captured.recipe;
-  $("source").textContent =
-    `Captured ${r.source.file} · channel ${r.source.channel} (${r.source.title})\nSource SHA-256 ${r.source.sha256}\nProcessed output SHA-256 ${r.output.sha256}\nSelection ${JSON.stringify(r.selection)}\nIndependent capture: later viewer edits do not change this recipe.`;
-  invalidate("Snapshot captured. Choose explicit preprocessing, then measure.");
+  busy = true;
+  sync();
+  try {
+    const baseline = snapshot.recipe;
+    if ($("scope").value === "full" && baseline.selection.roi !== null) {
+      status(
+        "Creating a separate full-image capture with the same operations and exclusions…",
+      );
+      snapshot = await (
+        await request("/api/analyze", {
+          file: baseline.source.file,
+          channel: Number(baseline.source.channel),
+          operations: baseline.operations,
+          selection: { ...baseline.selection, roi: null },
+          profile: baseline.profile,
+          plateaus: baseline.plateaus,
+          reference: baseline.reference && {
+            file: baseline.reference.file,
+            channel: Number(baseline.reference.channel),
+          },
+        })
+      ).json();
+      if (
+        snapshot.recipe.source.sha256 !== baseline.source.sha256 ||
+        snapshot.recipe.engine.sha256 !== baseline.engine.sha256 ||
+        snapshot.recipe.reference?.sha256 !== baseline.reference?.sha256
+      )
+        throw Error(
+          "Capture source, reference or engine changed. Recalculate and review again.",
+        );
+    }
+    captured = { recipe: structuredClone(snapshot.recipe) };
+    thumbnail = makeThumbnail(snapshot.data);
+    const r = captured.recipe;
+    $("source").textContent =
+      `Captured ${r.source.file} · channel ${r.source.channel} (${r.source.title})\nSource SHA-256 ${r.source.sha256}\nProcessed output SHA-256 ${r.output.sha256}\nSelection ${JSON.stringify(r.selection)}\nIndependent capture: later viewer edits do not change this recipe.`;
+    invalidate(
+      "Snapshot captured. Choose explicit preprocessing, then measure.",
+    );
+  } catch (error) {
+    status(error.message + " Previous capture retained.", true);
+  } finally {
+    busy = false;
+    sync();
+    drawDomain();
+  }
 };
+function makeThumbnail(data) {
+  const height = data.length,
+    width = data[0].length;
+  const image = document.createElement("canvas");
+  image.width = Math.min(192, width);
+  image.height = Math.min(192, height);
+  const values = [];
+  let low = Infinity,
+    high = -Infinity;
+  for (let y = 0; y < image.height; y++)
+    for (let x = 0; x < image.width; x++) {
+      const value =
+        data[Math.floor((y * height) / image.height)][
+          Math.floor((x * width) / image.width)
+        ];
+      values.push(value);
+      if (Number.isFinite(value)) {
+        low = Math.min(low, value);
+        high = Math.max(high, value);
+      }
+    }
+  const ctx = image.getContext("2d"),
+    pixels = ctx.createImageData(image.width, image.height);
+  values.forEach((value, i) => {
+    const t = Number.isFinite(value)
+      ? high === low
+        ? 0.5
+        : (value - low) / (high - low)
+      : 0;
+    pixels.data.set(
+      Number.isFinite(value)
+        ? [35 + 160 * t, 67 + 151 * t, 67 + 105 * t, 255]
+        : [170, 170, 170, 255],
+      i * 4,
+    );
+  });
+  ctx.putImageData(pixels, 0, 0);
+  return image;
+}
+function drawDomain() {
+  const node = $("domain-map"),
+    w = node.clientWidth,
+    h = node.clientHeight;
+  if (!w || !h) return;
+  const dpr = devicePixelRatio || 1;
+  node.width = Math.round(w * dpr);
+  node.height = Math.round(h * dpr);
+  const ctx = node.getContext("2d");
+  ctx.scale(dpr, dpr);
+  ctx.fillStyle = "#e8eeea";
+  ctx.fillRect(0, 0, w, h);
+  if (!captured) {
+    $("domain").textContent = "No captured domain.";
+    return;
+  }
+  const r = captured.recipe,
+    g = r.output.geometry,
+    roi = r.selection.roi;
+  const label = roi
+    ? "ROI"
+    : r.operations.some((op) => op.name === "crop")
+      ? "Cropped image"
+      : "Full processed image";
+  const ratio = Math.min((w - 28) / g.xreal, (h - 28) / g.yreal);
+  const dw = g.xreal * ratio,
+    dh = g.yreal * ratio,
+    left = (w - dw) / 2,
+    top = (h - dh) / 2;
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(thumbnail, left, top, dw, dh);
+  const measured = result?.domain;
+  const bounds = measured?.effective_physical_bounds ||
+    roi || [g.xoff, g.yoff, g.xoff + g.xreal, g.yoff + g.yreal];
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(left, top, dw, dh);
+  ctx.clip();
+  ctx.strokeStyle = "#ffcf50";
+  ctx.lineWidth = 3;
+  ctx.setLineDash(measured ? [] : [5, 3]);
+  ctx.strokeRect(
+    left + (bounds[0] - g.xoff) * ratio,
+    top + (bounds[1] - g.yoff) * ratio,
+    (bounds[2] - bounds[0]) * ratio,
+    (bounds[3] - bounds[1]) * ratio,
+  );
+  ctx.restore();
+  const effective = result?.geometry;
+  $("domain").textContent =
+    `${label} · captured processed image ${g.shape[1]} × ${g.shape[0]} pixels · ${fmt(g.xreal)} × ${fmt(g.yreal)} ${unit(g.xy_unit)}. ` +
+    (effective
+      ? `Measured rectangle (solid amber): ${effective.shape[1]} × ${effective.shape[0]} pixels · ${fmt(effective.xreal)} × ${fmt(effective.yreal)} ${unit(effective.xy_unit)}. Effective physical bounds ${JSON.stringify(bounds)} ${unit(g.xy_unit)}; half-open processed pixel bounds ${JSON.stringify(result.source_bounds)}. `
+      : "Dashed amber: requested domain; exact valid rectangle is established when measured. ") +
+    `${r.selection.exclude_polygons.length} exclusion polygons; masks and nonfinite samples remain excluded. This is a snapshot, independent of the current viewer selection.`;
+  node.dataset.pixelBounds = result ? JSON.stringify(result.source_bounds) : "";
+  node.dataset.physicalBounds = measured ? JSON.stringify(bounds) : "";
+}
 for (const id of ["detrend", "window"])
   $(id).addEventListener("input", () =>
     invalidate(
@@ -135,7 +281,7 @@ function summary() {
       "Preprocessing",
       `${result.parameters.detrend} detrend; ${result.parameters.window} window`,
     ],
-    ["Source pixel bounds", JSON.stringify(result.source_bounds)],
+    ["Half-open processed pixel bounds", JSON.stringify(result.source_bounds)],
     ["Report SHA-256", result.report_sha256],
   ];
   $("summary").replaceChildren(
@@ -348,6 +494,7 @@ function cut(kind) {
     `Cobalt: X cut at Y = 0. Amber: Y cut at X = 0. Each point averages its recorded half-open cut bin (up to 2048 bins per axis); connecting lines guide the eye. Values: ${unit(valueUnit)}. ${s.log ? "Log10 display; zero values appear at the minimum positive display level." : "Linear display."}`;
 }
 function draw() {
+  drawDomain();
   for (const kind of ["psd", "acf"]) {
     map(kind);
     cut(kind);

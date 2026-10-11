@@ -113,3 +113,20 @@
     height: 190px;
   }
 }
+
+.texture-domain-figure {
+  margin: 12px 0;
+  border: 1px solid #adb9aa;
+  background: #e8eeea;
+}
+#texture-domain-map {
+  display: block;
+  width: 100%;
+  height: 190px;
+}
+#texture-domain {
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}

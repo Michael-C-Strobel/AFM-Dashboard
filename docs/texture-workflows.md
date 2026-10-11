@@ -13,6 +13,14 @@ The output directory must not exist. Add `--reference PATH` when the input recip
 
 The directory contains `report.json`, the unchanged `input-recipe.json`, `README.txt`, full-resolution `psd.f64` and `acf.f64`, and `acf_normalized.f64` when zero-lag energy is nonzero. `texture.tar` packages those same files without input measurement bytes. Original measurements are never modified.
 
+## Capture and measured domain
+
+In Texture, review **Capture domain** before capturing. **Current viewer selection** retains the completed viewer recipe. **Full processed image** creates a separate analysis with the ROI removed, rerunning the same operations while retaining crop operations, exclusion polygons and imported masks. ROI-dependent corrections can therefore change. This never replaces the viewer baseline. Changing the selector alone does not change an existing capture or result; use **Capture processed analysis** explicitly.
+
+The captured-image preview retains its source/channel even after viewer edits. Dashed amber marks the requested domain; after measurement, solid amber marks the exact effective rectangle. Entire invalid outer rows/columns can disappear; invalid internal pixels or holes reject instead of being filled. Smaller rectangles reduce access to long spatial wavelengths.
+
+Every report includes `domain`: selection kind, processed geometry, requested ROI, exclusion count, effective geometry, half-open pixel bounds and physical outer-edge bounds. Pixel indices refer to the processed output, including any crop, not necessarily the original raster. The same metadata is hashed and included in JSON and TAR. Historical reports without `domain` still retain their recipe, `geometry` and `source_bounds`; new metadata changes report/code hashes, not estimator formulas.
+
 ## Numerical arrays and display reductions
 
 Raster files are headerless little-endian IEEE-754 float64, in row-major order. Byte offset is `8 * (row * width + column)`. Dimensions, SHA-256 hashes and regular axis metadata are in `report.arrays`. Coordinates follow `start + index * step`. Frequency axes use cycles per stored lateral unit; correlation axes use physical lags. Unknown units remain `null`.

@@ -811,10 +811,33 @@
                 </div>
                 <span>CALIBRATED / REPLAYED</span>
               </div>
-              <button id="texture-capture">Capture processed analysis</button>
+              <div class="toolbar texture-options">
+                <label
+                  >Capture domain<select id="texture-scope">
+                    <option value="selection">Current viewer selection</option>
+                    <option value="full">
+                      Full processed image (retain exclusions)
+                    </option>
+                  </select></label
+                >
+                <button id="texture-capture">Capture processed analysis</button>
+              </div>
+              <p id="texture-scope-review" class="hint">
+                Capture retains the completed viewer recipe, including its ROI
+                and exclusions. Later viewer edits do not update this snapshot.
+              </p>
               <p id="texture-source" class="readout">
                 Capture a completed analysis to retain its recipe and selection.
               </p>
+              <figure class="texture-domain-figure">
+                <canvas
+                  id="texture-domain-map"
+                  role="img"
+                  aria-label="Captured processed image and texture measurement domain"
+                  aria-describedby="texture-domain"
+                ></canvas>
+                <figcaption id="texture-domain">No captured domain.</figcaption>
+              </figure>
               <div class="toolbar texture-options">
                 <label
                   >Detrend<select id="texture-detrend">

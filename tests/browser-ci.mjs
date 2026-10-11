@@ -474,6 +474,7 @@ try {
     "./browser-agent-modes.mjs",
     "./browser-measurement-readout.mjs",
     "./browser-three-point.mjs",
+    "./browser-texture-domain.mjs",
     "./browser-model-observations.mjs",
   ]) {
     await new Promise((resolve, reject) => {
@@ -523,7 +524,7 @@ try {
           "autonomous quality and texture observation feedback",
           "Assistant strict replay",
           "captured processed segmentation",
-          "captured processed spatial texture",
+          "captured processed spatial texture and explicit domain selection",
           "dual-recipe registration",
           "captured sensitivity alternatives",
           "expanded inspection and Escape",
