@@ -194,10 +194,26 @@ try {
     if (!response.ok) throw Error(await response.text());
     return response.json();
   }, selected.recipe);
-  assert.notEqual(
+  assert.equal(
     expectedFull.recipe.output.sha256,
     selected.recipe.output.sha256,
-    "ROI-dependent leveling changes on full recapture",
+    "Full measurement recapture preserves the plane fitted to its recorded selection",
+  );
+  assert.deepEqual(
+    expectedFull.data,
+    selected.data,
+    "Measurement ROI does not refit the applied plane",
+  );
+  assert.deepEqual(expectedFull.recipe.operations, selected.recipe.operations);
+  assert.deepEqual(
+    selected.recipe.operations[0].selection,
+    selected.recipe.selection,
+    "Plane retains its original ROI and exclusions",
+  );
+  assert.notEqual(
+    expectedFull.recipe.output.measurement_sha256,
+    selected.recipe.output.measurement_sha256,
+    "Measurement domain changes the measurement hash",
   );
   assert.deepEqual(
     await snapshot(),

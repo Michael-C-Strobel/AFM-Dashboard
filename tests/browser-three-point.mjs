@@ -263,7 +263,11 @@ try {
   await ready();
   const applied = await snapshot();
   assert.deepEqual(applied.recipe.operations, [
-    { name: "three_point", params: { points, radius: 1 } },
+    {
+      name: "three_point",
+      params: { points, radius: 1 },
+      selection: original.recipe.selection,
+    },
   ]);
   assert.equal(await page.locator("#history li").count(), 1);
   const direct = await page.evaluate(

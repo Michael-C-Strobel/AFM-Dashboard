@@ -96,7 +96,11 @@ try {
     await add(axis, degree);
     await ready();
     const actual = await snapshot(),
-      operation = { name: "line_polynomial", params: { axis, degree } };
+      operation = {
+        name: "line_polynomial",
+        params: { axis, degree },
+        selection: baseline.recipe.selection,
+      };
     assert.deepEqual(actual.recipe.operations, [operation]);
     assert.equal(await page.locator("#history li").count(), 1);
     assert.equal(
