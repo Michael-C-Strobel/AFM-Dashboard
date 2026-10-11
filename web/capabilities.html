@@ -92,7 +92,7 @@
     </nav>
     <h1>Capabilities and validation evidence</h1>
     <p class="version">
-      Matrix version 0.1.0 · reviewed 2026-10-11 · roadmap card A05
+      Matrix version 0.1.1 · reviewed 2026-10-11 · roadmap card A05
     </p>
     <p>
       Use this matrix to decide whether the workbench can read and analyze a
@@ -302,8 +302,9 @@
             <td>Preparation<br />P01/P02/P09</td>
             <td>
               Explicit plane, robust/quadratic and three-point leveling, row
-              correction, crop and existing smoothing; numbered point
-              preview/apply and recipe replay.
+              correction, independent degree-0–3 line-polynomial fits, crop and
+              existing smoothing; numbered point preview/apply and recipe
+              replay.
             </td>
             <td>
               Known-input engine tests and supplied chemist-point replay.
@@ -378,9 +379,12 @@
       The Q02 reference program compares precisely matched methods and settings,
       including known mathematical inputs and Gwyddion-native examples. Import
       compatibility, numerical agreement and scientific adequacy are separate
-      questions. The public workflow benchmark records a step-fitting gap,
+      questions. The initial public workflow benchmark records a step-fitting gap,
       missing row-polynomial/Fourier methods and a half-pixel crop-origin
-      convention difference; it does not establish general Gwyddion parity.
+      convention difference. Line-polynomial fits now have independent synthetic
+      validation in <code>docs/line-polynomial-validation.json</code>; the matched
+      published workflow still needs reassessment and Fourier methods. No general
+      Gwyddion parity is established.
       Consult <code>docs/workflow-benchmark.md</code> and its recorded results
       in the development checkout for case-specific scope and reproducibility.
     </p>

@@ -475,6 +475,7 @@ try {
     "./browser-measurement-readout.mjs",
     "./browser-three-point.mjs",
     "./browser-texture-domain.mjs",
+    "./browser-line-polynomial.mjs",
     "./browser-model-observations.mjs",
   ]) {
     await new Promise((resolve, reject) => {
@@ -521,6 +522,7 @@ try {
           "autonomous adaptive rounds, help agent, provider presets and pilot SOPs",
           "histogram and profile pointer/keyboard readouts",
           "three-point editing, preview, commit and replay",
+          "row/column polynomial correction and strict replay",
           "autonomous quality and texture observation feedback",
           "Assistant strict replay",
           "captured processed segmentation",

@@ -96,6 +96,7 @@
             <option value="polynomial">Polynomial background (degree 2)</option>
             <option value="line_match">Match adjacent lines</option>
             <option value="line_median">Subtract line medians</option>
+            <option value="line_polynomial">Line polynomial correction</option>
             <option value="gaussian">Gaussian smoothing</option>
             <option value="crop">Crop to ROI</option>
           </select></label
@@ -104,6 +105,13 @@
           >Line direction<select id="axis">
             <option value="rows">Rows</option>
             <option value="columns">Columns</option>
+          </select></label
+        ><label id="line-degree-control" hidden
+          >Line polynomial degree<select id="line-degree">
+            <option value="0">0 · mean</option>
+            <option value="1" selected>1 · slope</option>
+            <option value="2">2 · bow</option>
+            <option value="3">3 · cubic</option>
           </select></label
         ><label
           >Smoothing σ (pixels)<input
@@ -114,6 +122,11 @@
             step="0.1"
             value="1"
         /></label>
+        <p id="line-polynomial-hint" class="hint" hidden>
+          Fits the selected background pixels of each line; corrects the full
+          line. Empty fit lines remain unchanged. Review before/after: this can
+          remove real surface structure.
+        </p>
         <button id="add" class="primary">Add operation & apply</button>
         <div class="button-row">
           <button id="undo">Undo</button

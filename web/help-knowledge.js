@@ -2,6 +2,12 @@
 export const helpTopics = Object.freeze(
   [
     {
+      id: "line-polynomial",
+      title: "Correct line slopes and curvature",
+      target: "operation",
+      text: "1. Save an original baseline and identify representative background pixels. Import masks, exclusion polygons and the current ROI restrict fitting; excluded features do not influence the fit.\n2. Choose Line polynomial correction, Rows or Columns, and degree 0 (mean), 1 (slope), 2 (bow) or 3 (cubic). These are independent least-squares fits, not robust artifact detection.\n3. Add operation & apply. The fitted polynomial is subtracted across each fitted line, including outside the selected background. Masks remain excluded. A line with no fit pixels is left unchanged and reported; a partially selected line with fewer than degree+1 fit pixels rejects the operation.\n4. Inspect the map, before/after measurements and recorded per-line coefficients/counts/skipped lines. High degrees and extrapolation can remove real features. Undo if inappropriate. Minimum-zero shifting is separate.\n5. Save the recipe and replay with the matching application code. This operation changes the engine identity; older saved recipes require their original application snapshot, not an edited hash.",
+    },
+    {
       id: "three-point-leveling",
       title: "Level a surface using three chosen points",
       target: "three-point-start",
@@ -223,6 +229,7 @@ export const helpSections = Object.freeze(
         "profiles-plateaus",
         "roughness-workflow",
         "three-point-leveling",
+        "line-polynomial",
         "texture",
         "quality",
         "segmentation",

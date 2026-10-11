@@ -903,12 +903,18 @@ $("channel").onchange = () => {
   analyze();
 };
 $("refresh").onclick = analyze;
+$("operation").addEventListener("change", () => {
+  const visible = $("operation").value === "line_polynomial";
+  $("line-degree-control").hidden = $("line-polynomial-hint").hidden = !visible;
+});
 $("add").onclick = () => {
   const name = $("operation").value;
   let params = {};
   if (name === "robust_plane") params = { iterations: 5, sigma: 3 };
   if (name === "polynomial") params = { degree: 2 };
   if (name.startsWith("line_")) params = { axis: $("axis").value };
+  if (name === "line_polynomial")
+    params.degree = Number($("line-degree").value);
   if (name === "gaussian") {
     const sigma = Number($("sigma").value);
     if (!finite(sigma) || sigma <= 0) {

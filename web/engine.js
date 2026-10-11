@@ -196,6 +196,58 @@ function prediction(c, i, f) {
     0,
   );
 }
+/** Streaming Givens QR avoids normal equations for the bounded one-dimensional fit. */
+function fitLine(values, positions, degree) {
+  const n = degree + 1;
+  if (values.length < n)
+    fail("Too few selected pixels for line polynomial degree " + degree + ".");
+  const first = positions[0],
+    last = positions[positions.length - 1];
+  const index_origin = (first + last) / 2,
+    index_scale = last === first ? 1 : (last - first) / 2,
+    height_origin = average(values),
+    r = Array.from({ length: n }, () => Array(n).fill(0)),
+    b = Array(n).fill(0);
+  for (let sample = 0; sample < values.length; sample++) {
+    const t = (positions[sample] - index_origin) / index_scale,
+      v = Array.from({ length: n }, (_, j) => t ** j);
+    let z = values[sample] - height_origin;
+    for (let k = 0; k < n; k++) {
+      const norm = Math.hypot(r[k][k], v[k]);
+      if (!norm) continue;
+      const cosine = r[k][k] / norm,
+        sine = v[k] / norm;
+      r[k][k] = norm;
+      for (let j = k + 1; j < n; j++) {
+        const next = cosine * r[k][j] + sine * v[j];
+        v[j] = -sine * r[k][j] + cosine * v[j];
+        r[k][j] = next;
+      }
+      const next = cosine * b[k] + sine * z;
+      z = -sine * b[k] + cosine * z;
+      b[k] = next;
+    }
+  }
+  const scale = Math.max(...r.map((row, i) => Math.abs(row[i]))),
+    coefficients = Array(n).fill(0);
+  for (let i = n - 1; i >= 0; i--) {
+    if (!finite(r[i][i]) || Math.abs(r[i][i]) <= scale * 1e-12)
+      fail("Line polynomial fit is numerically underdetermined.");
+    let value = b[i];
+    for (let j = i + 1; j < n; j++) value -= r[i][j] * coefficients[j];
+    coefficients[i] = value / r[i][i];
+  }
+  if (!finite(height_origin) || !coefficients.every(finite))
+    fail("Line polynomial fit overflow.");
+  return {
+    count: values.length,
+    index_origin,
+    index_scale,
+    height_origin,
+    coefficients,
+    fit_index_bounds: [first, last + 1],
+  };
+}
 const SPECS = {
   mean: {},
   plane: {},
@@ -205,6 +257,7 @@ const SPECS = {
   three_point: { points: null, radius: 1 },
   line_median: { axis: "rows" },
   line_match: { axis: "rows" },
+  line_polynomial: { axis: "rows", degree: 1 },
   gaussian: { sigma: 1 },
   crop: { bounds: null },
 };
@@ -229,6 +282,11 @@ export function normalizeOperation(op) {
   const p = { ...defaults, ...supplied };
   if ("axis" in p && !["rows", "columns"].includes(p.axis))
     fail("Axis must be rows or columns.");
+  if (
+    op.name === "line_polynomial" &&
+    (!Number.isInteger(p.degree) || p.degree < 0 || p.degree > 3)
+  )
+    fail("Line polynomial degree must be an integer from 0 to 3.");
   if (op.name === "polynomial" && p.degree !== 2)
     fail("Only degree 2 polynomial surfaces are supported.");
   if (
@@ -352,6 +410,60 @@ export function applyOperation(input, operation, selection = {}) {
     for (let i = 0; i < c.data.length; i++)
       c.data[i] = c.data[i] - origin - prediction(c, i, f);
     Object.assign(details, f, { point_heights: z });
+  } else if (op.name === "line_polynomial") {
+    const rows = p.axis === "rows",
+      lines = rows ? c.height : c.width,
+      length = rows ? c.width : c.height,
+      idx = (line, j) => (rows ? line * c.width + j : j * c.width + line),
+      fits = [],
+      skipped = [];
+    for (let line = 0; line < lines; line++) {
+      const values = [],
+        positions = [];
+      for (let j = 0; j < length; j++)
+        if (m[idx(line, j)]) {
+          values.push(input.data[idx(line, j)]);
+          positions.push(j);
+        }
+      if (!values.length) {
+        skipped.push(line);
+        continue;
+      }
+      let fit;
+      try {
+        fit = fitLine(values, positions, p.degree);
+      } catch (error) {
+        fail(`${p.axis} line ${line}: ${error.message}`);
+      }
+      fits.push({ line, ...fit });
+      for (let j = 0; j < length; j++) {
+        const i = idx(line, j);
+        if (!finite(input.data[i])) continue;
+        const t = (j - fit.index_origin) / fit.index_scale;
+        let correction = 0;
+        for (let k = fit.coefficients.length - 1; k >= 0; k--)
+          correction = correction * t + fit.coefficients[k];
+        const corrected = input.data[i] - fit.height_origin - correction;
+        if (!finite(corrected)) fail("Line polynomial correction overflow.");
+        c.data[i] = corrected;
+      }
+    }
+    Object.assign(details, {
+      method: "least-squares streaming Givens QR",
+      coordinate_basis:
+        "t = (zero-based pixel index - index_origin) / index_scale; physical pixel center = axis_offset + (index + 0.5) * axis_pitch",
+      axis_offset: rows ? c.xoff : c.yoff,
+      axis_pitch: (rows ? c.xreal : c.yreal) / length,
+      xy_unit: c.xy_unit,
+      z_unit: c.z_unit,
+      prediction: "height_origin + sum(coefficients[k] * t^k)",
+      fit_domain:
+        "selected finite pixels excluding imported masks and exclusion polygons",
+      application_domain:
+        "all finite pixels in fitted lines; masks retained; empty fit lines unchanged",
+      fits,
+      skipped_lines: skipped,
+    });
   } else if (op.name === "line_median" || op.name === "line_match") {
     const rows = p.axis === "rows",
       lines = rows ? c.height : c.width,
@@ -593,6 +705,10 @@ export function runPipeline(source, operations = [], selection = {}) {
   if (c.z_unit !== "m")
     warnings.push(
       "Vertical units are not metres; interpret statistics in the stored units, not as topographic heights.",
+    );
+  if (history.some((h) => h.name === "line_polynomial"))
+    warnings.push(
+      "Line polynomial correction can remove real features and extrapolates beyond selected fit pixels. Review line fits, skipped lines and before/after measurements; this is not calibration or automatic artifact identification.",
     );
   if (nonfinite) warnings.push(`${nonfinite} nonfinite pixels are excluded.`);
   if (history.some((h) => h.details.skipped_lines?.length))

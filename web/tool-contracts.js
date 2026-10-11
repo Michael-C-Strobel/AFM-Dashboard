@@ -60,6 +60,8 @@ const descriptions = {
   line_median: "Correct row or column medians; may remove physical structure.",
   line_match:
     "Correct adjacent row or column offsets; may remove physical structure.",
+  line_polynomial:
+    "Subtract independent degree 0–3 least-squares row or column fits. Empty fit lines remain unchanged; partially populated underdetermined lines reject. May remove real structure.",
   gaussian: "Apply normalized Gaussian smoothing in pixel coordinates.",
   crop: "Crop to pixel centers within physical bounds.",
 };
@@ -84,6 +86,10 @@ const parameterSchemas = {
   }),
   line_match: object({
     axis: { type: "string", enum: ["rows", "columns"], default: "rows" },
+  }),
+  line_polynomial: object({
+    axis: { type: "string", enum: ["rows", "columns"], default: "rows" },
+    degree: { type: "integer", minimum: 0, maximum: 3, default: 1 },
   }),
   gaussian: object({
     sigma: { type: "number", exclusiveMinimum: 0, maximum: 10, default: 1 },
