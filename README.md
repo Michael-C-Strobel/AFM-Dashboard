@@ -32,6 +32,8 @@ An analysis ROI controls fitting and statistics. If it excludes a recorded three
 - Mean-referenced areal Sa and Sq, height distributions, extrema, valid area/counts, bilinear profiles, and two-plateau step heights.
 - Matched-grid reference comparison with residuals, RMSE, MAE, and maximum absolute difference.
 - Ordered recipes, branch/undo, strict replay verification, and headless batch processing.
+- On-demand original-acquisition diagnostics with selected-pixel counts, row/column boundary candidates, explicit channel comparison, and a separate provenance report.
+- Headless saved-run comparison tables with compatibility groups, exclusions, and explicit independent-sample IDs.
 
 Sa and Sq are computed relative to the selected mean after the explicit preprocessing pipeline. Non-height channels retain their own units. Plateau standard deviations describe pixel spread; they are not confidence intervals or calibration uncertainty. Automatic leveling is a starting point requiring scientific review, particularly when the background occupies little of an image.
 
@@ -58,9 +60,19 @@ node scripts/afm.mjs replay recipes/chemist-reference.json \
 # Apply a saved recipe to new compatible inputs; each gets a new provenance record
 node scripts/afm.mjs batch artifacts/automatic/recipe.json \
   data/sample-input.gwy --out artifacts/batch --resume
+
+# Inspect original acquisition quality without processing it
+node scripts/quality.mjs data/sample-input.gwy \
+  --channel 0 --out artifacts/quality.json
+
+# Compare saved runs; duplicates/incompatible records remain documented
+node scripts/compare.mjs artifacts/automatic artifacts/replay \
+  --out artifacts/comparison
 ```
 
 Batch requires matching channel title, geometry, and units; it never silently rescales selections. Failures and unprocessed files are listed in `batch.json`. Ctrl-C stops between files. Resume verifies saved recipe replay before reusing a completed result. Batch application is distinct from verifying the original input's recipe.
+
+Quality boundary candidates are descriptive flags, not identified defects or automatic repairs. Browser checks use the current ROI/polygons on the original channel and export a separate JSON report. Saved-run comparison reads metadata only; it does not replay arrays or infer sample independence. See [quality diagnostics](docs/quality.md) and [comparison tables](docs/comparison.md).
 
 ## Validation and reference evidence
 
@@ -76,7 +88,7 @@ Synthetic numerical/importer tests do not require sample files or network access
 
 ## Compatibility and project status
 
-Supported inputs are native **GWYP image data**, a validated **NanoScope binary image subset**, **Igor Binary Wave v5 image data**, and a validated **JPK TIFF image subset**. See [NanoScope support and limitations](docs/nanoscope-support.md) for storage, calibration, orientation, and independent numerical checks. See [IBW calibration and limits](docs/ibw-support.md) , [JPK limitations](docs/jpk-support.md), and the [supported configuration matrix](docs/supported-inputs.md). Untested readable instrument configurations receive a persistent warning; unsupported formats/encodings are rejected. Legacy GWYO, older IBW, ordinary TIFF, spectroscopy, and other scientific objects are not yet supported. Unknown objects/fields are reported; units are preserved or marked unknown. Invalid instrument text bytes remain visible with warnings.
+Supported inputs are native **GWYP image data**, a validated **NanoScope binary image subset**, **Igor Binary Wave v5 image data**, and a validated **JPK TIFF image subset**. See [NanoScope support and limitations](docs/nanoscope-support.md) for storage, calibration, orientation, and independent numerical checks. See [IBW calibration and limits](docs/ibw-support.md), [JPK limitations](docs/jpk-support.md), and the [supported configuration matrix](docs/supported-inputs.md). Untested readable instrument configurations receive a persistent warning; unsupported formats/encodings are rejected. Legacy GWYO, older IBW, ordinary TIFF, spectroscopy, and other scientific objects are not yet supported. Unknown objects/fields are reported; units are preserved or marked unknown. Invalid instrument text bytes remain visible with warnings.
 
 Four additional public reference files cover GWYP, SPM, IBW, and JPK. The GWYP sample imports three channels and the NanoScope and IBW samples each import eight channels, and the JPK sample imports ten. Provenance, local-only downloads, and redistribution gaps are recorded in [compatibility samples](docs/compatibility-samples.md). These external binaries are ignored and must not be included in releases without resolving their terms. The supplied laboratory data also needs redistribution approval before publication.
 

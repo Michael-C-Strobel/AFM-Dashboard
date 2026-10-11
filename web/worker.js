@@ -24,19 +24,26 @@ function identityFor(format) {
 }
 let qualityIdentity;
 function identifyQuality() {
-  return qualityIdentity ??= (async () => {
-    const files = await Promise.all(["quality.js", "engine.js"].map(async name => {
-      const response = await fetch(new URL(name, import.meta.url));
-      if (!response.ok) throw new Error("Cannot identify diagnostic code");
-      return { name, text: await response.text() };
-    }));
-    const digest = text => sha256(new TextEncoder().encode(text));
+  return (qualityIdentity ??= (async () => {
+    const files = await Promise.all(
+      ["quality.js", "engine.js"].map(async (name) => {
+        const response = await fetch(new URL(name, import.meta.url));
+        if (!response.ok) throw new Error("Cannot identify diagnostic code");
+        return { name, text: await response.text() };
+      }),
+    );
+    const digest = (text) => sha256(new TextEncoder().encode(text));
     return {
-      sha256: await digest(files.map(f => f.text).join("\n")),
+      sha256: await digest(files.map((f) => f.text).join("\n")),
       definition: "SHA-256 of UTF-8 quality.js + newline + engine.js",
-      files: await Promise.all(files.map(async f => ({name: f.name, sha256: await digest(f.text)}))),
+      files: await Promise.all(
+        files.map(async (f) => ({
+          name: f.name,
+          sha256: await digest(f.text),
+        })),
+      ),
     };
-  })();
+  })());
 }
 const get = (name) => {
   const source = sources.get(name);
@@ -94,24 +101,45 @@ async function dispatch(type, payload) {
   if (type === "quality") {
     const channel = source.channels[payload.channel];
     if (!channel) throw new Error("Input channel not found.");
-    const reference = payload.reference_channel == null ? null : source.channels[payload.reference_channel];
-    if (payload.reference_channel != null && !reference) throw new Error("Reference channel not found.");
-    const report = qualityReport(channel, {selection: payload.selection ?? {}, boundary_sigma: payload.boundary_sigma ?? 6}, reference);
+    const reference =
+      payload.reference_channel == null
+        ? null
+        : source.channels[payload.reference_channel];
+    if (payload.reference_channel != null && !reference)
+      throw new Error("Reference channel not found.");
+    const report = qualityReport(
+      channel,
+      {
+        selection: payload.selection ?? {},
+        boundary_sigma: payload.boundary_sigma ?? 6,
+      },
+      reference,
+    );
     const output = {
       schema_version: 1,
       input: {
-        file: payload.file, sha256: source.sha256, channel: String(channel.id), channel_title: channel.title,
-        format: source.format, support: source.support ?? null,
-        warnings: [...new Set([...(source.warnings ?? []), ...(channel.warnings ?? [])])],
+        file: payload.file,
+        sha256: source.sha256,
+        channel: String(channel.id),
+        channel_title: channel.title,
+        format: source.format,
+        support: source.support ?? null,
+        warnings: [
+          ...new Set([...(source.warnings ?? []), ...(channel.warnings ?? [])]),
+        ],
         reference_channel: reference ? String(reference.id) : null,
-        reference_title: reference?.title ?? null, reference_warnings: reference?.warnings ?? [],
+        reference_title: reference?.title ?? null,
+        reference_warnings: reference?.warnings ?? [],
       },
       reader_engine_sha256: engine,
       warnings: [...new Set([...(source.warnings ?? []), ...report.warnings])],
-      code: await identifyQuality(), parameters: report.parameters, report,
+      code: await identifyQuality(),
+      parameters: report.parameters,
+      report,
     };
     JSON.stringify(output, (_key, value) => {
-      if (typeof value === "number" && !Number.isFinite(value)) throw new Error("Nonfinite diagnostic result cannot be exported.");
+      if (typeof value === "number" && !Number.isFinite(value))
+        throw new Error("Nonfinite diagnostic result cannot be exported.");
       return value;
     });
     return output;
