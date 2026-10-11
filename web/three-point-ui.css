@@ -1,0 +1,55 @@
+#three-point-editor {
+  margin-block: 0.65rem;
+  padding: 0.65rem;
+  border: 1px solid var(--line, #bac6d6);
+  background: var(--panel, #f8f9fa);
+  min-width: 0;
+}
+#three-point-editor > summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+#three-point-editor > button,
+#three-point-editor > label,
+#three-point-editor > .level-coordinate-grid {
+  margin-top: 0.6rem;
+}
+#three-point-editor label {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.level-coordinate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+#three-point-editor input,
+#three-point-editor select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+#three-point-editor input[readonly] {
+  background: #e8edf3;
+  color: #34465c;
+}
+.level-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+}
+.level-actions button {
+  flex: 1 1 7rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#level-status {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+#level-status.error {
+  color: #9f2635;
+}
