@@ -120,6 +120,11 @@ export async function apiFetch(path, options = {}) {
       await ensure(body.file);
       return Response.json(await call("quality", body));
     }
+    if (route === "/api/segment") {
+      await ensure(body.recipe?.source?.file);
+      if (body.recipe?.reference) await ensure(body.recipe.reference.file);
+      return Response.json(await call("segment", body));
+    }
     if (route === "/api/replay") {
       await ensure(body.file ?? body.recipe?.source?.file);
       if (body.recipe.reference) await ensure(body.recipe.reference.file);

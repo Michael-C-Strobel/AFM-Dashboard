@@ -1768,3 +1768,14 @@ new MutationObserver(syncBatchControls).observe($("download"), {
   attributeFilter: ["disabled"],
 });
 refreshBatchFiles();
+
+/** Detached current processed analysis for explicitly captured downstream measurements. */
+export function getAnalysisSnapshot() {
+  if ($("download").disabled || !state.response?.recipe) return null;
+  return structuredClone({
+    recipe: state.response.recipe,
+    data: state.response.data,
+    channel: state.response.channel,
+    statistics: state.response.statistics,
+  });
+}

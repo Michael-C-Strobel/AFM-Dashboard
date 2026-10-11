@@ -180,7 +180,7 @@ async function dispatch(type, payload) {
   }
   if (type === "registry") return operationRegistry();
   const source = get(
-    type === "replay"
+    type === "replay" || type === "segment"
       ? (payload.file ?? payload.recipe?.source?.file)
       : payload.file,
   );
@@ -225,6 +225,36 @@ async function dispatch(type, payload) {
     // Keep the captured run record after independently verifying its numerical replay.
     result.recipe = structuredClone(payload.recipe);
     return exportBundle(result);
+  }
+  if (type === "segment") {
+    const { segmentRecipe } = await import("./segmentation-service.js");
+    const files = await Promise.all(
+      ["segmentation.js", "segmentation-service.js", "engine.js"].map(
+        async (name) => {
+          const response = await fetch(new URL(name, import.meta.url));
+          if (!response.ok)
+            throw new Error("Cannot identify segmentation code.");
+          return { name, text: await response.text() };
+        },
+      ),
+    );
+    const digest = (text) => sha256(new TextEncoder().encode(text));
+    const code = {
+      sha256: await digest(files.map((file) => file.text).join("\n")),
+      files: await Promise.all(
+        files.map(async (file) => ({
+          name: file.name,
+          sha256: await digest(file.text),
+        })),
+      ),
+    };
+    return segmentRecipe(
+      payload,
+      source,
+      payload.recipe?.reference ? get(payload.recipe.reference.file) : null,
+      engine,
+      code,
+    );
   }
   if (type === "quality") {
     const channel = source.channels[payload.channel];
