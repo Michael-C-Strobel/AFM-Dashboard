@@ -29,3 +29,7 @@ The user confirms `sample-input.gwy` as raw input and `_worked.gwy` as the chemi
 `web/quality.js` computes descriptive row/column diagnostics without changing source arrays. The worker exposes `/api/quality`; reports include the source hash, reader identity, diagnostic code hashes, selection, warnings, and optional explicit same-file reference. Diagnostics use the original channel even when the processing pipeline contains a crop or leveling step. They remain separate from analysis recipes.
 
 `web/comparison.js` groups compatible saved-run metadata; `scripts/compare.mjs` exports complete included/excluded JSON and TSV rows. It never pools pixels or treats multiple regions as independent acquisitions. Sample independence requires an explicit source-hash-to-sample-ID map. Metadata comparison is not numerical replay verification.
+
+## Browser batch queue
+
+`web/batch.js` supplies shared browser/CLI compatibility gates and a sequential browser queue with detached recipe snapshots and between-file cancellation. The API exposes `batch-check`, `batch-run`, and `batch-export` through the existing local worker. Queue records retain compact provenance/statistics instead of raster matrices. Exports replay each completed recipe against the exact loaded input before creating its TAR. Reference-bearing templates are rejected instead of silently dropping the comparison. The browser keeps its manifest only in memory; persistent verified resume remains a CLI capability.

@@ -184,6 +184,9 @@ test("CLI shared batch gate preserves resume and rejects reference templates exp
   await exec(process.execPath, [...args, "--resume"]);
   report = JSON.parse(await readFile(join(out, "batch.json"), "utf8"));
   assert.equal(report.records[0].resumed, true);
+  assert.equal(report.records[0].output_sha256, result.recipe.output.sha256);
+  assert.ok(report.records[0].support);
+  assert.ok(Array.isArray(report.records[0].warnings));
   await writeFile(
     templatePath,
     JSON.stringify({

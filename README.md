@@ -57,8 +57,12 @@ node scripts/afm.mjs analyze data/sample-input.gwy \
 node scripts/afm.mjs replay recipes/chemist-reference.json \
   --data-dir data --out artifacts/replay
 
+# Save a batch template without a reference comparison
+node scripts/afm.mjs analyze data/sample-input.gwy \
+  --preset automatic --out artifacts/batch-template
+
 # Apply a saved recipe to new compatible inputs; each gets a new provenance record
-node scripts/afm.mjs batch artifacts/automatic/recipe.json \
+node scripts/afm.mjs batch artifacts/batch-template/recipe.json \
   data/sample-input.gwy --out artifacts/batch --resume
 
 # Inspect original acquisition quality without processing it
@@ -70,9 +74,15 @@ node scripts/compare.mjs artifacts/automatic artifacts/replay \
   --out artifacts/comparison
 ```
 
-Batch requires matching channel title, geometry, and units; it never silently rescales selections. Failures and unprocessed files are listed in `batch.json`. Ctrl-C stops between files. Resume verifies saved recipe replay before reusing a completed result. Batch application is distinct from verifying the original input's recipe.
+Batch requires matching channel ID/title, geometry, units, and engine identity; it never silently rescales selections. Templates containing reference comparisons are rejected explicitly. Failures and unprocessed files are listed in `batch.json`. Ctrl-C stops between files. Resume verifies saved recipe replay before reusing a completed result. Batch application is distinct from verifying the original input's recipe.
 
 Quality boundary candidates are descriptive flags, not identified defects or automatic repairs. Browser checks use the current ROI/polygons on the original channel and export a separate JSON report. Saved-run comparison reads metadata only; it does not replay arrays or infer sample independence. See [quality diagnostics](docs/quality.md) and [comparison tables](docs/comparison.md).
+
+## Browser batch processing
+
+After a successful analysis, disable reference comparison and recalculate before capturing a batch template. Select files in the batch panel, check compatibility, then start the queue. The captured template is a snapshot: later interactive changes do not change the job. Progress and per-file warnings/errors remain visible; cancellation finishes the current file and marks remaining files unprocessed.
+
+Download the batch JSON manifest and each completed recipe or analysis TAR. A TAR download verifies the saved run by strict replay before export. Batch application generates a new recipe for each input; it is not verification of the original template against a new source. Browser results are session-local and have no persistent resume; download records before reloading. CLI `--resume` remains available. See [browser batch workflow](docs/browser-batch.md).
 
 ## Validation and reference evidence
 

@@ -203,6 +203,9 @@ try {
               resumed: true,
               out,
               source_sha256: source.sha256,
+              output_sha256: verified.recipe.output.sha256,
+              support: source.support,
+              warnings: verified.warnings,
             });
           } catch {
             /* regenerate incomplete or invalid checkpoint */
