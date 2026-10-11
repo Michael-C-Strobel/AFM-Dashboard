@@ -15,7 +15,12 @@ const encoder = new TextEncoder();
 const clone = (value) => structuredClone(value);
 
 // Validate before serialization: JSON.stringify alone silently drops or coerces values.
-function canonicalJSON(value, ancestors = new Set(), depth = 0, maxDepth = 64) {
+export function canonicalJSON(
+  value,
+  ancestors = new Set(),
+  depth = 0,
+  maxDepth = 64,
+) {
   if (depth > maxDepth)
     throw new Error("Tool result exceeds the JSON depth limit");
   if (value === null || typeof value === "boolean" || typeof value === "string")
