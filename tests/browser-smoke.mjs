@@ -71,6 +71,7 @@ try {
   const mapBefore = await page
     .locator("#result")
     .evaluate((canvas) => canvas.toDataURL());
+  await page.locator("#tab-acquisition").click();
   assert.equal(await page.locator("#acquisition-reference").inputValue(), "");
   await page.locator("#acquisition-check").click();
   await page.waitForFunction(
@@ -154,6 +155,7 @@ try {
   await page.waitForFunction(
     () => !document.querySelector("#acquisition-export").disabled,
   );
+  await page.locator("#tab-measurements").click();
   await action("#preset");
   assert.equal(await page.locator("#history li").count(), 2);
   await action("#chemist");
@@ -318,6 +320,8 @@ try {
     path: process.env.AFM_MOBILE_SCREENSHOT || "/tmp/afm-ui-mobile.png",
     fullPage: true,
   });
+  await page.locator("#toggle-inspector").click();
+  assert.equal(await page.locator("#data-inspector").isVisible(), true);
   // Local file import is exercised after benchmark evidence is saved.
   const local = await readFile(
     new URL("../data/sample-input.gwy", import.meta.url),

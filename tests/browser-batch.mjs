@@ -83,6 +83,7 @@ try {
   );
   await page.goto(process.env.AFM_BASE_URL || "http://127.0.0.1:4174/web/");
   await ready();
+  await page.locator("#tab-batch").click();
   await page.waitForSelector("#batch-files input");
   await action("#preset");
   await page.locator("#batch-capture").click();

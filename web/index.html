@@ -10,27 +10,41 @@
     />
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./app.js"></script>
+    <script type="module" src="./workspace.js"></script>
   </head>
   <body>
     <header>
       <div class="brand">
-        <span class="mark">A∿</span>
+        <span class="mark" aria-hidden="true">A∿</span>
         <div>
           <strong>AFM Workbench</strong
-          ><small>Explore surfaces. Preserve the evidence.</small>
+          ><small>SURFACE ANALYSIS / LOCAL WORKSPACE</small>
         </div>
       </div>
-      <span class="badge">LOCAL ANALYSIS · REPRODUCIBLE</span>
+      <div class="header-actions">
+        <span class="badge">SOURCE → RECIPE → EVIDENCE</span
+        ><button
+          id="toggle-inspector"
+          aria-expanded="false"
+          aria-controls="data-inspector"
+        >
+          Data & processing
+        </button>
+      </div>
     </header>
     <div class="layout">
-      <aside>
+      <aside id="data-inspector" aria-label="Data and processing inspector">
+        <div class="dock-caption"><span>01 / DATA & PROCESSING</span></div>
         <h2>Measurement</h2>
-        <p class="hint">
-          Supported subsets: Gwyddion GWYP, NanoScope raster, calibrated IBW v5
-          images, and JPK TIFF raster. Other instrument configurations are
-          unverified; ordinary TIFF images are unsupported. File contents
-          determine format; numeric filenames such as .001 are accepted.
-        </p>
+        <details class="format-help">
+          <summary>Supported formats & import help</summary>
+          <p class="hint">
+            Supported subsets: Gwyddion GWYP, NanoScope raster, calibrated IBW
+            v5 images, and JPK TIFF raster. Other instrument configurations are
+            unverified; ordinary TIFF images are unsupported. File contents
+            determine format; numeric filenames such as .001 are accepted.
+          </p>
+        </details>
         <label class="button import-button" tabindex="0" role="button"
           >Import local AFM files<input
             id="import"
@@ -124,7 +138,7 @@
       <main>
         <div class="heading">
           <div>
-            <p class="eyebrow">SURFACE ANALYSIS</p>
+            <p class="eyebrow">02 / SURFACE VIEWPORT</p>
             <h1 id="title">Your measurement, in context.</h1>
           </div>
           <button id="refresh">Recalculate</button>
@@ -132,7 +146,7 @@
         <div id="status" role="status" aria-live="polite">
           Loading measurements…
         </div>
-        <section class="toolbar" aria-label="Display controls">
+        <section class="toolbar display-tools" aria-label="Display controls">
           <label
             >Right-hand view<select id="view">
               <option value="processed">Processed</option>
@@ -161,11 +175,14 @@
               placeholder="Auto" /></label
           ><button id="reset-view">Reset zoom</button>
         </section>
-        <p class="hint">
-          Each map is autoscaled independently unless Shared color scale is
-          enabled. Color limits use base units; they never change data. Scroll
-          to zoom; drag with Navigate to pan.
-        </p>
+        <details class="display-help">
+          <summary>Color limits & navigation</summary>
+          <p class="hint">
+            Each map is autoscaled independently unless Shared color scale is
+            enabled. Color limits use base units; they never change data. Scroll
+            to zoom; drag with Navigate to pan.
+          </p>
+        </details>
         <section class="maps">
           <article class="map-card">
             <div class="map-heading">
@@ -214,159 +231,234 @@
             >Reference channel<select id="reference-channel"></select
           ></label>
         </section>
-        <details class="coordinate-panel">
-          <summary>
-            Enter exact selection coordinates (keyboard alternative)
-          </summary>
-          <p class="hint" id="coordinate-units">
-            Coordinates use the source channel’s base units.
-          </p>
-          <div class="toolbar">
-            <label>x₀<input id="coord-x0" type="number" step="any" /></label
-            ><label>y₀<input id="coord-y0" type="number" step="any" /></label
-            ><label>x₁<input id="coord-x1" type="number" step="any" /></label
-            ><label>y₁<input id="coord-y1" type="number" step="any" /></label
-            ><button id="coordinate-roi">Set ROI</button
-            ><button id="coordinate-profile">Set profile</button>
-          </div>
-          <label
-            >Excluded polygon vertices as JSON, e.g.
-            [[0,0],[1e-6,0],[0,1e-6]]<textarea
-              id="coordinate-polygon"
-              rows="2"
-              placeholder="[[x,y],[x,y],[x,y]]"
-            ></textarea></label
-          ><button id="coordinate-exclude">Add excluded polygon</button>
-        </details>
-        <p class="hint" id="selection-info">
-          Draw a selection, then recalculate. Nonfinite pixels appear
-          checkerboard.
-        </p>
-        <section
-          class="toolbar plateau-controls"
-          aria-label="Step height regions"
-        >
-          <button id="plateau-a">Use current ROI as plateau A</button
-          ><button id="plateau-b">Use current ROI as plateau B</button
-          ><button id="clear-plateaus">Clear plateaus</button>
-        </section>
-        <p class="hint" id="plateau-info">
-          Step height: select two plateau regions using the ROI tool. Plateaus
-          are measured independently of the global ROI; exclusions still apply.
-        </p>
-        <section
-          id="statistics"
-          class="statistics"
-          aria-label="Surface statistics"
-        ></section>
-        <p class="hint">
-          Sa and Sq are relative to the selected mean. Statistics use the
-          analysis selection, excluding masks and nonfinite values.
-        </p>
-        <section class="lower">
-          <article>
-            <h2>Height distribution</h2>
-            <div id="histogram">
-              <p class="hint">Recalculate to view selected heights.</p>
-            </div>
-          </article>
-          <article>
-            <h2>Two-plateau step height</h2>
-            <div id="step">
-              <p class="hint">Set plateau A and plateau B, then recalculate.</p>
-            </div>
-            <p class="hint">
-              Step height is mean B minus mean A. Within-region standard
-              deviations describe spread, not measurement uncertainty.
-            </p>
-          </article>
-        </section>
-        <section class="lower">
-          <article>
-            <h2>Line profile</h2>
-            <div id="profile">
-              <p class="hint">Choose Line profile and drag across a surface.</p>
-            </div>
-          </article>
-          <article>
-            <h2>Validation & comparison</h2>
-            <div id="quality"></div>
-            <div id="comparison"></div>
-            <p class="hint">
-              Reference comparisons are numerical benchmarks. Agreement does not
-              establish the original processing procedure.
-            </p>
-          </article>
-        </section>
-        <section class="acquisition-card" aria-labelledby="acquisition-title">
-          <h2 id="acquisition-title">Check acquisition</h2>
-          <p class="hint">
-            On-demand diagnostics of the original source channel with the
-            current ROI and excluded polygons. Processing operations and cropped
-            previews are not used. Boundary candidates can reflect real sample
-            structure; they are not defect classifications.
-          </p>
-          <div class="toolbar">
-            <label
-              >Boundary threshold multiplier<input
-                id="acquisition-sigma"
-                type="number"
-                min="0.1"
-                step="0.1"
-                value="6" /></label
-            ><label
-              >Optional channel from this file<select
-                id="acquisition-reference"
-              >
-                <option value="">None — no comparison</option>
-              </select></label
-            ><button id="acquisition-check">Check original acquisition</button
-            ><button id="acquisition-export" disabled>
-              Export quality JSON
+        <section class="inspection-dock" aria-label="Analysis inspection">
+          <div
+            class="inspection-tabs"
+            role="tablist"
+            aria-label="Inspection panels"
+          >
+            <button
+              id="tab-measurements"
+              role="tab"
+              aria-selected="true"
+              aria-controls="panel-measurements"
+              tabindex="0"
+            >
+              Measurements
             </button>
-          </div>
-          <p id="acquisition-pair" class="hint">
-            Select a reference explicitly to compare channels.
-          </p>
-          <p id="acquisition-status" role="status" aria-live="polite">
-            No acquisition diagnostics requested.
-          </p>
-          <div id="acquisition-report"></div>
-        </section>
-        <section class="batch-card" aria-labelledby="batch-title">
-          <h2 id="batch-title">Batch analysis</h2>
-          <p class="hint">
-            Apply a captured processing recipe to explicitly selected new
-            inputs. This creates new per-file recipes; it is not replay of the
-            original recipe. Templates containing reference comparisons are
-            rejected. Unknown instrument configurations retain their warnings.
-            Jobs run in this browser session; reopening the page does not resume
-            them.
-          </p>
-          <div class="toolbar">
-            <button id="batch-capture" disabled>Capture current recipe</button
-            ><button id="batch-refresh">Refresh file list</button
-            ><button id="batch-reset">Reset batch</button>
-          </div>
-          <p id="batch-template" class="hint">
-            No template captured. Analyze a source channel first.
-          </p>
-          <fieldset id="batch-files">
-            <legend>Select input files</legend>
-          </fieldset>
-          <div class="toolbar">
-            <button id="batch-preflight" disabled>Check selected inputs</button
-            ><button id="batch-start" disabled>Start batch</button
-            ><button id="batch-cancel" disabled>
-              Cancel after current file</button
-            ><button id="batch-download" disabled>
-              Download batch manifest
+            <button
+              id="tab-acquisition"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-acquisition"
+              tabindex="-1"
+            >
+              Acquisition quality
             </button>
+            <button
+              id="tab-batch"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-batch"
+              tabindex="-1"
+            >
+              Batch
+            </button>
+            <span class="dock-label" aria-hidden="true"
+              >03 / INSPECT & EXPORT</span
+            >
           </div>
-          <p id="batch-status" role="status" aria-live="polite">
-            No batch started.
-          </p>
-          <div id="batch-records"></div>
+          <div
+            id="panel-measurements"
+            role="tabpanel"
+            aria-labelledby="tab-measurements"
+            tabindex="0"
+          >
+            <section
+              id="statistics"
+              class="statistics"
+              aria-label="Surface statistics"
+            ></section>
+            <p class="hint">
+              Sa and Sq are relative to the selected mean. Statistics use the
+              analysis selection, excluding masks and nonfinite values.
+            </p>
+            <details class="coordinate-panel">
+              <summary>
+                Enter exact selection coordinates (keyboard alternative)
+              </summary>
+              <p class="hint" id="coordinate-units">
+                Coordinates use the source channel’s base units.
+              </p>
+              <div class="toolbar">
+                <label>x₀<input id="coord-x0" type="number" step="any" /></label
+                ><label
+                  >y₀<input id="coord-y0" type="number" step="any" /></label
+                ><label
+                  >x₁<input id="coord-x1" type="number" step="any" /></label
+                ><label
+                  >y₁<input id="coord-y1" type="number" step="any" /></label
+                ><button id="coordinate-roi">Set ROI</button
+                ><button id="coordinate-profile">Set profile</button>
+              </div>
+              <label
+                >Excluded polygon vertices as JSON, e.g.
+                [[0,0],[1e-6,0],[0,1e-6]]<textarea
+                  id="coordinate-polygon"
+                  rows="2"
+                  placeholder="[[x,y],[x,y],[x,y]]"
+                ></textarea></label
+              ><button id="coordinate-exclude">Add excluded polygon</button>
+            </details>
+            <p class="hint" id="selection-info">
+              Draw a selection, then recalculate. Nonfinite pixels appear
+              checkerboard.
+            </p>
+            <section
+              class="toolbar plateau-controls"
+              aria-label="Step height regions"
+            >
+              <button id="plateau-a">Use current ROI as plateau A</button
+              ><button id="plateau-b">Use current ROI as plateau B</button
+              ><button id="clear-plateaus">Clear plateaus</button>
+            </section>
+            <p class="hint" id="plateau-info">
+              Step height: select two plateau regions using the ROI tool.
+              Plateaus are measured independently of the global ROI; exclusions
+              still apply.
+            </p>
+            <section class="lower">
+              <article>
+                <h2>Height distribution</h2>
+                <div id="histogram">
+                  <p class="hint">Recalculate to view selected heights.</p>
+                </div>
+              </article>
+              <article>
+                <h2>Two-plateau step height</h2>
+                <div id="step">
+                  <p class="hint">
+                    Set plateau A and plateau B, then recalculate.
+                  </p>
+                </div>
+                <p class="hint">
+                  Step height is mean B minus mean A. Within-region standard
+                  deviations describe spread, not measurement uncertainty.
+                </p>
+              </article>
+            </section>
+            <section class="lower">
+              <article>
+                <h2>Line profile</h2>
+                <div id="profile">
+                  <p class="hint">
+                    Choose Line profile and drag across a surface.
+                  </p>
+                </div>
+              </article>
+              <article>
+                <h2>Validation & comparison</h2>
+                <div id="quality"></div>
+                <div id="comparison"></div>
+                <p class="hint">
+                  Reference comparisons are numerical benchmarks. Agreement does
+                  not establish the original processing procedure.
+                </p>
+              </article>
+            </section>
+          </div>
+          <div
+            id="panel-acquisition"
+            role="tabpanel"
+            aria-labelledby="tab-acquisition"
+            tabindex="0"
+            hidden
+          >
+            <section
+              class="acquisition-card"
+              aria-labelledby="acquisition-title"
+            >
+              <h2 id="acquisition-title">Check acquisition</h2>
+              <p class="hint">
+                On-demand diagnostics of the original source channel with the
+                current ROI and excluded polygons. Processing operations and
+                cropped previews are not used. Boundary candidates can reflect
+                real sample structure; they are not defect classifications.
+              </p>
+              <div class="toolbar">
+                <label
+                  >Boundary threshold multiplier<input
+                    id="acquisition-sigma"
+                    type="number"
+                    min="0.1"
+                    step="0.1"
+                    value="6" /></label
+                ><label
+                  >Optional channel from this file<select
+                    id="acquisition-reference"
+                  >
+                    <option value="">None — no comparison</option>
+                  </select></label
+                ><button id="acquisition-check">
+                  Check original acquisition</button
+                ><button id="acquisition-export" disabled>
+                  Export quality JSON
+                </button>
+              </div>
+              <p id="acquisition-pair" class="hint">
+                Select a reference explicitly to compare channels.
+              </p>
+              <p id="acquisition-status" role="status" aria-live="polite">
+                No acquisition diagnostics requested.
+              </p>
+              <div id="acquisition-report"></div>
+            </section>
+          </div>
+          <div
+            id="panel-batch"
+            role="tabpanel"
+            aria-labelledby="tab-batch"
+            tabindex="0"
+            hidden
+          >
+            <section class="batch-card" aria-labelledby="batch-title">
+              <h2 id="batch-title">Batch analysis</h2>
+              <p class="hint">
+                Apply a captured processing recipe to explicitly selected new
+                inputs. This creates new per-file recipes; it is not replay of
+                the original recipe. Templates containing reference comparisons
+                are rejected. Unknown instrument configurations retain their
+                warnings. Jobs run in this browser session; reopening the page
+                does not resume them.
+              </p>
+              <div class="toolbar">
+                <button id="batch-capture" disabled>
+                  Capture current recipe</button
+                ><button id="batch-refresh">Refresh file list</button
+                ><button id="batch-reset">Reset batch</button>
+              </div>
+              <p id="batch-template" class="hint">
+                No template captured. Analyze a source channel first.
+              </p>
+              <fieldset id="batch-files">
+                <legend>Select input files</legend>
+              </fieldset>
+              <div class="toolbar">
+                <button id="batch-preflight" disabled>
+                  Check selected inputs</button
+                ><button id="batch-start" disabled>Start batch</button
+                ><button id="batch-cancel" disabled>
+                  Cancel after current file</button
+                ><button id="batch-download" disabled>
+                  Download batch manifest
+                </button>
+              </div>
+              <p id="batch-status" role="status" aria-live="polite">
+                No batch started.
+              </p>
+              <div id="batch-records"></div>
+            </section>
+          </div>
         </section>
       </main>
     </div>
