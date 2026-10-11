@@ -11,11 +11,13 @@
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./segmentation-ui.css" />
     <link rel="stylesheet" href="./texture-ui.css" />
+    <link rel="stylesheet" href="./registration-ui.css" />
     <link rel="stylesheet" href="./assistant.css" />
     <link rel="stylesheet" href="./model-panel.css" />
     <script type="module" src="./app.js"></script>
     <script type="module" src="./segmentation-ui.js"></script>
     <script type="module" src="./texture-ui.js"></script>
+    <script type="module" src="./registration-ui.js"></script>
     <script type="module" src="./assistant.js"></script>
     <script type="module" src="./workspace.js"></script>
   </head>
@@ -297,6 +299,15 @@
               tabindex="-1"
             >
               Texture
+            </button>
+            <button
+              id="tab-registration"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-registration"
+              tabindex="-1"
+            >
+              Registration
             </button>
             <span class="dock-label" aria-hidden="true"
               >03 / INSPECT & EXPORT</span
@@ -857,6 +868,175 @@
                 directional cuts. TAR contains full-resolution float64 arrays,
                 recipe, units and hashes; source measurement bytes are not
                 included.
+              </p>
+            </section>
+          </div>
+
+          <div
+            id="panel-registration"
+            role="tabpanel"
+            aria-labelledby="tab-registration"
+            tabindex="0"
+            hidden
+          >
+            <section
+              class="registration-panel"
+              aria-labelledby="registration-title"
+            >
+              <h2 id="registration-title">Translation registration</h2>
+              <p class="hint">
+                Capture two processed analyses independently. Change the main
+                viewer’s source, channel or processing between captures.
+                Registration leaves both recipes and the main viewer unchanged.
+              </p>
+              <div class="registration-captures">
+                <div>
+                  <button id="registration-capture-fixed">
+                    Capture fixed analysis
+                  </button>
+                  <p id="registration-fixed-source" class="readout">
+                    No fixed analysis captured.
+                  </p>
+                </div>
+                <div>
+                  <button id="registration-capture-moving">
+                    Capture moving analysis
+                  </button>
+                  <p id="registration-moving-source" class="readout">
+                    No moving analysis captured.
+                  </p>
+                </div>
+              </div>
+              <div class="toolbar registration-options">
+                <label
+                  >Transform mode<select id="registration-mode">
+                    <option value="manual">Manual physical translation</option>
+                    <option value="automatic">
+                      Automatic integer proposal
+                    </option>
+                  </select></label
+                >
+                <label
+                  >Interpolation<select id="registration-interpolation">
+                    <option value="bilinear">Bilinear</option>
+                    <option value="nearest">Nearest neighbor</option>
+                  </select></label
+                >
+              </div>
+              <fieldset id="registration-manual">
+                <legend>Moving → fixed physical shift</legend>
+                <div class="toolbar">
+                  <label
+                    >X translation<input
+                      id="registration-tx"
+                      type="number"
+                      step="any"
+                      value="0" /></label
+                  ><label
+                    >Y translation<input
+                      id="registration-ty"
+                      type="number"
+                      step="any"
+                      value="0"
+                  /></label>
+                </div>
+                <p class="hint">
+                  Use the captured lateral unit. p_fixed = p_moving +
+                  translation; each fixed pixel samples moving at p_fixed −
+                  translation. Bilinear sampling requires every contributing
+                  pixel to be valid.
+                </p>
+              </fieldset>
+              <fieldset id="registration-automatic" hidden>
+                <legend>Bounded correlation proposal</legend>
+                <div class="toolbar">
+                  <label
+                    >X radius (pixels)<input
+                      id="registration-radius-x"
+                      type="number"
+                      min="0"
+                      max="64"
+                      step="1"
+                      value="4" /></label
+                  ><label
+                    >Y radius (pixels)<input
+                      id="registration-radius-y"
+                      type="number"
+                      min="0"
+                      max="64"
+                      step="1"
+                      value="4" /></label
+                  ><label
+                    >Minimum overlap fraction<input
+                      id="registration-min-overlap"
+                      type="number"
+                      min="0.000001"
+                      max="1"
+                      step="any"
+                      value="0.5"
+                  /></label>
+                </div>
+                <p class="hint">
+                  Search is centered on coincident raster origins, not physical
+                  zero translation: t = fixed_offset − moving_offset + (sx·dx,
+                  sy·dy). Equal X/Y pixel pitches are required. Minimum overlap
+                  uses the smaller input’s valid-pixel count. Integer proposals
+                  do not imply subpixel precision. Large requests may require an
+                  explicit crop or smaller radius.
+                </p>
+              </fieldset>
+              <button id="registration-run" disabled>
+                Register captured analyses
+              </button>
+              <p id="registration-status" role="status" aria-live="polite">
+                Capture fixed and moving analyses to begin.
+              </p>
+              <div id="registration-summary" class="registration-summary"></div>
+              <p id="registration-warnings" role="status"></p>
+              <div
+                id="registration-candidates"
+                class="registration-table"
+              ></div>
+              <div class="registration-plots">
+                <figure>
+                  <figcaption>Aligned moving surface · fixed grid</figcaption>
+                  <canvas
+                    id="registration-aligned"
+                    role="img"
+                    aria-label="Aligned moving surface on the fixed physical grid"
+                    aria-describedby="registration-aligned-legend"
+                  ></canvas>
+                  <p id="registration-aligned-legend" class="hint">
+                    No registration result.
+                  </p>
+                </figure>
+                <figure>
+                  <figcaption>Residual · fixed minus aligned moving</figcaption>
+                  <canvas
+                    id="registration-difference"
+                    role="img"
+                    aria-label="Fixed minus aligned moving residual on the fixed physical grid"
+                    aria-describedby="registration-difference-legend"
+                  ></canvas>
+                  <p id="registration-difference-legend" class="hint">
+                    No registration result.
+                  </p>
+                </figure>
+              </div>
+              <div class="toolbar">
+                <button id="registration-json" disabled>
+                  Download registration JSON</button
+                ><button id="registration-tar" disabled>
+                  Download numerical TAR
+                </button>
+              </div>
+              <p class="hint">
+                Overviews average recorded bins using common-valid pixels only.
+                Gray is missing overlap; no extrapolation, hole filling or
+                implicit crop. TAR contains full numerical arrays, masks, both
+                recipes and hashes; raw measurement files are not included.
+                Translation and residual metrics do not establish physical
+                deformation or certify calibration.
               </p>
             </section>
           </div>
