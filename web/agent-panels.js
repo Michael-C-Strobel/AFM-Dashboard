@@ -11,6 +11,8 @@ export function mountAgentModes({
   getJournal,
   isBusy,
   setBusy,
+  showRecipe = null,
+  getDashboardContext = () => "",
 }) {
   const el = (tag, text) => {
     const n = document.createElement(tag);
@@ -194,6 +196,21 @@ export function mountAgentModes({
       "Start authorizes automatic planning and tool execution on the selected channels above. Each round sends selected source metadata and verified compact surface evidence and quality, segmentation, texture or sensitivity summaries from completed rounds; raw images remain local. Review scientific choices and recorded results. Stop and pause take effect after any running local tool finishes.",
     ),
   );
+  const goal = field(
+    autonomous,
+    "Analysis goal and scientific constraints (required)",
+    "autonomous-goal",
+  );
+  goal.rows = 3;
+  goal.maxLength = 6000;
+  goal.placeholder =
+    "Describe what to measure, which region to use, and allowed processing.";
+  autonomous.append(
+    el(
+      "p",
+      "Required: select a Plan source and Plan channel above, then enter a goal. An SOP supplies workflow guidance; it does not select data or fill in your goal.",
+    ),
+  );
   const sopLabel = el("label", "Optional workflow SOP"),
     sop = el("select");
   sop.id = "autonomous-sop";
@@ -226,7 +243,9 @@ export function mountAgentModes({
   deviations.rows = 2;
   deviations.maxLength = 1000;
   const expectedDetails = el("details");
-  expectedDetails.append(el("summary", "Expected SOP settings (optional)"));
+  expectedDetails.append(
+    el("summary", "Advanced: expected SOP settings (optional JSON)"),
+  );
   expectedDetails.append(
     el(
       "p",
@@ -266,13 +285,6 @@ export function mountAgentModes({
     );
   };
   autonomous.append(expectedDetails);
-  const goal = field(
-    autonomous,
-    "Analysis goal and scientific constraints",
-    "autonomous-goal",
-  );
-  goal.rows = 3;
-  goal.maxLength = 6000;
   const bounds = el("div");
   bounds.className = "toolbar";
   autonomous.append(bounds);
@@ -309,11 +321,20 @@ export function mountAgentModes({
   status.id = "autonomous-status";
   status.setAttribute("role", "status");
   autonomous.append(status);
+  const activity = el("div", "Steps will appear here after you start a goal.");
+  activity.id = "autonomous-activity";
+  activity.setAttribute("role", "log");
+  activity.setAttribute("aria-live", "polite");
+  activity.setAttribute("aria-label", "Autonomous analysis activity");
+  autonomous.append(activity);
+  const technical = el("details");
+  technical.append(el("summary", "Technical progress record"));
   const output = el("pre");
   output.id = "autonomous-output";
   output.tabIndex = 0;
   output.setAttribute("aria-label", "Autonomous progress and evidence");
-  autonomous.append(output);
+  technical.append(output);
+  autonomous.append(technical);
   const sopOutput = el("pre");
   sopOutput.id = "autonomous-sop-report";
   sopOutput.tabIndex = 0;
@@ -344,8 +365,96 @@ export function mountAgentModes({
       sync();
     }
   };
+  const showing = new Set(),
+    displayMessages = new Map();
+  function renderActivity(s) {
+    activity.replaceChildren();
+    for (const round of s.rounds) {
+      const section = el("section");
+      section.append(
+        el(
+          "h3",
+          `Round ${round.number} · ${round.status.replaceAll("_", " ")}`,
+        ),
+      );
+      if (round.proposal?.plan?.title)
+        section.append(el("p", round.proposal.plan.title));
+      if (round.proposal?.question)
+        section.append(el("p", "Input needed: " + round.proposal.question));
+      const proposed = round.proposal?.plan?.steps ?? [];
+      const steps = round.manifest?.steps ?? proposed;
+      const list = el("ol");
+      for (const step of steps) {
+        const proposal = proposed.find((item) => item.id === step.id) ?? step;
+        const tool =
+          step.resolved_call?.name ??
+          step.call?.name ??
+          proposal.call?.name ??
+          "Tool";
+        const state = step.status ?? "proposed";
+        const row = el("li");
+        row.append(
+          el("strong", `${step.id} · ${tool} · ${state.replaceAll("_", " ")}`),
+        );
+        if (proposal.rationale) row.append(el("p", proposal.rationale));
+        const result = step.result?.artifact?.content?.result;
+        if (state === "complete" && result?.statistics) {
+          const statistics = result.statistics;
+          const unit =
+            statistics.z_unit ?? result.channel?.z_unit ?? "unit unknown";
+          const values = [
+            ["Sa", statistics.sa],
+            ["Sq", statistics.sq],
+          ]
+            .filter(([, value]) => Number.isFinite(value))
+            .map(([name, value]) => `${name} ${value.toPrecision(5)} ${unit}`);
+          if (values.length)
+            row.append(el("p", "Recorded surface: " + values.join(" · ")));
+        }
+        if (
+          state === "complete" &&
+          result?.recipe &&
+          typeof showRecipe === "function"
+        ) {
+          const key = `${s.started_at}:${round.number}:${step.id}`;
+          const show = el("button", "Show on dashboard");
+          show.type = "button";
+          show.disabled = showing.has(key);
+          const feedback = el("p", displayMessages.get(key) ?? "");
+          show.onclick = async () => {
+            if (showing.has(key)) return;
+            const recipe = structuredClone(result.recipe);
+            showing.add(key);
+            show.disabled = true;
+            feedback.textContent = "Opening verified recipe on dashboard…";
+            try {
+              await showRecipe(recipe);
+              displayMessages.set(key, "Recipe shown on dashboard.");
+            } catch {
+              displayMessages.set(
+                key,
+                "Could not show this recipe. Check its loaded source and recorded application version; the goal audit is retained.",
+              );
+            } finally {
+              showing.delete(key);
+              show.disabled = false;
+              feedback.textContent = displayMessages.get(key);
+              if (snapshot?.started_at === s.started_at) renderActivity(snapshot);
+            }
+          };
+          row.append(show, feedback);
+        }
+        list.append(row);
+      }
+      if (steps.length) section.append(list);
+      activity.append(section);
+    }
+    if (!s.rounds.length)
+      activity.append(el("p", "Preparing the first planning round…"));
+  }
   const update = (s) => {
     snapshot = s;
+    renderActivity(s);
     status.textContent = "Goal " + s.status;
     output.textContent = JSON.stringify(
       {
@@ -378,9 +487,15 @@ export function mountAgentModes({
   };
   start.onclick = async () => {
     if (isBusy()) return;
-    if (!goal.value.trim() || !getSources().length) {
+    if (!getSources().length) {
       status.textContent =
-        "Enter a goal and select an inspected source channel.";
+        "Click Refresh loaded sources, then select a Plan source and Plan channel above.";
+      return;
+    }
+    if (!goal.value.trim()) {
+      status.textContent =
+        "Enter an Analysis goal in the required field above the SOP selector.";
+      goal.focus();
       return;
     }
     const maxRounds = Number(rounds.value),
@@ -411,7 +526,17 @@ export function mountAgentModes({
         return;
       }
     }
+    let dashboardContext;
+    try {
+      dashboardContext = getDashboardContext();
+      if (typeof dashboardContext !== "string") throw new Error();
+    } catch {
+      status.textContent =
+        "Dashboard context could not be captured. Recalculate the viewer and try again. No goal started.";
+      return;
+    }
     const goalText = [
+      dashboardContext,
       sop.value ? sopPrompt(sop.value) : "",
       sopRecord?.approved_settings
         ? "User-approved SOP settings: " +
@@ -429,7 +554,7 @@ export function mountAgentModes({
       .join("\n\n");
     if ([...goalText].length > 6000) {
       status.textContent =
-        "Goal, SOP and deviations exceed 6000 characters; shorten the goal or deviations.";
+        "Dashboard context, goal, SOP and deviations exceed 6000 characters; shorten the goal or deviations.";
       return;
     }
     conformance = null;
@@ -498,6 +623,9 @@ export function mountAgentModes({
     cancelHelp.disabled = !helpController;
     downloadHelp.disabled = !helpAudits.length;
     start.disabled = busy || !getSources().length;
+    start.title = getSources().length
+      ? "Start the entered goal on the selected channels"
+      : "Click Refresh loaded sources and select a Plan source and Plan channel first";
     pause.disabled = !active;
     resume.disabled = !active;
     stop.disabled = !active;
