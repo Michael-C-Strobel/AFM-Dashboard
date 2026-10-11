@@ -141,7 +141,7 @@ function selectionLabel() {
             : "not selected"),
       )
       .join(" | ") +
-    ". Step regions ignore the global ROI; exclusions still apply.";
+    ". Step regions ignore the measurement ROI; exclusions still apply. Applied processing keeps its recorded fit selection.";
 
   $("selection-info").textContent =
     (state.selection.roi
@@ -157,7 +157,7 @@ function selectionLabel() {
       ? " · " + state.polygon.length + " unfinished vertices"
       : "") +
     (state.profile ? " · Line profile selected" : "") +
-    ". Draw a selection, then recalculate. Nonfinite pixels appear checkerboard.";
+    ". Draw a measurement selection, then recalculate. Applied processing keeps its recorded fit selection. Nonfinite pixels appear checkerboard.";
 }
 async function loadFile() {
   levelEditor?.sync(null, null);
@@ -270,6 +270,12 @@ async function analyze() {
     const result = await api("/api/analyze", request);
     if (seq !== state.sequence) return;
     state.response = result;
+    state.operations = result.recipe.operations.map((operation) => ({
+      ...structuredClone(operation),
+      selection: structuredClone(
+        operation.selection ?? result.recipe.selection,
+      ),
+    }));
     state.rasters = {};
     renderAll();
     const warnings = [
@@ -314,7 +320,9 @@ function renderAll() {
     const item = document.createElement("li"),
       button = document.createElement("button");
     button.textContent = op.name + " " + JSON.stringify(op.params);
-    button.title = "Keep pipeline through this step";
+    button.title =
+      "Keep pipeline through this step. Processing selection: " +
+      JSON.stringify(op.selection ?? r.recipe.selection);
     button.onclick = () => {
       state.operations = state.operations.slice(0, index + 1);
       analyze();
@@ -930,7 +938,11 @@ $("add").onclick = () => {
     }
     params = { bounds: [...state.selection.roi] };
   }
-  state.operations.push({ name, params });
+  state.operations.push({
+    name,
+    params,
+    selection: structuredClone(state.selection),
+  });
   analyze();
 };
 $("undo").onclick = () => {
@@ -946,6 +958,10 @@ $("preset").onclick = () => {
     { name: "robust_plane", params: { iterations: 5, sigma: 3 } },
     { name: "zero_min", params: {} },
   ];
+  state.operations = state.operations.map((operation) => ({
+    ...operation,
+    selection: structuredClone(state.selection),
+  }));
   analyze();
 };
 $("chemist").onclick = () => {
@@ -960,6 +976,10 @@ $("chemist").onclick = () => {
     },
     { name: "zero_min", params: {} },
   ];
+  state.operations = state.operations.map((operation) => ({
+    ...operation,
+    selection: structuredClone(state.selection),
+  }));
   analyze();
 };
 $("finish-polygon").onclick = () => {
@@ -1092,7 +1112,11 @@ $("upload").onchange = async (event) => {
     $("channel").value = String(result.channel.id);
     configureAcquisition();
     state.operations = (recipe.operations || result.history || []).map(
-      (op) => ({ name: op.name, params: op.params || {} }),
+      (op) => ({
+        name: op.name,
+        params: op.params || {},
+        selection: structuredClone(op.selection ?? recipe.selection),
+      }),
     );
     state.selection = recipe.selection || { roi: null, exclude_polygons: [] };
     state.profile = recipe.profile || null;
@@ -2025,7 +2049,10 @@ levelEditor = mountThreePointEditor({
     if (!context || $("download").disabled)
       throw Error("Recalculate before previewing leveling.");
     const request = body();
-    request.operations.push(operation);
+    request.operations.push({
+      ...operation,
+      selection: structuredClone(state.selection),
+    });
     const result = await api("/api/analyze", request);
     if (
       requestId !== levelRequest ||
@@ -2056,7 +2083,10 @@ levelEditor = mountThreePointEditor({
     )
       throw Error("Preview these exact points before applying.");
     levelEditor.cancel();
-    state.operations.push(structuredClone(operation));
+    state.operations.push({
+      ...structuredClone(operation),
+      selection: structuredClone(state.selection),
+    });
     await analyze();
     if ($("download").disabled)
       throw Error(

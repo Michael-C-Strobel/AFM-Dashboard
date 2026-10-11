@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "kind": "independent_line_polynomial_validation",
-  "generated_at": "2026-10-11T23:10:43.942Z",
+  "generated_at": "2026-10-11T23:24:18.473Z",
   "method": "Independent NumPy numpy.linalg.lstsq; no application imports in Python; selected-position normalized pixel coordinates; full finite-line correction",
   "tolerance": "1e-15 + 1e-9 * maxabs(reference finite processed values)",
   "fixture_definition": "17x13 calibrated anisotropic grid; line-dependent polynomial degree 0–3; deterministic sinusoidal noise and stepped feature; see generator code hash",
@@ -20,7 +20,7 @@
   "code": [
     {
       "name": "web/engine.js",
-      "sha256": "54afe04aa913c5d7fa3f9bb616d0cb085d2699891953775cbf1ec683772cf5db"
+      "sha256": "e917a1b40fac4c11bab36a576ee6b06db9aa509dbf5f665c654aa4d104384c91"
     },
     {
       "name": "scripts/validate-line-polynomial.mjs",

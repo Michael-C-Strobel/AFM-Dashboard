@@ -101,6 +101,7 @@ const operationSchema = {
     object(
       {
         name: { const: name },
+        selection,
         params: ["crop", "three_point"].includes(name)
           ? parameterSchemas[name]
           : nullable(parameterSchemas[name]),

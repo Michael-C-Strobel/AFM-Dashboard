@@ -46,7 +46,7 @@ function invalidate(message) {
 $("scope").onchange = () => {
   $("scope-review").textContent =
     $("scope").value === "full"
-      ? "On capture: remove the ROI and rerun the same processing operations in a separate analysis. ROI-dependent leveling can change. Crop operations, imported masks and exclusion polygons remain. The viewer baseline stays unchanged. Review this choice before capturing."
+      ? "On capture: remove the ROI and rerun the same processing operations in a separate analysis. Recorded processing selections stay fixed; legacy operations without their own selection can refit. Crop operations, imported masks and exclusion polygons remain. The viewer baseline stays unchanged. Review this choice before capturing."
       : "Capture retains the completed viewer recipe, including its ROI and exclusions. Later viewer edits do not update this snapshot.";
 };
 $("capture").onclick = async () => {

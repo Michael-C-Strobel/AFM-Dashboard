@@ -199,7 +199,15 @@ export function normalizeLegacyRecipe(value) {
   if (!Array.isArray(r.operations) || r.operations.length > 32)
     throw new Error("Expected at most 32 operations.");
   const operations = r.operations.map((op) => {
-    exact(op, ["name", "params"], "Operation");
+    exact(
+      op,
+      [
+        "name",
+        "params",
+        ...(Object.hasOwn(op, "selection") ? ["selection"] : []),
+      ],
+      "Operation",
+    );
     const normalized = normalizeOperation(op);
     if (canonicalRecipeJSON(op) !== canonicalRecipeJSON(normalized))
       throw new Error(

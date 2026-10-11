@@ -15,7 +15,7 @@ The directory contains `report.json`, the unchanged `input-recipe.json`, `README
 
 ## Capture and measured domain
 
-In Texture, review **Capture domain** before capturing. **Current viewer selection** retains the completed viewer recipe. **Full processed image** creates a separate analysis with the ROI removed, rerunning the same operations while retaining crop operations, exclusion polygons and imported masks. ROI-dependent corrections can therefore change. This never replaces the viewer baseline. Changing the selector alone does not change an existing capture or result; use **Capture processed analysis** explicitly.
+In Texture, review **Capture domain** before capturing. **Current viewer selection** retains the completed viewer recipe. **Full processed image** creates a separate analysis with the ROI removed, rerunning the same operations while retaining crop operations, exclusion polygons and imported masks. Recorded operation selections stay fixed. Legacy operations without their own selection can refit. This never replaces the viewer baseline. Changing the selector alone does not change an existing capture or result; use **Capture processed analysis** explicitly.
 
 The captured-image preview retains its source/channel even after viewer edits. Dashed amber marks the requested domain; after measurement, solid amber marks the exact effective rectangle. Entire invalid outer rows/columns can disappear; invalid internal pixels or holes reject instead of being filled. Smaller rectangles reduce access to long spatial wavelengths.
 

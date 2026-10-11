@@ -96,7 +96,7 @@ export async function analyze(
           parent: parentId,
           operation: step.name,
           params: step.params,
-          selection,
+          selection: step.selection ?? selection,
           engine: engineIdentity,
         }),
       ),
@@ -135,7 +135,15 @@ export async function analyze(
       title: channel.title,
       geometry: geometry(channel),
     },
-    operations: result.history.map(({ name, params }) => ({ name, params })),
+    operations: result.history.map(
+      ({ name, params, selection: operationSelection }) => ({
+        name,
+        params,
+        ...(operationSelection !== undefined
+          ? { selection: operationSelection }
+          : {}),
+      }),
+    ),
     selection,
     profile: request.profile ?? null,
     plateaus: request.plateaus ?? null,

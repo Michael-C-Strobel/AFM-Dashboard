@@ -271,7 +271,7 @@ export function operationRegistry() {
 export function normalizeOperation(op) {
   if (!op || typeof op !== "object" || !Object.hasOwn(SPECS, op.name))
     fail(`Unknown operation: ${op?.name}`);
-  if (Object.keys(op).some((k) => !["name", "params"].includes(k)))
+  if (Object.keys(op).some((k) => !["name", "params", "selection"].includes(k)))
     fail("Unknown operation field.");
   const supplied = op.params ?? {};
   if (typeof supplied !== "object" || Array.isArray(supplied))
@@ -312,7 +312,13 @@ export function normalizeOperation(op) {
     if (!Number.isInteger(p.radius) || p.radius < 1 || p.radius > 20)
       fail("Point radius must be 1–20 pixels.");
   }
-  return { name: op.name, params: structuredClone(p) };
+  return {
+    name: op.name,
+    params: structuredClone(p),
+    ...(Object.hasOwn(op, "selection")
+      ? { selection: normalizeSelection(op.selection) }
+      : {}),
+  };
 }
 export function applyOperation(input, operation, selection = {}) {
   const op = normalizeOperation(operation),
@@ -322,8 +328,9 @@ export function applyOperation(input, operation, selection = {}) {
       data: input.data.slice(),
       mask: input.mask?.slice() ?? null,
     },
-    m = validMask(c, selection),
+    m = validMask(c, op.selection ?? selection),
     details = {};
+  selection = op.selection ?? selection;
   selected(c, m);
   if (["plane", "polynomial", "robust_plane"].includes(op.name)) {
     let fm = m.slice(),

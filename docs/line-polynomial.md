@@ -8,7 +8,7 @@ The fit uses finite pixels inside the current ROI, excluding imported masks and 
 
 A line with zero selected pixels remains unchanged and appears in `skipped_lines`. A line with 1 through `degree` selected pixels rejects the entire operation. Numerically rank-deficient fits and nonfinite corrections also reject; the input data is never modified. A failure does not return a partially corrected image.
 
-The current selection controls both fitting and measurements. Changing it and recalculating refits the pipeline; it is not a separate frozen background mask. Separate named fit/measurement selections remain V05 work. Narrow fit intervals require extrapolation and can greatly amplify uncertainty. This operation is ordinary least squares, not robust outlier rejection or automatic scar detection.
+Applying an operation in the viewer records its current ROI and exclusions as `operation.selection`. Later measurement selection changes preserve this fit domain. To change a fit, undo and reapply the operation with the intended selection. API operations without an explicit selection retain legacy behavior: the analysis selection controls fitting. Separate named fit/measurement selection management remains V05 work. Narrow fit intervals require extrapolation and can greatly amplify uncertainty. This operation is ordinary least squares, not robust outlier rejection or automatic scar detection.
 
 ## Numerical definition and records
 

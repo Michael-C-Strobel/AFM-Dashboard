@@ -404,11 +404,9 @@ try {
   await page.waitForFunction(
     () => !document.querySelector("#inspection-dialog").open,
   );
-  assert.equal(
-    await page
-      .locator("#expand-inspection")
-      .evaluate((node) => node === document.activeElement),
-    true,
+  await page.waitForFunction(
+    () =>
+      document.querySelector("#expand-inspection") === document.activeElement,
   );
   await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(
@@ -474,6 +472,7 @@ try {
     "./browser-agent-modes.mjs",
     "./browser-measurement-readout.mjs",
     "./browser-three-point.mjs",
+    "./browser-plateau-after-leveling.mjs",
     "./browser-texture-domain.mjs",
     "./browser-line-polynomial.mjs",
     "./browser-model-observations.mjs",
