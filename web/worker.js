@@ -120,6 +120,23 @@ const toolSession = createToolSession({
       const { source_sha256, ...request } = args;
       return dispatch("quality", request);
     }
+    if (name === "segment_surface") {
+      const saved = toolSession.artifact(args.recipe_artifact);
+      const recipe = saved.content.result?.recipe;
+      if (
+        !recipe ||
+        recipe.source?.file !== args.file ||
+        recipe.source?.sha256 !== args.source_sha256
+      )
+        throw new Error(
+          "Segmentation recipe artifact does not match the bound source.",
+        );
+      const { labels, ...report } = await dispatch("segment", {
+        recipe,
+        parameters: args.parameters,
+      });
+      return report;
+    }
     if (name === "replay_recipe") {
       const saved = toolSession.artifact(args.recipe_artifact);
       const recipe = saved.content.result?.recipe;

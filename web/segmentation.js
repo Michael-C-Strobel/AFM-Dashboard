@@ -113,9 +113,10 @@ export function segmentSurface(channel, options) {
     throw new Error("Segmentation selection contains no valid pixels.");
   const dx = channel.xreal / width,
     dy = channel.yreal / height,
+    pixelArea = dx * dy,
     regions = [],
     excluded = [];
-  if (!(dx > 0 && dy > 0))
+  if (!(dx > 0 && dy > 0 && pixelArea > 0 && Number.isFinite(pixelArea)))
     throw new RangeError(
       "Segmentation pixel pitches exceed finite numeric range.",
     );
@@ -212,7 +213,7 @@ export function segmentSurface(channel, options) {
     const region = {
       id: candidates,
       pixel_count: n,
-      area: n * dx * dy,
+      area: n * pixelArea,
       area_unit: channel.xy_unit == null ? null : `(${channel.xy_unit})²`,
       bbox_pixel: [x0, y0, x1, y1],
       bbox: [

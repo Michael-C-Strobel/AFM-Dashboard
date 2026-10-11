@@ -42,7 +42,7 @@ test("catalog is plain detached data with complete registry parity and strict in
   assert.deepEqual(toolCatalog().tools[0].input_schema.properties, {});
 });
 
-test("all six tools accept bounded inputs and normalize optional fields", () => {
+test("all existing tools accept bounded inputs and normalize optional fields", () => {
   assert.deepEqual(call("list_sources", {}), {
     name: "list_sources",
     arguments: {},
@@ -291,4 +291,29 @@ test("UTF-8 argument byte budget is enforced independently of valid point counts
   };
   assert.ok(new TextEncoder().encode(JSON.stringify(args)).byteLength > 262144);
   assert.throws(() => call("analyze_surface", args), /262144/);
+});
+
+test("segmentation tool requires an explicit threshold and normalizes bounded component policy", () => {
+  const args = {
+    file: "source.gwy",
+    source_sha256: identity.source_sha256,
+    recipe_artifact: "artifact:" + "b".repeat(64),
+    parameters: { threshold: 2e-9 },
+  };
+  assert.deepEqual(call("segment_surface", args).arguments.parameters, {
+    threshold: 2e-9,
+    direction: "above",
+    connectivity: 4,
+    min_pixels: 1,
+    boundary: "include",
+  });
+  for (const parameters of [
+    {},
+    { threshold: NaN },
+    { threshold: 0, connectivity: 6 },
+    { threshold: 0, selection: {} },
+    { threshold: 0, min_pixels: 0 },
+    { threshold: 0, boundary: "guess" },
+  ])
+    assert.throws(() => call("segment_surface", { ...args, parameters }));
 });

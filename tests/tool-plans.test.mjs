@@ -309,3 +309,39 @@ test("unserializable thrown values still produce a failed manifest", async () =>
   assert.equal(result.steps[1].status, "not_run");
   assert.equal(typeof result.steps[0].error, "string");
 });
+
+test("segmentation plans resolve only prior recipe artifact dependencies", () => {
+  const result = validatePlan({
+    schema_version: 1,
+    title: "Segment measured surface",
+    steps: [
+      {
+        id: "measure",
+        call: {
+          name: "analyze_surface",
+          arguments: {
+            file: "source.gwy",
+            source_sha256: "a".repeat(64),
+            channel: "0",
+            operations: [],
+          },
+        },
+      },
+      {
+        id: "segment",
+        call: {
+          name: "segment_surface",
+          arguments: {
+            file: "source.gwy",
+            source_sha256: "a".repeat(64),
+            recipe_artifact: "$step:measure",
+            parameters: { threshold: 1 },
+          },
+        },
+      },
+    ],
+  });
+  assert.equal(result.steps[1].call.arguments.recipe_artifact, "$step:measure");
+  result.steps.reverse();
+  assert.throws(() => validatePlan(result), /earlier step/);
+});

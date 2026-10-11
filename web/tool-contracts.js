@@ -134,6 +134,37 @@ const schemas = {
     },
     ["file", "source_sha256", "channel"],
   ),
+  segment_surface: object(
+    {
+      file,
+      source_sha256: sha,
+      recipe_artifact: artifact,
+      parameters: object(
+        {
+          threshold: number,
+          direction: {
+            type: "string",
+            enum: ["above", "below"],
+            default: "above",
+          },
+          connectivity: { type: "integer", enum: [4, 8], default: 4 },
+          min_pixels: {
+            type: "integer",
+            minimum: 1,
+            maximum: 4194304,
+            default: 1,
+          },
+          boundary: {
+            type: "string",
+            enum: ["include", "exclude"],
+            default: "include",
+          },
+        },
+        ["threshold"],
+      ),
+    },
+    ["file", "source_sha256", "recipe_artifact", "parameters"],
+  ),
   replay_recipe: object(
     { file, source_sha256: sha, recipe_artifact: artifact },
     ["file", "source_sha256", "recipe_artifact"],
@@ -148,6 +179,8 @@ const toolDescriptions = {
     "Run an explicit reproducible surface-analysis recipe on a hash-bound source.",
   check_quality:
     "Report acquisition diagnostics without repairing or aligning data.",
+  segment_surface:
+    "Strictly replay a prior analysis artifact, then measure user-reviewed threshold components; returns metadata and label hash, not a particle or defect classification.",
   replay_recipe: "Replay a saved recipe artifact against a hash-bound source.",
   get_artifact:
     "Retrieve an existing immutable artifact by its content identifier.",
@@ -329,6 +362,12 @@ export function validateToolCall(call) {
     args.selection = normalizeSelection(args.selection ?? {});
     args.boundary_sigma ??= 6;
     args.reference_channel ??= null;
+  }
+  if (call.name === "segment_surface") {
+    args.parameters.direction ??= "above";
+    args.parameters.connectivity ??= 4;
+    args.parameters.min_pixels ??= 1;
+    args.parameters.boundary ??= "include";
   }
   return { name: call.name, arguments: args };
 }

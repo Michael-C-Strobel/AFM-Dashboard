@@ -163,7 +163,7 @@ test("worker batch routes gate calibration, retain provenance and verify exporte
   );
   const catalog = await call("tools", {});
   assert.equal(catalog.version, "1.0.0");
-  assert.equal(catalog.tools.length, 6);
+  assert.equal(catalog.tools.length, 7);
   const inspected = await call("tool", {
     name: "inspect_source",
     arguments: { file: "a.gwy" },
@@ -236,6 +236,47 @@ test("worker batch routes gate calibration, retain provenance and verify exporte
     await call("tool-artifact", { artifact_id: analyzed.artifact.id }),
     analyzed.artifact,
   );
+  const segmented = await call("tool", {
+    name: "segment_surface",
+    arguments: {
+      file: "a.gwy",
+      source_sha256: toolSource.sha256,
+      recipe_artifact: analyzed.artifact.id,
+      parameters: { threshold: 3e-9 },
+    },
+  });
+  assert.equal(
+    segmented.record.status,
+    "succeeded",
+    JSON.stringify(segmented.record),
+  );
+  const segmentation = segmented.artifact.content.result;
+  assert.equal(segmentation.report.counts.accepted_pixels, 3);
+  assert.equal(segmentation.report.regions.length, 1);
+  assert.equal(
+    segmentation.labels,
+    undefined,
+    "Tool artifacts keep compact metadata, not raster labels",
+  );
+  assert.equal(segmentation.input_recipe.output.sha256, template.output.sha256);
+  const directSegmentation = await call("segment", {
+    recipe: analyzed.artifact.content.result.recipe,
+    parameters: { threshold: 3e-9 },
+  });
+  assert.deepEqual(directSegmentation.labels, [0, 0, 0, 1, 1, 1]);
+  assert.equal(directSegmentation.report_sha256, segmentation.report_sha256);
+  assert.equal(directSegmentation.labels_sha256, segmentation.labels_sha256);
+  const wrongSegmentation = await call("tool", {
+    name: "segment_surface",
+    arguments: {
+      file: "b.gwy",
+      source_sha256: checked.source_sha256,
+      recipe_artifact: analyzed.artifact.id,
+      parameters: { threshold: 3e-9 },
+    },
+  });
+  assert.equal(wrongSegmentation.record.status, "failed");
+  assert.match(wrongSegmentation.record.error, /bound source/);
   const altered = structuredClone(result.recipe);
   altered.output.sha256 = "0".repeat(64);
   await assert.rejects(

@@ -251,3 +251,18 @@ test("finite extreme values reject derived overflow instead of emitting nonfinit
   for (const option of ["direction", "connectivity", "min_pixels", "boundary"])
     assert.throws(() => seg(channel(), { [option]: null }));
 });
+
+test("finite calibration that underflows pixel area is rejected", () => {
+  assert.throws(
+    () =>
+      seg(
+        channel(2, 2, () => 2, {
+          xreal: 1e-300,
+          yreal: 1e-300,
+          xoff: 0,
+          yoff: 0,
+        }),
+      ),
+    /numeric range/,
+  );
+});

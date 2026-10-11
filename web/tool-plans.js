@@ -115,12 +115,11 @@ export function validatePlan(raw) {
     const rationale = Object.hasOwn(step, "rationale") ? step.rationale : "";
     text(rationale, 0, 2000, "step rationale");
     const call = step.call,
-      allowed =
-        call?.name === "replay_recipe"
-          ? "recipe_artifact"
-          : call?.name === "get_artifact"
-            ? "artifact_id"
-            : null;
+      allowed = ["replay_recipe", "segment_surface"].includes(call?.name)
+        ? "recipe_artifact"
+        : call?.name === "get_artifact"
+          ? "artifact_id"
+          : null;
     const tokens = references(call);
     let token = null;
     for (const found of tokens) {
