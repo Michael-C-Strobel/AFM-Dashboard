@@ -254,3 +254,47 @@ test("unknown declared units stay null and channel statistics are not geometry",
   assert.equal(s.metrics[0].unit, null);
   assert.ok(!s.warnings.some((w) => w.includes("geometry differs")));
 });
+
+test("IDs reject every trailing line terminator and labels require visible text", () => {
+  for (const id of ["a\n", "a\r", "a\u2028", "a\u2029"]) {
+    const r = request();
+    r.variants[0].id = id;
+    assert.throws(() => normalizeSensitivityRequest(r), /ID/);
+  }
+  for (const label of [" ", "\t\n", "\u2028"]) {
+    const r = request();
+    r.variants[0].label = label;
+    assert.throws(() => normalizeSensitivityRequest(r), /label/);
+  }
+});
+test("incompatible units retain raw evidence but cannot enter summary arithmetic", () => {
+  const b = result(2),
+    v = result(100);
+  v.statistics.z_unit = "V";
+  v.statistics.area_unit = "(nm)²";
+  v.step.z_unit = "V";
+  const saved = structuredClone(v),
+    s = summarizeSensitivity(b, [variant(v)]);
+  for (const key of [
+    "statistics.sa",
+    "statistics.area",
+    "step.height",
+    "comparison.rmse",
+  ]) {
+    const m = metric(s, key),
+      value = m.values[1];
+    assert.equal(value.value, null);
+    assert.equal(value.delta, null);
+    assert.equal(value.relative_delta, null);
+    assert.match(value.reason, /unit differs/);
+    assert.deepEqual(m.range.member_ids, ["baseline"]);
+    assert.equal(m.range.span, 0);
+    assert.equal(m.range.max_abs_delta, 0);
+  }
+  assert.equal(metric(s, "statistics.valid_count").values[1].value, 4);
+  assert.deepEqual(v, saved);
+  assert.equal(v.statistics.sa, 100);
+  assert.ok(
+    s.warnings.some((w) => w.includes("excluded from numerical comparison")),
+  );
+});

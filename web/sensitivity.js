@@ -85,12 +85,14 @@ export function normalizeSensitivityRequest(request) {
       typeof v.id !== "string" ||
       v.id.length > 32 ||
       !/^[a-z][a-z0-9_-]*$/.test(v.id) ||
-      v.id.includes("\n") ||
+      v.id.trim() !== v.id ||
       ids.has(v.id)
     )
       throw new Error("Invalid or duplicate sensitivity variant ID.");
     ids.add(v.id);
     text(v.label, 1, 120, "variant label");
+    if (!v.label.trim())
+      throw new Error("Variant label must contain non-whitespace text.");
     if (!Array.isArray(v.operations) || v.operations.length > 32)
       throw new Error("At most 32 operations per variant.");
     return {
@@ -235,13 +237,24 @@ export function summarizeSensitivity(baseline, variants) {
       u = unit(baseline, key);
     const values = entries.map((v) => {
       const raw = read(v.result, key),
-        value = v.status === "succeeded" && Number.isFinite(raw) ? raw : null;
+        compatible = unit(v.result, key) === u,
+        value =
+          v.status === "succeeded" && Number.isFinite(raw) && compatible
+            ? raw
+            : null;
       let delta = null,
         relative_delta = null;
       const reasons = [];
       if (v.status === "failed")
         reasons.push("Variant failed: " + (v.error || "unspecified error"));
-      else if (value === null)
+      else if (!compatible) {
+        reasons.push(
+          "Declared metric unit differs from baseline; excluded from summary arithmetic.",
+        );
+        warnings.push(
+          `Variant ${v.id}: ${key} unit differs; excluded from numerical comparison.`,
+        );
+      } else if (value === null)
         reasons.push("Measurement is missing or nonfinite.");
       if (value !== null) {
         if (base === null)
@@ -257,12 +270,6 @@ export function summarizeSensitivity(baseline, variants) {
             if (Number.isFinite(rel)) relative_delta = rel;
             else reasons.push("Relative delta exceeds finite numeric range.");
           }
-        }
-        if (unit(v.result, key) !== u) {
-          reasons.push("Declared metric unit differs from baseline.");
-          warnings.push(
-            `Variant ${v.id}: ${key} unit differs; numerical alternatives are not directly comparable.`,
-          );
         }
       }
       return {
