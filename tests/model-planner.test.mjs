@@ -569,3 +569,59 @@ test("texture proposals bind source and use only prior recipe artifacts", async 
     proposed.steps[1].call.arguments = previous;
   }
 });
+
+test("sensitivity proposals bind source and use only prior recipe artifacts", async () => {
+  const proposed = plan();
+  proposed.steps[0] = {
+    id: "analysis",
+    call: {
+      name: "analyze_surface",
+      arguments: {
+        file: source().file,
+        source_sha256: source().source_sha256,
+        channel: "0",
+        operations: [],
+      },
+    },
+  };
+  proposed.steps.push({
+    id: "sensitivity",
+    call: {
+      name: "analyze_sensitivity",
+      arguments: {
+        file: source().file,
+        source_sha256: source().source_sha256,
+        recipe_artifact: "$step:analysis",
+        variants: [
+          {
+            id: "mean",
+            label: "Mean removal",
+            operations: [{ name: "mean", params: {} }],
+            selection: {},
+          },
+        ],
+        assumptions: {
+          calibration_note: "",
+          model_note: "Explicit alternatives",
+        },
+      },
+    },
+  });
+  const run = () =>
+    proposePlan(
+      options({
+        fetchImpl: async () => response(wrap({ kind: "plan", plan: proposed })),
+      }),
+    );
+  assert.equal((await run()).audit.status, "proposed");
+  for (const patch of [
+    { file: "other.gwy" },
+    { source_sha256: "b".repeat(64) },
+    { recipe_artifact: "artifact:" + "c".repeat(64) },
+  ]) {
+    const previous = { ...proposed.steps[1].call.arguments };
+    Object.assign(proposed.steps[1].call.arguments, patch);
+    assert.equal((await run()).proposal, null);
+    proposed.steps[1].call.arguments = previous;
+  }
+});

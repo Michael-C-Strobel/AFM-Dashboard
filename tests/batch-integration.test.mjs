@@ -163,7 +163,7 @@ test("worker batch routes gate calibration, retain provenance and verify exporte
   );
   const catalog = await call("tools", {});
   assert.equal(catalog.version, "1.0.0");
-  assert.equal(catalog.tools.length, 8);
+  assert.equal(catalog.tools.length, 9);
   const inspected = await call("tool", {
     name: "inspect_source",
     arguments: { file: "a.gwy" },

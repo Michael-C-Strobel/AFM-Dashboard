@@ -8,7 +8,7 @@ A request has exactly `{baseline_recipe, variants, assumptions}`. Each of 1–16
 
 Strictly replay the baseline first, including source channel/title and any reference. Fail the entire request if this cannot be verified. Execute variants sequentially from the original source with normalized operations/selections, retaining their own actual generated recipe timestamps and environments. A variant error becomes a visible failed result, without losing successful variants or stopping later variants. No silent variant omission. Successful reports retain recipe, channel, statistics, profile, plateau result, scalar reference comparison, operation history and warnings; omit image matrices. Failed records retain their normalized definition and error. Baseline compact evidence retains the original captured recipe.
 
-Limit inputs to 4,194,304 pixels. Preflight a conservative count of planned pixel passes: source pixels times the sum of `max(1, operation_count)` for baseline and each variant, at most 134,217,728. Record this estimate; it is a work gate, not a wall-clock guarantee or a complete model of iterative operations. Runs do not imply scientific equivalence across different masks, crops or fitted populations.
+Limit inputs to 4,194,304 pixels. Preflight an estimated count of planned pixel passes: source pixels times the sum of `max(1, operation_count)` for baseline and each variant, at most 134,217,728. Record this estimate; it is a work gate, not a wall-clock guarantee or a complete model of iterative operations. Runs do not imply scientific equivalence across different masks, crops or fitted populations.
 
 ## Summaries and interpretation
 

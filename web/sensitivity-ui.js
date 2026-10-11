@@ -224,15 +224,7 @@ function render() {
     ...result.variants,
   ];
   for (const record of records) {
-    const mv =
-      record.id === "baseline"
-        ? {
-            value: m.baseline,
-            delta: 0,
-            relative_delta: m.baseline === 0 ? null : 0,
-            status: "succeeded",
-          }
-        : m.values.find((v) => v.id === record.id);
+    const mv = m.values.find((v) => v.id === record.id);
     const definition =
       record.id === "baseline"
         ? result.request.baseline_recipe
@@ -309,7 +301,7 @@ function draw() {
     ctx.fillText("Run reviewed alternatives to inspect metric values.", 12, 24);
     return;
   }
-  const values = [{ id: "baseline", value: m.baseline }, ...m.values],
+  const values = m.values,
     finite = values.filter((v) => Number.isFinite(v.value));
   if (!finite.length) {
     ctx.fillText(

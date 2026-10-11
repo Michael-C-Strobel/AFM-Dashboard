@@ -58,6 +58,19 @@ node scripts/register.mjs --fixed-recipe fixed/recipe.json \
 
 Recorded references require `--fixed-reference` or `--moving-reference`. Automatic search requires equal pixel pitches and a bounded candidate workload; manual resampling supports different grids. Only compatible declared units are accepted. Rotations, scaling and local deformation are unsupported. JSON and verified TAR exports retain both recipes, transform, common-valid mask and full numerical rasters. See [registration definitions](docs/registration.md) and [replay/export workflow](docs/registration-workflows.md).
 
+## Review processing and selection sensitivity
+
+In **Sensitivity**, capture a completed baseline, then add current processing/selection or an explicit baseline-plus-mean/plane alternative. Review the complete JSON definitions and assumption notes before selecting **Run reviewed alternatives**. Current processing can be copied only from the same source file, hash and channel; baseline profile, plateau and reference settings remain fixed. Captures stay independent of later viewer edits.
+
+Inspect every successful or failed alternative, valid-pixel counts, signed/relative deltas and the recorded range membership. Selection changes can alter the measured population. These alternatives are not independent observations, and their spread is not calibration uncertainty. JSON retains the report; TSV and TAR downloads verify saved recipes and recorded failures before exporting.
+
+```sh
+node scripts/sensitivity.mjs --request request.json --input data/source.gwy --out sensitivity-run
+node scripts/sensitivity.mjs --report sensitivity-run/report.json --input data/source.gwy --out verified-export
+```
+
+Add `--reference PATH` when required by the baseline; use new output directories. See [sensitivity definitions](docs/sensitivity.md) and [request, strict replay and export workflow](docs/sensitivity-workflows.md).
+
 ## Reviewed analysis plans
 
 Open **Assistant**, refresh loaded sources, then choose a starter or expand **Ask for a plan**. Local starters require no model. Review the arguments, validate the plan, and select **Run reviewed plan**. Completed steps expose recipes and artifacts; **Verify evidence report** produces linked numeric claims and Markdown/JSON exports, including partial results after a failure or cancellation.

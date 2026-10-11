@@ -329,6 +329,31 @@ try {
     registration.input_recipes.fixed,
     registration.input_recipes.moving,
   );
+  await page.locator("#tab-sensitivity").click();
+  await page.locator("#sensitivity-capture").click();
+  await page.locator("#sensitivity-add-mean").click();
+  await page.locator("#sensitivity-run").click();
+  await page.waitForFunction(
+    () =>
+      !document.querySelector("#sensitivity-json").disabled ||
+      document.querySelector("#sensitivity-status.error"),
+  );
+  assert.equal(
+    await page.locator("#sensitivity-status.error").count(),
+    0,
+    await page.locator("#sensitivity-status").textContent(),
+  );
+  const sensitivity = (await download("#sensitivity-json", "sensitivity.json"))
+    .value;
+  assert.equal(sensitivity.kind, "analysis_sensitivity");
+  assert.equal(sensitivity.status, "complete");
+  assert.equal(
+    sensitivity.baseline.recipe.output.sha256,
+    restored.output.sha256,
+  );
+  assert.equal(sensitivity.variants.length, 1);
+  assert.equal(sensitivity.variants[0].status, "succeeded");
+  assert.equal(sensitivity.calibration_uncertainty.status, "not_evaluated");
   await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(
     await page.evaluate(
@@ -350,6 +375,11 @@ try {
   await page.keyboard.press("ArrowRight");
   assert.equal(
     await page.locator("#tab-registration").getAttribute("aria-selected"),
+    "true",
+  );
+  await page.keyboard.press("ArrowRight");
+  assert.equal(
+    await page.locator("#tab-sensitivity").getAttribute("aria-selected"),
     "true",
   );
   await page.keyboard.press("ArrowRight");
@@ -381,6 +411,7 @@ try {
           "captured processed segmentation",
           "captured processed spatial texture",
           "dual-recipe registration",
+          "captured sensitivity alternatives",
           "keyboard tabs",
           "mobile overflow",
         ],

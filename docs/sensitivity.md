@@ -8,7 +8,7 @@
 
 Provide 1–16 variants, each exactly `{id,label,operations,selection}`. IDs match `[a-z][a-z0-9_-]{0,31}`, are unique and cannot be `baseline`; labels contain 1–120 characters. Operation lists contain at most 32 entries, normalized through the existing engine. Selections use its ROI/polygon rules. Assumptions have exactly `calibration_note` and `model_note`, each a string of at most 2000 characters. Notes are not numerical calibration evidence.
 
-`sensitivityWork(request,sourcePixelCount)` counts source pixels times the sum of `max(1,operations.length)` over baseline and variants. Limits are 4,194,304 source pixels and 134,217,728 estimated pixel passes. This conservative gate is not a runtime prediction or a complete cost model for iterative operations.
+`sensitivityWork(request,sourcePixelCount)` counts source pixels times the sum of `max(1,operations.length)` over baseline and variants. Limits are 4,194,304 source pixels and 134,217,728 estimated pixel passes. This estimated-pass gate is not a runtime prediction or a true bound on iterative work: it counts operation entries, not their internal passes.
 
 ## Summary contract
 

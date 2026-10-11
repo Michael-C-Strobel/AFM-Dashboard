@@ -345,3 +345,48 @@ test("texture tool defaults and strict recipe-only selection", () => {
     { detrend: "plane", window: "hann" },
   );
 });
+
+test("sensitivity tool retains explicit alternatives and rejects ambiguous definitions", () => {
+  const variant = {
+    id: "mean_removed",
+    label: "Mean removal",
+    operations: [{ name: "mean" }],
+    selection: {},
+  };
+  const args = {
+    file: "sample.gwy",
+    source_sha256: "a".repeat(64),
+    recipe_artifact: "artifact:" + "b".repeat(64),
+    variants: [variant],
+    assumptions: {
+      calibration_note: "",
+      model_note: "Deterministic alternatives",
+    },
+  };
+  const checked = call("analyze_sensitivity", args).arguments;
+  assert.deepEqual(checked.variants[0].selection, {
+    roi: null,
+    exclude_polygons: [],
+  });
+  assert.deepEqual(checked.variants[0].operations, [
+    { name: "mean", params: {} },
+  ]);
+  for (const variants of [
+    [],
+    [variant, variant],
+    [{ ...variant, id: "baseline" }],
+    [{ ...variant, id: "a\r" }],
+    [{ ...variant, id: "a\u2028" }],
+    [{ ...variant, label: " " }],
+    [{ ...variant, source: "other.gwy" }],
+    [{ ...variant, selection: { roi: [1, 0, 0, 1] } }],
+  ])
+    assert.throws(() => call("analyze_sensitivity", { ...args, variants }));
+  assert.throws(() =>
+    call("analyze_sensitivity", {
+      ...args,
+      assumptions: { calibration_note: "", model_note: "", uncertainty: 0.1 },
+    }),
+  );
+  assert.equal(variant.operations[0].params, undefined);
+});

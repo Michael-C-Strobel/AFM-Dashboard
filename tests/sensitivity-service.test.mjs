@@ -360,3 +360,49 @@ test("CLI executes requests and verifies existing reports without changing recip
   await assert.rejects(exec(process.execPath, args), /EEXIST/);
   assert.deepEqual(await readFile(input), bytes);
 });
+
+test("a nonfinite variant measurement remains an independently reproducible failure", async () => {
+  const input = source();
+  input.channels[0].data = Float64Array.from(
+    [0, 1, 2, 3, 4, 5],
+    (v) => v * 1e155,
+  );
+  const baseline = await analyze(
+    {
+      file: "source.gwy",
+      channel: "0",
+      operations: [{ name: "plane", params: {} }],
+    },
+    input,
+    null,
+    engine,
+  );
+  assert.ok(Number.isFinite(baseline.statistics.sq));
+  const request = {
+    baseline_recipe: baseline.recipe,
+    variants: [
+      { id: "raw", label: "Unlevelled", operations: [], selection: {} },
+      {
+        id: "levelled",
+        label: "Levelled",
+        operations: [{ name: "plane", params: {} }],
+        selection: {},
+      },
+    ],
+    assumptions: {
+      calibration_note: "",
+      model_note: "Numerical range regression",
+    },
+  };
+  const code = await identity();
+  const report = await sensitivityReport(request, input, null, engine, code);
+  assert.deepEqual(
+    report.variants.map((v) => v.status),
+    ["failed", "succeeded"],
+  );
+  assert.match(report.variants[0].error, /finite/);
+  assert.deepEqual(
+    await verifySensitivityReport(report, input, null, engine, code),
+    report,
+  );
+});

@@ -373,3 +373,35 @@ test("texture resolves only prior recipe artifact references", async () => {
   input.steps[1].call.arguments.recipe_artifact = "$step:later";
   assert.throws(() => validatePlan(input));
 });
+
+test("sensitivity binds only prior analysis artifacts", async () => {
+  const input = plan();
+  input.steps[1].call = {
+    name: "analyze_sensitivity",
+    arguments: {
+      file: "a.gwy",
+      source_sha256: "b".repeat(64),
+      recipe_artifact: "$step:first",
+      variants: [
+        {
+          id: "mean",
+          label: "Mean removal",
+          operations: [{ name: "mean" }],
+          selection: {},
+        },
+      ],
+      assumptions: { calibration_note: "", model_note: "" },
+    },
+  };
+  const calls = [];
+  const result = await runPlan(input, {
+    execute: async (call) => {
+      calls.push(call);
+      return success();
+    },
+  });
+  assert.equal(result.status, "complete");
+  assert.equal(calls[1].arguments.recipe_artifact, id);
+  input.steps[1].call.arguments.recipe_artifact = "$step:later";
+  assert.throws(() => validatePlan(input));
+});

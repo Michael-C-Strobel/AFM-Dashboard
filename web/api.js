@@ -120,6 +120,27 @@ export async function apiFetch(path, options = {}) {
       await ensure(body.file);
       return Response.json(await call("quality", body));
     }
+    if (["/api/sensitivity", "/api/sensitivity-export"].includes(route)) {
+      if (options.method?.toUpperCase() !== "POST")
+        throw new Error("Sensitivity routes require POST.");
+      const recipe =
+        route === "/api/sensitivity"
+          ? body.baseline_recipe
+          : body.report?.request?.baseline_recipe;
+      await ensure(recipe?.source?.file);
+      if (recipe?.reference) await ensure(recipe.reference.file);
+      const result = await call(route.slice(5), body);
+      return route === "/api/sensitivity-export"
+        ? new Response(result, {
+            headers: {
+              "Content-Type":
+                body.format === "tsv"
+                  ? "text/tab-separated-values;charset=utf-8"
+                  : "application/x-tar",
+            },
+          })
+        : Response.json(result);
+    }
     if (["/api/registration", "/api/registration-export"].includes(route)) {
       if (options.method?.toUpperCase() !== "POST")
         throw new Error("Registration routes require POST.");

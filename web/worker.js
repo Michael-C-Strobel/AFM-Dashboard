@@ -150,6 +150,23 @@ const toolSession = createToolSession({
         );
       return dispatch("texture", { recipe, parameters: args.parameters });
     }
+    if (name === "analyze_sensitivity") {
+      const saved = toolSession.artifact(args.recipe_artifact),
+        recipe = saved.content.result?.recipe;
+      if (
+        !recipe ||
+        recipe.source?.file !== args.file ||
+        recipe.source?.sha256 !== args.source_sha256
+      )
+        throw new Error(
+          "Sensitivity recipe artifact does not match the bound source.",
+        );
+      return dispatch("sensitivity", {
+        baseline_recipe: recipe,
+        variants: args.variants,
+        assumptions: args.assumptions,
+      });
+    }
     if (name === "replay_recipe") {
       const saved = toolSession.artifact(args.recipe_artifact);
       const recipe = saved.content.result?.recipe;
@@ -209,6 +226,64 @@ async function dispatch(type, payload) {
     };
   }
   if (type === "registry") return operationRegistry();
+  if (type === "sensitivity" || type === "sensitivity-export") {
+    const {
+      sensitivityReport,
+      verifySensitivityReport,
+      sensitivityBundle,
+      sensitivityTsv,
+    } = await import("./sensitivity-service.js");
+    if (
+      type === "sensitivity-export" &&
+      (!payload ||
+        Object.keys(payload).length !== 2 ||
+        !Object.hasOwn(payload, "report") ||
+        !["tsv", "tar"].includes(payload.format))
+    )
+      throw new Error(
+        "Sensitivity export requires exactly report and format (tsv or tar).",
+      );
+    const recipe =
+      type === "sensitivity"
+        ? payload.baseline_recipe
+        : payload.report?.request?.baseline_recipe;
+    const source = get(recipe?.source?.file),
+      reference = recipe?.reference ? get(recipe.reference.file) : null;
+    const files = await Promise.all(
+      ["sensitivity.js", "sensitivity-service.js", "engine.js"].map(
+        async (name) => {
+          const response = await fetch(new URL(name, import.meta.url));
+          if (!response.ok)
+            throw new Error("Cannot identify sensitivity code.");
+          return { name, text: await response.text() };
+        },
+      ),
+    );
+    const digest = (text) => sha256(new TextEncoder().encode(text));
+    const code = {
+      sha256: await digest(files.map((f) => f.text).join("\n")),
+      files: await Promise.all(
+        files.map(async (f) => ({
+          name: f.name,
+          sha256: await digest(f.text),
+        })),
+      ),
+    };
+    const engine = await identityFor(source.format);
+    if (type === "sensitivity")
+      return sensitivityReport(payload, source, reference, engine, code);
+    const verified = await verifySensitivityReport(
+      payload.report,
+      source,
+      reference,
+      engine,
+      code,
+    );
+    return payload.format === "tsv"
+      ? sensitivityTsv(verified)
+      : sensitivityBundle(verified);
+  }
+
   if (type === "registration" || type === "registration-export") {
     const { registrationRecipe, registrationBundle } = await import(
       "./registration-service.js"

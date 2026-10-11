@@ -119,6 +119,7 @@ export function validatePlan(raw) {
         "replay_recipe",
         "segment_surface",
         "measure_texture",
+        "analyze_sensitivity",
       ].includes(call?.name)
         ? "recipe_artifact"
         : call?.name === "get_artifact"

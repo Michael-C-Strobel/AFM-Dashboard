@@ -181,6 +181,39 @@ const schemas = {
     },
     ["file", "source_sha256", "recipe_artifact", "parameters"],
   ),
+  analyze_sensitivity: object(
+    {
+      file,
+      source_sha256: sha,
+      recipe_artifact: artifact,
+      variants: array(
+        object(
+          {
+            id: {
+              type: "string",
+              minLength: 1,
+              maxLength: 32,
+              pattern: "^[a-z][a-z0-9_-]{0,31}$",
+            },
+            label: { type: "string", minLength: 1, maxLength: 120 },
+            operations: array(operationSchema, 0, 32),
+            selection,
+          },
+          ["id", "label", "operations", "selection"],
+        ),
+        1,
+        16,
+      ),
+      assumptions: object(
+        {
+          calibration_note: { type: "string", maxLength: 2000 },
+          model_note: { type: "string", maxLength: 2000 },
+        },
+        ["calibration_note", "model_note"],
+      ),
+    },
+    ["file", "source_sha256", "recipe_artifact", "variants", "assumptions"],
+  ),
   replay_recipe: object(
     { file, source_sha256: sha, recipe_artifact: artifact },
     ["file", "source_sha256", "recipe_artifact"],
@@ -199,6 +232,8 @@ const toolDescriptions = {
     "Strictly replay a prior analysis artifact, then measure user-reviewed threshold components; returns metadata and label hash, not a particle or defect classification.",
   measure_texture:
     "Strictly replay a prior analysis artifact and measure spatial PSD and ACF on its saved selection; returns compact evidence and raster hashes without selection overrides.",
+  analyze_sensitivity:
+    "Compare explicit processing/selection alternatives on a source-bound prior analysis, preserving every recipe and failure. Variation ranges are not measurement uncertainty.",
   replay_recipe: "Replay a saved recipe artifact against a hash-bound source.",
   get_artifact:
     "Retrieve an existing immutable artifact by its content identifier.",
@@ -380,6 +415,23 @@ export function validateToolCall(call) {
     args.selection = normalizeSelection(args.selection ?? {});
     args.boundary_sigma ??= 6;
     args.reference_channel ??= null;
+  }
+  if (call.name === "analyze_sensitivity") {
+    const ids = new Set();
+    for (const variant of args.variants) {
+      if (
+        variant.id.trim() !== variant.id ||
+        variant.id === "baseline" ||
+        ids.has(variant.id) ||
+        !variant.label.trim()
+      )
+        throw new Error(
+          "Sensitivity variants require unique nonreserved IDs and nonempty labels.",
+        );
+      ids.add(variant.id);
+      variant.operations = variant.operations.map(normalizeOperation);
+      variant.selection = normalizeSelection(variant.selection);
+    }
   }
   if (call.name === "measure_texture") {
     args.parameters.detrend ??= "mean";

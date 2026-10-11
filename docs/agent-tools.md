@@ -1,6 +1,6 @@
 # Typed local analysis tools
 
-The worker exposes eight versioned tools through `POST /api/tool` with `{name, arguments}`. `GET /api/tools` returns their input schemas and operation parameters. Inputs are plain finite JSON, limited to 256 KiB and 32 processing operations; unknown tools, fields, invalid ranges and prototype/accessor objects are rejected. The original engine and reader identities remain unchanged.
+The worker exposes nine versioned tools through `POST /api/tool` with `{name, arguments}`. `GET /api/tools` returns their input schemas and operation parameters. Inputs are plain finite JSON, limited to 256 KiB and 32 processing operations; unknown tools, fields, invalid ranges and prototype/accessor objects are rejected. The original engine and reader identities remain unchanged.
 
 - `list_sources`: loaded files, hashes, channels and import support.
 - `inspect_source`: calibrated channel metadata and reader identity for a loaded file.
@@ -10,6 +10,7 @@ The worker exposes eight versioned tools through `POST /api/tool` with `{name, a
 - `get_artifact`: retrieve an immutable result by identifier.
 - `segment_surface`: threshold regions from a strictly replayed analysis artifact.
 - `measure_texture`: calibrated PSD/ACF from a strictly replayed analysis artifact.
+- `analyze_sensitivity`: reviewed same-source processing/selection alternatives from a strictly replayed baseline artifact.
 
 Numerical tools require the source filename, channel where applicable, and SHA-256 returned by inspection. Reference analyses bind both input hashes. Tools cannot import arbitrary URLs, execute scripts, rewrite raw files, or infer missing calibration. Import files through the existing viewer first. Compatibility warnings remain in results.
 
@@ -28,3 +29,11 @@ The session serializes calls, permits at most 256 requests and retains at most 3
 `measure_texture` takes `{file, source_sha256, recipe_artifact, parameters}`. Parameters are `detrend: none|mean|plane` and `window: boxcar|hann`, defaulting to mean and boxcar when omitted from the required parameters object. A plan can reference a prior analysis using `recipe_artifact: "$step:analyze"`. The captured recipe fixes channel, preprocessing and selection; the tool cannot override them.
 
 Reports retain code/source/recipe identities, estimator definitions, calibrated sampling, bin-mean display overviews, directional cuts and hashes for full numerical rasters. Complete float64 arrays are exported through Texture or the CLI. Texture summaries remain attributed artifacts; the generic evidence report does not manufacture claims beyond its documented surface statistics. See [texture workflow and resource limits](texture-workflows.md).
+
+## Sensitivity extension
+
+`analyze_sensitivity` takes `{file, source_sha256, recipe_artifact, variants, assumptions}`. The recipe artifact must contain a prior analysis recipe whose source filename and SHA-256 match the supplied binding. A plan may use `recipe_artifact: "$step:analyze"`. Strict replay fixes the baseline channel, profile, plateaus and reference; variants cannot replace these fields.
+
+Supply 1–16 variants, each exactly `{id, label, operations, selection}`. IDs match `[a-z][a-z0-9_-]{0,31}`, are unique and cannot be `baseline`; labels contain non-whitespace text and have at most 120 characters. Each full operation list has at most 32 entries. Assumptions are exactly `{calibration_note, model_note}`, with strings of at most 2000 characters each. Existing operation/selection validation and the service work gates apply.
+
+The attributed artifact retains the normalized request, original baseline recipe, successful variant recipes and compact evidence, explicit failures, metric deltas/range membership, assumption notes, code identity and report hash. A partial report retains failed alternatives; inspect its status as well as the outer tool outcome. Calibration uncertainty remains `not_evaluated`. Sensitivity summaries are separate attributed outputs; the generic evidence report does not turn alternative spread into an uncertainty claim. See [sensitivity execution and verified exports](sensitivity-workflows.md).

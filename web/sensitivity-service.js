@@ -185,6 +185,7 @@ export async function sensitivityReport(
   title(replayed, normalized.baseline_recipe);
   const baseline = compact(replayed, normalized.baseline_recipe),
     variants = [];
+  finiteJSON(baseline);
   for (const variant of normalized.variants) {
     try {
       const result = await analyze(
@@ -193,11 +194,13 @@ export async function sensitivityReport(
         reference,
         engineIdentity,
       );
+      const recorded = compact(result, result.recipe);
+      finiteJSON(recorded);
       variants.push({
         id: variant.id,
         label: variant.label,
         status: "succeeded",
-        result: compact(result, result.recipe),
+        result: recorded,
         error: null,
       });
     } catch (error) {
@@ -286,12 +289,13 @@ export async function verifySensitivityReport(
         throw new Error("Invalid failed sensitivity record.");
       let error = null;
       try {
-        await analyze(
+        const recreated = await analyze(
           invocation(request.baseline_recipe, definition),
           source,
           reference,
           engineIdentity,
         );
+        finiteJSON(compact(recreated, recreated.recipe));
       } catch (e) {
         error = String(e.message ?? e);
       }
@@ -338,6 +342,10 @@ export function sensitivityTsv(report) {
       "delta",
       "relative_delta",
       "reason",
+      "report_sha256",
+      "code_sha256",
+      "source_sha256",
+      "output_sha256",
     ],
   ];
   for (const metric of report.summary.metrics)
@@ -353,6 +361,13 @@ export function sensitivityTsv(report) {
         value.delta,
         value.relative_delta,
         value.reason,
+        report.report_sha256,
+        report.code.sha256,
+        report.request.baseline_recipe.source.sha256,
+        value.id === "baseline"
+          ? report.baseline.recipe.output.sha256
+          : (report.variants.find((v) => v.id === value.id)?.result?.recipe
+              .output.sha256 ?? null),
       ]);
   return rows.map((row) => row.map(cell).join("\t")).join("\n") + "\n";
 }
