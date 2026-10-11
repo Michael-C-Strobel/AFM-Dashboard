@@ -1,0 +1,125 @@
+.sensitivity-panel {
+  min-width: 0;
+}
+.sensitivity-panel textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  resize: vertical;
+  background: #f8fafc;
+  color: #253650;
+  border: 1px solid #aebed1;
+  padding: 9px;
+  font:
+    12px/1.5 ui-monospace,
+    monospace;
+}
+.sensitivity-panel > label {
+  display: block;
+  font-size: 12px;
+  margin-top: 10px;
+}
+.sensitivity-notes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0;
+}
+.sensitivity-notes label {
+  min-width: 0;
+  font-size: 11px;
+}
+.sensitivity-panel .readout,
+#sensitivity-warnings {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  line-height: 1.5;
+}
+#sensitivity-source {
+  max-height: 210px;
+  overflow: auto;
+}
+#sensitivity-run {
+  background: #f5bc4a;
+  border-color: #d29c31;
+  color: #342709;
+}
+#sensitivity-status {
+  padding: 8px;
+  border-left: 3px solid #456be6;
+  background: #e6ecf8;
+  font-size: 12px;
+}
+#sensitivity-status.error {
+  color: #8e392a;
+  background: #fff0e7;
+  border-color: #be6146;
+}
+#sensitivity-warnings {
+  border-left: 3px solid #b79a55;
+  padding-left: 10px;
+}
+.sensitivity-table {
+  overflow-x: auto;
+  margin: 12px 0;
+}
+.sensitivity-table table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 11px;
+}
+.sensitivity-table th,
+.sensitivity-table td {
+  padding: 7px;
+  border: 1px solid #cbd4e0;
+  text-align: left;
+  vertical-align: top;
+}
+.sensitivity-table td {
+  max-width: 300px;
+  overflow-wrap: anywhere;
+}
+.sensitivity-table caption {
+  text-align: left;
+  padding: 8px 0;
+  font-weight: 600;
+  color: #345985;
+}
+.sensitivity-table .failed {
+  background: #fff0e7;
+}
+.sensitivity-table .baseline {
+  background: #e6ecf8;
+}
+.sensitivity-table details {
+  margin-top: 6px;
+}
+.sensitivity-table pre {
+  white-space: pre-wrap;
+  font-size: 10px;
+}
+.sensitivity-figure {
+  margin: 12px 0;
+  border: 1px solid #adb9ca;
+  background: #f2f5fa;
+}
+.sensitivity-figure figcaption {
+  padding: 9px;
+  font-size: 12px;
+  border-bottom: 1px solid #ccd5e1;
+}
+.sensitivity-figure canvas {
+  width: 100%;
+  height: 260px;
+  display: block;
+}
+@media (max-width: 760px) {
+  .sensitivity-notes {
+    grid-template-columns: 1fr;
+  }
+  .sensitivity-table th,
+  .sensitivity-table td {
+    padding: 5px;
+  }
+}

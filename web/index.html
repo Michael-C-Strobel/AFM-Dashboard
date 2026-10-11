@@ -12,12 +12,14 @@
     <link rel="stylesheet" href="./segmentation-ui.css" />
     <link rel="stylesheet" href="./texture-ui.css" />
     <link rel="stylesheet" href="./registration-ui.css" />
+    <link rel="stylesheet" href="./sensitivity-ui.css" />
     <link rel="stylesheet" href="./assistant.css" />
     <link rel="stylesheet" href="./model-panel.css" />
     <script type="module" src="./app.js"></script>
     <script type="module" src="./segmentation-ui.js"></script>
     <script type="module" src="./texture-ui.js"></script>
     <script type="module" src="./registration-ui.js"></script>
+    <script type="module" src="./sensitivity-ui.js"></script>
     <script type="module" src="./assistant.js"></script>
     <script type="module" src="./workspace.js"></script>
   </head>
@@ -308,6 +310,15 @@
               tabindex="-1"
             >
               Registration
+            </button>
+            <button
+              id="tab-sensitivity"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-sensitivity"
+              tabindex="-1"
+            >
+              Sensitivity
             </button>
             <span class="dock-label" aria-hidden="true"
               >03 / INSPECT & EXPORT</span
@@ -1037,6 +1048,131 @@
                 recipes and hashes; raw measurement files are not included.
                 Translation and residual metrics do not establish physical
                 deformation or certify calibration.
+              </p>
+            </section>
+          </div>
+
+          <div
+            id="panel-sensitivity"
+            role="tabpanel"
+            aria-labelledby="tab-sensitivity"
+            tabindex="0"
+            hidden
+          >
+            <section
+              class="sensitivity-panel"
+              aria-labelledby="sensitivity-title"
+            >
+              <h2 id="sensitivity-title">Processing & selection sensitivity</h2>
+              <p class="hint">
+                Review alternatives on the same original source and channel.
+                Each variant starts from original data. These are deterministic
+                analysis choices, not independent repeated measurements or an
+                uncertainty budget.
+              </p>
+              <button id="sensitivity-capture">
+                Capture baseline analysis
+              </button>
+              <p id="sensitivity-source" class="readout">
+                No baseline captured.
+              </p>
+              <div class="toolbar">
+                <button id="sensitivity-add-current" disabled>
+                  Add current processing & selection</button
+                ><button id="sensitivity-add-mean" disabled>
+                  Add baseline + mean removal</button
+                ><button id="sensitivity-add-plane" disabled>
+                  Add baseline + plane leveling
+                </button>
+              </div>
+              <p class="hint">
+                “Add current” copies only operations and selection from a
+                completed analysis with matching source file, SHA-256 and
+                channel. Baseline profile, plateaus and reference stay fixed.
+                Later main-viewer edits do not change captured definitions. Up
+                to 16 variants, each with at most 32 operations.
+              </p>
+              <label for="sensitivity-variants"
+                >Complete variant definitions · review before running</label
+              >
+              <textarea
+                id="sensitivity-variants"
+                rows="12"
+                spellcheck="false"
+                aria-describedby="sensitivity-variant-help"
+              >
+[]</textarea
+              >
+              <p id="sensitivity-variant-help" class="hint">
+                Each entry has id, label, operations and selection. Selections
+                can change the measured population; inspect valid-pixel counts.
+                Definitions are editable JSON and are not executed until you
+                select Run.
+              </p>
+              <div class="sensitivity-notes">
+                <label
+                  >Calibration assumptions (not numerical uncertainty)<textarea
+                    id="sensitivity-calibration-note"
+                    maxlength="2000"
+                    rows="3"
+                  ></textarea></label
+                ><label
+                  >Measurement-model assumptions<textarea
+                    id="sensitivity-model-note"
+                    maxlength="2000"
+                    rows="3"
+                  ></textarea>
+                </label>
+              </div>
+              <button id="sensitivity-run" disabled>
+                Run reviewed alternatives
+              </button>
+              <p id="sensitivity-status" role="status" aria-live="polite">
+                Capture a baseline and add alternatives.
+              </p>
+              <p id="sensitivity-warnings" role="status"></p>
+              <div id="sensitivity-assumptions" class="readout"></div>
+              <div class="toolbar">
+                <label
+                  >Displayed metric<select
+                    id="sensitivity-metric"
+                    disabled
+                  ></select
+                ></label>
+              </div>
+              <p id="sensitivity-range" class="readout"></p>
+              <figure class="sensitivity-figure">
+                <figcaption>
+                  Available metric values · baseline shown as a dashed line
+                </figcaption>
+                <canvas
+                  id="sensitivity-plot"
+                  role="img"
+                  aria-label="Baseline and available alternative metric values"
+                  aria-describedby="sensitivity-range sensitivity-rows"
+                ></canvas>
+              </figure>
+              <div
+                id="sensitivity-rows"
+                class="sensitivity-table"
+                tabindex="0"
+                aria-label="Baseline and all alternative outcomes"
+              ></div>
+              <div class="toolbar">
+                <button id="sensitivity-json" disabled>
+                  Download sensitivity JSON</button
+                ><button id="sensitivity-tsv" disabled>
+                  Download verified TSV</button
+                ><button id="sensitivity-tar" disabled>
+                  Download verified evidence TAR
+                </button>
+              </div>
+              <p class="hint">
+                Range membership includes the baseline and available successful
+                alternatives only; failed or missing measurements remain listed.
+                Relative delta is (alternative − baseline) / |baseline| and is
+                unavailable for a zero baseline. Variant spread is not a
+                confidence interval or calibration uncertainty.
               </p>
             </section>
           </div>
