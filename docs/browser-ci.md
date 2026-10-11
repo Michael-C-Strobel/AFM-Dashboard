@@ -2,19 +2,20 @@
 
 `tests/browser-ci.mjs` creates a six-pixel GWYP measurement in a unique temporary directory. Heights are 0–5 nm, lateral extent is 3 × 2 µm, and units are metres. The fixture is generated from code; no laboratory or external sample files are required or redistributed.
 
-The test starts its own server on **127.0.0.1:4175**. Keep this port free; an existing server is not reused or stopped. The script closes its browser/server and deletes generated files on success or failure. Port 4173 is unaffected.
+The test starts its own server on **127.0.0.1:4175**, or `AFM_TEST_PORT` when supplied (for example 4177). Ports must be integers from 1024 through 65535; demo port 4173 is refused. Keep this port free; an existing server is not reused or stopped. The script closes its browser/server and deletes generated files on success or failure. Port 4173 is unaffected.
 
 ## Run locally
 
-Provide an existing Playwright installation and its Chromium executable:
+Provide an existing Playwright installation and select `PLAYWRIGHT_BROWSER=chromium|firefox|webkit` (default `chromium`):
 
 ```sh
 PLAYWRIGHT_MODULE=/absolute/path/to/playwright/index.mjs \
-PLAYWRIGHT_CHROMIUM_EXECUTABLE=/absolute/path/to/chrome \
-node tests/browser-ci.mjs
+PLAYWRIGHT_BROWSER=chromium \
+PLAYWRIGHT_EXECUTABLE=/absolute/path/to/chrome \
+AFM_TEST_PORT=4177 node tests/browser-ci.mjs
 ```
 
-The executable override is optional when Playwright's matching Chromium is installed. Playwright is test tooling, not an application dependency.
+`PLAYWRIGHT_EXECUTABLE` optionally overrides the selected engine's executable. The older `PLAYWRIGHT_CHROMIUM_EXECUTABLE` remains supported only for Chromium; it is ignored for Firefox/WebKit. Omit overrides to use Playwright's matching downloaded browser. `PLAYWRIGHT_BROWSERS_PATH` can isolate downloaded binaries in a temporary cache. Unknown engine names fail before starting a server. The output records both browser engine and version. Playwright is test tooling, not an application dependency.
 
 ## Coverage
 
@@ -24,6 +25,39 @@ It also validates and runs the Assistant's measurement starter with strict repla
 
 ## GitHub Actions
 
-`.github/workflows/test.yml` runs `npm test`, installs **Playwright 1.55.0** in the runner's temporary directory, installs matching Chromium and system dependencies, then runs the synthetic browser script. Application dependency manifests are unchanged.
+`.github/workflows/test.yml` uses a Chromium/Firefox/WebKit matrix with independent results (`fail-fast: false`). Each job runs `npm test`, installs **Playwright 1.55.0** in the runner's temporary directory, installs its matching engine with `--with-deps`, then runs the same synthetic browser assertions. Application dependency manifests are unchanged.
 
-This checks a small native GWYP path in Chromium. Vendor fixtures, large datasets, other browser engines, and complete accessibility audits remain separate checks. Local execution passed with Playwright 1.55.0 and the available Chromium 151.0.7922.34 executable. Hosted CI installs the Chromium version bundled with the pinned Playwright release and still requires a pushed workflow run.
+This checks a small native GWYP workflow across the three browser engines. Vendor fixtures, large datasets and complete accessibility audits remain separate checks. Hosted execution still requires a pushed workflow run.
+
+## Local validation
+
+With Playwright 1.55.0 and isolated port 4177:
+
+| Engine                                                | Result                                                                                                     |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Chromium 151.0.7922.34 (existing executable override) | Passed all synthetic scientific, replay/export, keyboard and mobile assertions.                            |
+| Firefox 141.0, Playwright build 1490                  | Passed the same assertions using `/tmp/afm-cross-browser-cache`.                                           |
+| WebKit 26.0, Playwright build 2203                    | Download succeeded, but launch was blocked by missing host libraries; application behavior was not tested. |
+
+WebKit reported these missing dependencies:
+
+```text
+libgstcodecparsers-1.0.so.0
+libflite.so.1
+libflite_usenglish.so.1
+libflite_cmu_grapheme_lang.so.1
+libflite_cmu_grapheme_lex.so.1
+libflite_cmu_indic_lang.so.1
+libflite_cmu_indic_lex.so.1
+libflite_cmulex.so.1
+libflite_cmu_time_awb.so.1
+libflite_cmu_us_awb.so.1
+libflite_cmu_us_kal16.so.1
+libflite_cmu_us_kal.so.1
+libflite_cmu_us_rms.so.1
+libflite_cmu_us_slt.so.1
+libavif.so.13
+libx264.so
+```
+
+No local system packages were installed. Browser downloads remained in the isolated temporary cache; the demo server was untouched. CI uses matching bundled Chromium rather than the local executable override.

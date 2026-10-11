@@ -4,6 +4,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -13,8 +17,9 @@ jobs:
       - name: Install pinned test-only browser tooling
         run: |
           npm install --prefix "$RUNNER_TEMP/afm-browser-tools" --no-audit --no-fund playwright@1.55.0
-          node "$RUNNER_TEMP/afm-browser-tools/node_modules/playwright/cli.js" install --with-deps chromium
+          node "$RUNNER_TEMP/afm-browser-tools/node_modules/playwright/cli.js" install --with-deps "${{ matrix.browser }}"
       - name: Run synthetic browser integration
         run: node tests/browser-ci.mjs
         env:
+          PLAYWRIGHT_BROWSER: ${{ matrix.browser }}
           PLAYWRIGHT_MODULE: ${{ runner.temp }}/afm-browser-tools/node_modules/playwright/index.mjs

@@ -1,4 +1,4 @@
-/** Synthetic browser integration. Owns its server on port 4175 and temporary files. */
+/** Synthetic browser integration. Owns its isolated configurable server and temporary files. */
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
@@ -7,9 +7,15 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
-const { chromium } = await import(
-  process.env.PLAYWRIGHT_MODULE || "playwright"
-);
+const playwright = await import(process.env.PLAYWRIGHT_MODULE || "playwright");
+const browserEngine = process.env.PLAYWRIGHT_BROWSER || "chromium";
+if (!["chromium", "firefox", "webkit"].includes(browserEngine))
+  throw new Error("PLAYWRIGHT_BROWSER must be chromium, firefox or webkit.");
+const port = Number(process.env.AFM_TEST_PORT ?? 4175);
+if (!Number.isInteger(port) || port < 1024 || port > 65535 || port === 4173)
+  throw new Error(
+    "AFM_TEST_PORT must be an integer from 1024 to 65535, excluding demo port 4173.",
+  );
 function fixture(offset = 0, unit = "m") {
   const string = (text) => Buffer.from(text + "\0");
   const uint = (n) => {
@@ -78,7 +84,7 @@ try {
     process.execPath,
     [fileURLToPath(new URL("../scripts/serve.mjs", import.meta.url))],
     {
-      env: { ...process.env, PORT: "4175", AFM_LIVE_RELOAD: "0" },
+      env: { ...process.env, PORT: String(port), AFM_LIVE_RELOAD: "0" },
       stdio: ["ignore", "pipe", "pipe"],
     },
   );
@@ -106,9 +112,13 @@ try {
       }
     });
   });
-  browser = await chromium.launch({
+  browser = await playwright[browserEngine].launch({
     headless: true,
-    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined,
+    executablePath:
+      process.env.PLAYWRIGHT_EXECUTABLE ||
+      (browserEngine === "chromium"
+        ? process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
+        : undefined),
   });
   const page = await browser.newPage({
     viewport: { width: 1440, height: 1080 },
@@ -132,7 +142,7 @@ try {
     );
     return route.abort();
   });
-  await page.goto("http://127.0.0.1:4175/web/");
+  await page.goto(`http://127.0.0.1:${port}/web/`);
   await page.waitForFunction(() =>
     document.querySelector("#status").textContent.includes("Import a local"),
   );
@@ -416,6 +426,7 @@ try {
         fixture: "synthetic GWYP 3x2",
         source_sha256: sourceHash,
         replay_verified: replayed.replay_verified,
+        browser_engine: browserEngine,
         browser: await browser.version(),
         checks: [
           "UI import",
