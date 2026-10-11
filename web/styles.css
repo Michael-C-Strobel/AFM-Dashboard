@@ -560,3 +560,71 @@ textarea {
     grid-template-columns: 1fr;
   }
 }
+
+.batch-card {
+  margin-top: 22px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #dce3dc;
+  border-radius: 10px;
+  min-width: 0;
+}
+#batch-files {
+  margin: 15px 0;
+  border: 1px solid #dce3dc;
+  border-radius: 6px;
+  padding: 12px;
+}
+#batch-files legend {
+  font-size: 12px;
+  padding: 0 6px;
+}
+#batch-files label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  overflow-wrap: anywhere;
+  font-weight: 400;
+}
+#batch-files input {
+  width: auto;
+  margin: 0;
+  flex: none;
+}
+#batch-status {
+  font-size: 12px;
+  line-height: 1.6;
+}
+#batch-status.error {
+  color: #913f2c;
+  background: #fff0e8;
+  padding: 10px;
+}
+.batch-record {
+  border-top: 1px solid #e0e7df;
+  padding: 14px 0;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.batch-record h3 {
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+.batch-record p {
+  margin: 6px 0;
+  line-height: 1.6;
+}
+.batch-record .button-row {
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+.batch-record .button-row button {
+  flex: none;
+}
+
+#batch-template {
+  overflow-wrap: anywhere;
+}
+.batch-record .button-row {
+  flex-wrap: wrap;
+}

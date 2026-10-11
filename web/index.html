@@ -333,6 +333,41 @@
           </p>
           <div id="acquisition-report"></div>
         </section>
+        <section class="batch-card" aria-labelledby="batch-title">
+          <h2 id="batch-title">Batch analysis</h2>
+          <p class="hint">
+            Apply a captured processing recipe to explicitly selected new
+            inputs. This creates new per-file recipes; it is not replay of the
+            original recipe. Templates containing reference comparisons are
+            rejected. Unknown instrument configurations retain their warnings.
+            Jobs run in this browser session; reopening the page does not resume
+            them.
+          </p>
+          <div class="toolbar">
+            <button id="batch-capture" disabled>Capture current recipe</button
+            ><button id="batch-refresh">Refresh file list</button
+            ><button id="batch-reset">Reset batch</button>
+          </div>
+          <p id="batch-template" class="hint">
+            No template captured. Analyze a source channel first.
+          </p>
+          <fieldset id="batch-files">
+            <legend>Select input files</legend>
+          </fieldset>
+          <div class="toolbar">
+            <button id="batch-preflight" disabled>Check selected inputs</button
+            ><button id="batch-start" disabled>Start batch</button
+            ><button id="batch-cancel" disabled>
+              Cancel after current file</button
+            ><button id="batch-download" disabled>
+              Download batch manifest
+            </button>
+          </div>
+          <p id="batch-status" role="status" aria-live="polite">
+            No batch started.
+          </p>
+          <div id="batch-records"></div>
+        </section>
       </main>
     </div>
   </body>

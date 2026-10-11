@@ -1,4 +1,5 @@
 import { apiFetch } from "./api.js";
+import { runBatch } from "./batch.js";
 ("use strict");
 const $ = (id) => document.getElementById(id);
 const state = {
@@ -1429,3 +1430,341 @@ $("acquisition-export").onclick = () => {
 };
 $("acquisition-reference").onchange = invalidateAcquisition;
 $("acquisition-sigma").onchange = invalidateAcquisition;
+
+const batch = {
+  template: null,
+  files: [],
+  selected: new Set(),
+  manifest: null,
+  preflight: [],
+  busy: false,
+  cancel: false,
+  generation: 0,
+};
+function batchStatus(message, error = false) {
+  $("batch-status").textContent = message;
+  $("batch-status").classList.toggle("error", error);
+}
+function syncBatchControls() {
+  $("batch-capture").disabled =
+    batch.busy || $("download").disabled || !state.response?.recipe;
+  for (const id of ["batch-refresh", "batch-reset"])
+    $(id).disabled = batch.busy;
+  $("batch-files").disabled = batch.busy;
+  for (const id of ["batch-preflight", "batch-start"])
+    $(id).disabled = batch.busy || !batch.template || !batch.selected.size;
+  $("batch-cancel").disabled =
+    !batch.busy || batch.phase !== "running" || batch.cancel;
+  $("batch-download").disabled = !batch.manifest;
+}
+function describeBatchTemplate() {
+  const t = batch.template,
+    g = t?.source.geometry;
+  $("batch-template").textContent = t
+    ? "Captured from " +
+      t.source.file +
+      " · channel " +
+      t.source.channel +
+      " (" +
+      (t.source.title || "untitled") +
+      ")" +
+      " · operations: " +
+      (t.operations.map((op) => op.name).join(" → ") || "none") +
+      " · " +
+      g.shape.join(" × ") +
+      " pixels" +
+      " · span " +
+      format(g.xreal, g.xy_unit) +
+      " × " +
+      format(g.yreal, g.xy_unit) +
+      " · offsets x " +
+      format(g.xoff, g.xy_unit) +
+      ", y " +
+      format(g.yoff, g.xy_unit) +
+      " · vertical unit " +
+      (g.z_unit || "unknown") +
+      ". This snapshot is independent of later interactive edits."
+    : "No template captured. Analyze a source channel first.";
+}
+async function refreshBatchFiles() {
+  if (batch.busy) return;
+  const generation = ++batch.generation;
+  try {
+    const result = await api("/api/files");
+    if (generation !== batch.generation) return;
+    batch.files = result.files;
+    batch.selected = new Set(
+      [...batch.selected].filter((name) =>
+        batch.files.some((file) => file.name === name),
+      ),
+    );
+    const root = $("batch-files");
+    root.replaceChildren();
+    const legend = document.createElement("legend");
+    legend.textContent = "Select input files";
+    root.append(legend);
+    for (const file of batch.files) {
+      const label = document.createElement("label"),
+        input = document.createElement("input"),
+        text = document.createElement("span");
+      input.type = "checkbox";
+      input.value = file.name;
+      input.checked = batch.selected.has(file.name);
+      text.textContent = file.name;
+      input.onchange = () => {
+        if (input.checked) batch.selected.add(file.name);
+        else batch.selected.delete(file.name);
+        batch.preflight = [];
+        if (!batch.manifest) renderBatchRecords();
+        syncBatchControls();
+      };
+      label.append(input, text);
+      root.append(label);
+    }
+    syncBatchControls();
+  } catch (error) {
+    batchStatus(error.message, true);
+  }
+}
+function renderBatchRecords() {
+  const root = $("batch-records");
+  root.replaceChildren();
+  const records = batch.manifest?.records || batch.preflight;
+  for (const record of records) {
+    const details = record.result || record;
+    const row = document.createElement("article");
+    row.className = "batch-record";
+    row.dataset.file = record.file;
+    row.dataset.status = record.status;
+    acquisitionText("h3", record.file + " · " + record.status, row);
+    if (details.support)
+      acquisitionText(
+        "p",
+        "Import support: " +
+          details.support.status +
+          " · " +
+          (details.support.configuration || details.support.format || "") +
+          " · " +
+          (details.support.message || ""),
+        row,
+      );
+    if (record.error) acquisitionText("p", "Error: " + record.error, row);
+    if (details.warnings?.length)
+      acquisitionText("p", "Warnings: " + details.warnings.join(" · "), row);
+    if (record.status === "complete" && details.recipe) {
+      const controls = document.createElement("div");
+      controls.className = "button-row";
+      const recipeButton = document.createElement("button");
+      recipeButton.textContent = "Download recipe";
+      recipeButton.dataset.action = "recipe";
+      recipeButton.disabled = batch.busy;
+      recipeButton.onclick = () =>
+        save(
+          new Blob([JSON.stringify(details.recipe, null, 2)], {
+            type: "application/json",
+          }),
+          record.file + "-recipe.json",
+        );
+      const tarButton = document.createElement("button");
+      tarButton.textContent = "Export verified TAR";
+      tarButton.dataset.action = "tar";
+      tarButton.disabled = batch.busy;
+      tarButton.onclick = async () => {
+        if (batch.busy) return;
+        const generation = batch.generation;
+        batch.busy = true;
+        batch.phase = "export";
+        syncBatchControls();
+        renderBatchRecords();
+        batchStatus("Verifying " + record.file + " before export…");
+        try {
+          const response = await apiFetch("/api/batch-export", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ file: record.file, recipe: details.recipe }),
+          });
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || "Batch export failed.");
+          }
+          const blob = await response.blob();
+          if (generation !== batch.generation) return;
+          save(blob, record.file + "-analysis.tar");
+          batchStatus("Verified archive downloaded for " + record.file + ".");
+        } catch (error) {
+          if (generation === batch.generation) batchStatus(error.message, true);
+        } finally {
+          if (generation === batch.generation) {
+            batch.busy = false;
+            batch.phase = null;
+            syncBatchControls();
+            renderBatchRecords();
+          }
+        }
+      };
+      controls.append(recipeButton, tarButton);
+      row.append(controls);
+    }
+    root.append(row);
+  }
+}
+$("batch-capture").onclick = () => {
+  if (batch.busy || $("download").disabled || !state.response?.recipe) {
+    batchStatus(
+      "Recalculate the current analysis before capturing a template.",
+      true,
+    );
+    return;
+  }
+  if (state.response.recipe.reference) {
+    batchStatus(
+      "Reference-bearing recipes cannot be batch templates. Disable comparison and recalculate, then capture again.",
+      true,
+    );
+    return;
+  }
+  batch.template = structuredClone(state.response.recipe);
+  batch.manifest = null;
+  batch.preflight = [];
+  ++batch.generation;
+  describeBatchTemplate();
+  renderBatchRecords();
+  syncBatchControls();
+  batchStatus("Recipe snapshot captured. Select the files to process.");
+};
+$("batch-refresh").onclick = refreshBatchFiles;
+$("batch-reset").onclick = () => {
+  if (batch.busy) return;
+  ++batch.generation;
+  batch.template = null;
+  batch.manifest = null;
+  batch.preflight = [];
+  batch.selected.clear();
+  batch.cancel = false;
+  describeBatchTemplate();
+  renderBatchRecords();
+  refreshBatchFiles();
+  syncBatchControls();
+  batchStatus("Batch reset. Interactive analysis is unchanged.");
+};
+$("batch-preflight").onclick = async () => {
+  if (batch.busy || !batch.template || !batch.selected.size) return;
+  batch.busy = true;
+  batch.phase = "preflight";
+  batch.preflight = [];
+  batch.manifest = null;
+  const generation = ++batch.generation,
+    template = structuredClone(batch.template),
+    files = [...batch.selected];
+  syncBatchControls();
+  renderBatchRecords();
+  try {
+    for (const file of files) {
+      batchStatus("Checking " + file + "…");
+      try {
+        const result = await api("/api/batch-check", { file, template });
+        batch.preflight.push({ ...result, file, status: "compatible" });
+      } catch (error) {
+        batch.preflight.push({
+          file,
+          status: "incompatible",
+          error: error.message,
+        });
+      }
+      if (generation !== batch.generation) return;
+      renderBatchRecords();
+    }
+    batchStatus(
+      "Preflight complete: " +
+        batch.preflight.filter((r) => r.status === "compatible").length +
+        " of " +
+        files.length +
+        " compatible. Running still validates each input.",
+    );
+  } finally {
+    if (generation === batch.generation) {
+      batch.busy = false;
+      batch.phase = null;
+      syncBatchControls();
+    }
+  }
+};
+$("batch-start").onclick = async () => {
+  if (batch.busy || !batch.template || !batch.selected.size) return;
+  batch.busy = true;
+  batch.phase = "running";
+  batch.cancel = false;
+  batch.manifest = null;
+  batch.preflight = [];
+  const generation = ++batch.generation,
+    template = structuredClone(batch.template),
+    files = [...batch.selected];
+  syncBatchControls();
+  renderBatchRecords();
+  try {
+    const finalManifest = await runBatch({
+      template,
+      files,
+      execute: (file, snapshot) =>
+        api("/api/batch-run", { file, template: snapshot }),
+      shouldCancel: () => batch.cancel,
+      onUpdate: (manifest) => {
+        if (generation !== batch.generation) return;
+        batch.manifest = structuredClone(manifest);
+        renderBatchRecords();
+        syncBatchControls();
+        const done = manifest.records.filter((r) =>
+          ["complete", "failed"].includes(r.status),
+        ).length;
+        batchStatus(
+          (batch.cancel
+            ? "Cancellation requested; finishing the current file. "
+            : "Processing batch. ") +
+            done +
+            " of " +
+            files.length +
+            " finished.",
+        );
+      },
+    });
+    if (generation !== batch.generation) return;
+    if (finalManifest) batch.manifest = structuredClone(finalManifest);
+    batchStatus(
+      batch.manifest?.canceled
+        ? "Batch canceled after the current file; remaining inputs were not run."
+        : "Batch finished. Inspect individual records for failures and warnings.",
+    );
+  } catch (error) {
+    if (generation === batch.generation) batchStatus(error.message, true);
+  } finally {
+    if (generation === batch.generation) {
+      batch.busy = false;
+      batch.phase = null;
+      renderBatchRecords();
+      syncBatchControls();
+    }
+  }
+};
+$("batch-cancel").onclick = () => {
+  if (batch.busy && batch.phase === "running") {
+    batch.cancel = true;
+    batchStatus(
+      "Cancellation requested. The current file finishes; later files will not run.",
+    );
+    syncBatchControls();
+  }
+};
+$("batch-download").onclick = () => {
+  if (batch.manifest)
+    save(
+      new Blob([JSON.stringify(batch.manifest, null, 2)], {
+        type: "application/json",
+      }),
+      "afm-batch-manifest.json",
+    );
+};
+new MutationObserver(syncBatchControls).observe($("download"), {
+  attributes: true,
+  attributeFilter: ["disabled"],
+});
+refreshBatchFiles();
