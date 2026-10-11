@@ -5,7 +5,7 @@ import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { spawn } from "node:child_process";
+import { spawn, execFile } from "node:child_process";
 import { once } from "node:events";
 const playwright = await import(process.env.PLAYWRIGHT_MODULE || "playwright");
 const browserEngine = process.env.PLAYWRIGHT_BROWSER || "chromium";
@@ -449,6 +449,27 @@ try {
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   );
+  await new Promise((resolve, reject) => {
+    execFile(
+      process.execPath,
+      [fileURLToPath(new URL("./browser-model-context.mjs", import.meta.url))],
+      {
+        env: { ...process.env, AFM_BASE_URL: `http://127.0.0.1:${port}/web/` },
+        timeout: 120000,
+        maxBuffer: 1048576,
+      },
+      (error, stdout, stderr) => {
+        if (error)
+          reject(
+            new Error(
+              `Model context browser workflow failed: ${stdout} ${stderr}`,
+              { cause: error },
+            ),
+          );
+        else resolve();
+      },
+    );
+  });
   assert.deepEqual(errors, []);
   console.log(
     JSON.stringify(
@@ -465,6 +486,7 @@ try {
           "operation",
           "recipe download/upload/replay",
           "portable recipe save/upload/strict replay",
+          "mocked multi-source planning and opt-in verified evidence",
           "Assistant strict replay",
           "captured processed segmentation",
           "captured processed spatial texture",

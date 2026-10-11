@@ -137,6 +137,8 @@ function renderPlan() {
       const params = element("details"),
         summary = element("summary", "Review exact arguments"),
         pre = element("pre", JSON.stringify(step.call?.arguments, null, 2));
+      pre.tabIndex = 0;
+      pre.setAttribute("aria-label", "Exact arguments for " + step.id);
       params.append(summary, pre);
       row.append(params);
       root.append(row);
@@ -377,6 +379,8 @@ function renderResults() {
       const detail = element("details"),
         summary = element("summary", "Artifact " + artifact.id),
         pre = element("pre", JSON.stringify(artifact, null, 2));
+      pre.tabIndex = 0;
+      pre.setAttribute("aria-label", "Artifact JSON for " + step.id);
       const anchor = "artifact-" + artifact.sha256;
       if (!document.getElementById(anchor)) detail.id = anchor;
       detail.append(summary, pre);

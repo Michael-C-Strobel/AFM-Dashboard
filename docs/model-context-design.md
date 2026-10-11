@@ -1,6 +1,6 @@
 # Selected sources and evidence for model planning
 
-G02c extends the optional proposal adapter. Numerical work and explicit plan approval stay local. This is an implementation contract; the current adapter still supports one source and no numerical evidence.
+G02c extends the optional proposal adapter. Numerical work and explicit plan approval stay local. This contract is implemented by `model-planner.js`, `model-evidence.js` and the Assistant panel; legacy single-source calls remain supported.
 
 ## Source selection
 

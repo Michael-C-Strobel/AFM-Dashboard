@@ -410,6 +410,17 @@ export function mountModelPanel({
           );
           const link = el("a", "Exact local artifact " + claim.artifact_id);
           link.href = "#artifact-" + claim.artifact_id.slice(9);
+          link.onclick = (event) => {
+            event.preventDefault();
+            const target = document.getElementById(
+              link.getAttribute("href").slice(1),
+            );
+            if (target) {
+              target.open = true;
+              target.querySelector("summary")?.focus();
+              target.scrollIntoView({ block: "nearest" });
+            }
+          };
           row.append(el("br"), link);
           item.append(row);
         }

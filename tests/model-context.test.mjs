@@ -405,3 +405,23 @@ test("cancellation during local evidence verification sends no provider request"
   assert.equal(result.proposal, null);
   assert.equal(result.audit.evidenceContext.claims.length, 8);
 });
+
+test("local evidence errors cannot reflect credentials or unselected field values", async () => {
+  const evidenceBundle = await bundle();
+  evidenceBundle.step_ids = ["credential_marker"];
+  await assert.rejects(
+    proposePlan(
+      options({
+        sourceContexts: [source()],
+        evidenceBundle,
+        apiKey: "credential_marker",
+        fetchImpl: () => assert.fail("Invalid evidence must not send"),
+      }),
+    ),
+    (error) => {
+      assert.match(error.message, /Selected evidence could not be verified/);
+      assert.ok(!error.message.includes("credential_marker"));
+      return true;
+    },
+  );
+});
