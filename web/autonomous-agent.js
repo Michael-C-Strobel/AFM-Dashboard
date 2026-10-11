@@ -204,7 +204,19 @@ export function createAutonomousAgent({
     }
     return !stopped;
   };
+  const cancelRequestAudit = () => {
+    const round = state.rounds.at(-1);
+    if (round?.audit?.status === "requesting")
+      round.audit = {
+        ...round.audit,
+        status: "canceled",
+        error: "Provider proposal request canceled.",
+        finished_at: new Date().toISOString(),
+      };
+    if (round?.status === "planning") round.status = "canceled";
+  };
   const finish = async (status) => {
+    if (status === "stopped") cancelRequestAudit();
     state.status = status;
     state.finished_at = new Date().toISOString();
     await publish();
@@ -286,7 +298,7 @@ export function createAutonomousAgent({
         };
         state.rounds.push(round);
         await publish();
-        const prompt = `Goal: ${c.goal}\nRound ${n}/${rounds}; tool calls remaining ${calls - state.calls}. Previous run status: ${bundle?.manifest.status ?? "none"}. ${evidence ? "Adapt the next plan using the supplied verified evidence, or return evidence claim IDs when the goal is sufficiently addressed." : "No verified surface evidence is available. Request an analysis plan first; do not claim completion."} Stay within selected sources and remaining calls; list_sources is forbidden. All artifact references must refer to earlier steps of this same plan.`;
+        const prompt = `Goal: ${c.goal}\nRound ${n}/${rounds}; tool calls remaining ${calls - state.calls}. Previous run status: ${state.rounds.slice(0, -1).findLast((r) => r.manifest)?.manifest.status ?? "none"}. ${evidence ? "Adapt the next plan using the supplied verified evidence, or return evidence claim IDs when the goal is sufficiently addressed." : "No verified surface evidence is available. Request an analysis plan first; do not claim completion."} Stay within selected sources and remaining calls; list_sources is forbidden. All artifact references must refer to earlier steps of this same plan.`;
         if (!(await gate())) return await finish("stopped");
         abort = new AbortController();
         let rejectAbort;
@@ -294,7 +306,21 @@ export function createAutonomousAgent({
           rejectAbort = () => reject(Error());
           abort.signal.addEventListener("abort", rejectAbort, { once: true });
         });
-        let response;
+        let response,
+          acceptAudit = true;
+        const captureAudit = async (value) => {
+          if (!acceptAudit || stopped || terminal.has(state.status)) return;
+          const audit = copy(value);
+          if (
+            !audit ||
+            Array.isArray(audit) ||
+            typeof audit !== "object" ||
+            secretIn(audit, key)
+          )
+            throw new Error("Invalid provider audit.");
+          round.audit = audit;
+          await publish();
+        };
         try {
           response = copy(
             await Promise.race([
@@ -308,18 +334,20 @@ export function createAutonomousAgent({
                 ...(bundle ? { evidenceBundle: copy(bundle) } : {}),
                 history: copy(history),
                 signal: abort.signal,
+                onAudit: captureAudit,
               }),
               aborted,
             ]),
           );
         } finally {
+          acceptAudit = false;
           abort.signal.removeEventListener("abort", rejectAbort);
           abort = null;
         }
+        if (secretIn(response, key)) throw Error();
+        round.audit = response.audit ?? round.audit;
         if (stopped) return await finish("stopped");
         if (!(await gate())) return await finish("stopped");
-        if (secretIn(response, key)) throw Error();
-        round.audit = response.audit ?? null;
         const proposal = response.proposal;
         if (!proposal) {
           round.status = "failed";
@@ -420,10 +448,15 @@ export function createAutonomousAgent({
             history.shift();
         }
         await publish();
+        if (!(await gate())) return await finish("stopped");
       }
+      if (!(await gate())) return await finish("stopped");
       return await finish("budget_exhausted");
     } catch {
-      state.error = "Autonomous request or verification failed.";
+      if (stopped) cancelRequestAudit();
+      state.error = stopped
+        ? null
+        : "Autonomous request or verification failed.";
       state.status = stopped ? "stopped" : "failed";
       state.finished_at = new Date().toISOString();
       try {
@@ -456,6 +489,7 @@ export function createAutonomousAgent({
       if (started && !stopped && !terminal.has(state.status)) {
         stopped = true;
         paused = false;
+        cancelRequestAudit();
         abort?.abort();
         wake?.();
         controlsUpdate();

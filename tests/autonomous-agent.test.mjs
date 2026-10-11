@@ -455,3 +455,184 @@ test("invalid bounds getters and reflected plans reject before tool execution", 
     ).includes("configured-secret"),
   );
 });
+
+test("stop retains prepared request audit without waiting for hung provider or late callbacks", async () => {
+  const entered = deferred();
+  let callback, signal;
+  const audit = {
+    status: "requesting",
+    request_sha256: "b".repeat(64),
+    request: { model: "test", messages: [] },
+    finished_at: null,
+    error: null,
+  };
+  const a = createAutonomousAgent({
+    execute: () => assert.fail(),
+    getJournal: () => ({}),
+    propose: async (args) => {
+      callback = args.onAudit;
+      signal = args.signal;
+      await callback(audit);
+      entered.resolve();
+      return new Promise(() => {});
+    },
+  });
+  const pending = a.start(settings());
+  await entered.promise;
+  a.stop();
+  const result = await pending;
+  assert.equal(signal.aborted, true);
+  assert.equal(result.status, "stopped");
+  assert.equal(result.error, null);
+  assert.equal(result.rounds[0].status, "canceled");
+  assert.equal(result.rounds[0].audit.status, "canceled");
+  assert.equal(result.rounds[0].audit.request_sha256, audit.request_sha256);
+  assert.deepEqual(result.rounds[0].audit.request, audit.request);
+  assert.ok(result.rounds[0].audit.finished_at);
+  const saved = a.snapshot();
+  await callback({ ...audit, status: "failed" });
+  assert.deepEqual(a.snapshot(), saved);
+});
+test("completed provider audit is retained while paused and after stop", async () => {
+  const entered = deferred(),
+    release = deferred(),
+    captured = deferred();
+  let a;
+  a = createAutonomousAgent({
+    execute: () => assert.fail(),
+    getJournal: () => ({}),
+    propose: async () => {
+      entered.resolve();
+      await release.promise;
+      return proposal();
+    },
+    onUpdate: (s) => {
+      if (s.status === "paused" && s.rounds[0]?.audit?.status === "proposed")
+        captured.resolve();
+    },
+  });
+  const run = a.start(settings());
+  await entered.promise;
+  a.pause();
+  release.resolve();
+  await captured.promise;
+  assert.equal(a.snapshot().rounds[0].audit.status, "proposed");
+  a.stop();
+  assert.equal((await run).rounds[0].audit.status, "proposed");
+});
+test("pause and stop after final report take precedence over budget exhaustion", async () => {
+  for (const action of ["stop", "pause"]) {
+    const s = createToolSession({ invoke: async () => ({ metadata: "safe" }) }),
+      reached = deferred();
+    let a,
+      fired = false;
+    const p = validatePlan({
+      schema_version: 1,
+      title: "Inspect",
+      steps: [
+        {
+          id: "inspect",
+          call: { name: "inspect_source", arguments: { file: "a.gwy" } },
+        },
+      ],
+    });
+    a = createAutonomousAgent({
+      execute: s.execute,
+      getJournal: s.journal,
+      propose: () => proposal(p),
+      onUpdate: (snap) => {
+        if (!fired && snap.rounds[0]?.report) {
+          fired = true;
+          a[action]();
+          reached.resolve();
+        }
+      },
+    });
+    const run = a.start({ ...settings(), maxRounds: 1 });
+    await reached.promise;
+    if (action === "pause") {
+      assert.equal(a.snapshot().status, "paused");
+      a.stop();
+    }
+    assert.equal((await run).status, "stopped");
+    assert.equal(a.snapshot().calls, 1);
+  }
+});
+test("non-surface completed round reports actual previous run status", async () => {
+  const s = createToolSession({ invoke: async () => ({ metadata: "safe" }) }),
+    requests = [];
+  const p = validatePlan({
+    schema_version: 1,
+    title: "Inspect",
+    steps: [
+      {
+        id: "inspect",
+        call: { name: "inspect_source", arguments: { file: "a.gwy" } },
+      },
+    ],
+  });
+  const a = createAutonomousAgent({
+    execute: s.execute,
+    getJournal: s.journal,
+    propose: async (req) => {
+      requests.push(req);
+      return proposal(p);
+    },
+  });
+  assert.equal(
+    (await a.start({ ...settings(), maxRounds: 2 })).status,
+    "budget_exhausted",
+  );
+  assert.match(requests[1].prompt, /Previous run status: complete/);
+  assert.equal(requests[1].evidenceBundle, undefined);
+});
+test("audit callbacks reject secret reflection before retaining any unsafe audit", async () => {
+  const updates = [];
+  const a = createAutonomousAgent({
+    execute: () => assert.fail(),
+    getJournal: () => ({}),
+    onUpdate: (s) => updates.push(s),
+    propose: async (args) => {
+      await args.onAudit({
+        status: "requesting",
+        request: { content: "private-key" },
+      });
+      return proposal();
+    },
+  });
+  const r = await a.start({ ...settings(), apiKey: "private-key" });
+  assert.equal(r.status, "failed");
+  assert.equal(r.rounds[0].audit, null);
+  assert.ok(!JSON.stringify(updates).includes("private-key"));
+});
+
+test("real planner cancellation retains exact prepared credential-free request audit", async () => {
+  const { proposePlan } = await import("../web/model-planner.js");
+  const entered = deferred();
+  const a = createAutonomousAgent({
+    execute: () => assert.fail(),
+    getJournal: () => ({}),
+    propose: (args) =>
+      proposePlan({
+        ...args,
+        fetchImpl: async () => {
+          entered.resolve();
+          return new Promise(() => {});
+        },
+      }),
+  });
+  const run = a.start({ ...settings(), apiKey: "private-key" });
+  await entered.promise;
+  a.stop();
+  const stopped = await run,
+    audit = stopped.rounds[0].audit;
+  assert.equal(stopped.status, "stopped");
+  assert.equal(audit.status, "canceled");
+  assert.equal(audit.request.model, "test");
+  assert.ok(audit.finished_at);
+  assert.equal(
+    audit.request_sha256,
+    await sha256(new TextEncoder().encode(JSON.stringify(audit.request))),
+  );
+  assert.ok(!JSON.stringify(stopped).includes("private-key"));
+});
