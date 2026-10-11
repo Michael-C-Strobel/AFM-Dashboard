@@ -354,6 +354,21 @@ try {
   assert.equal(sensitivity.variants.length, 1);
   assert.equal(sensitivity.variants[0].status, "succeeded");
   assert.equal(sensitivity.calibration_uncertainty.status, "not_evaluated");
+  await page.locator("#expand-inspection").click();
+  assert.equal(
+    await page.locator("#inspection-dialog").evaluate((node) => node.open),
+    true,
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(
+    () => !document.querySelector("#inspection-dialog").open,
+  );
+  assert.equal(
+    await page
+      .locator("#expand-inspection")
+      .evaluate((node) => node === document.activeElement),
+    true,
+  );
   await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(
     await page.evaluate(
@@ -412,6 +427,7 @@ try {
           "captured processed spatial texture",
           "dual-recipe registration",
           "captured sensitivity alternatives",
+          "expanded inspection and Escape",
           "keyboard tabs",
           "mobile overflow",
         ],

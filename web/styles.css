@@ -913,3 +913,61 @@ details {
     max-height: none;
   }
 }
+
+/* Expanded inspection preserves the live panel and uses native modal focus. */
+.inspection-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 5px 8px;
+  background: #263448;
+  color: #e5edfc;
+  font-size: 10px;
+  letter-spacing: 0.6px;
+}
+.inspection-actions button {
+  background: #e6edfc;
+  color: #203b70;
+  font-size: 11px;
+  letter-spacing: normal;
+  min-height: 32px;
+}
+#inspection-dialog {
+  width: calc(100vw - 24px);
+  height: calc(100dvh - 24px);
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 1px solid #647793;
+  background: #f9f9f6;
+  color: #26303f;
+  overflow: hidden;
+}
+#inspection-dialog::backdrop {
+  background: rgb(18 28 45 / 65%);
+}
+#inspection-dialog .inspection-dock {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  border: 0;
+  overflow: hidden;
+}
+#inspection-dialog .inspection-tabs {
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+#inspection-dialog [role="tabpanel"] {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+body.inspection-expanded {
+  overflow: hidden;
+}

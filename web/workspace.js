@@ -30,3 +30,48 @@ toggle.addEventListener("click", () => {
   toggle.setAttribute("aria-expanded", String(expanded));
   document.body.classList.toggle("inspector-open", expanded);
 });
+
+// Move the existing controls into a native modal: no copied scientific state.
+const inspection = document.querySelector(".inspection-dock");
+const expand = document.getElementById("expand-inspection");
+const dialog = document.getElementById("inspection-dialog");
+const anchor = document.createComment("Inspection dock position");
+inspection.before(anchor);
+let panelScroll = [];
+function rememberScroll() {
+  panelScroll = [...inspection.querySelectorAll('[role="tabpanel"]')].map(
+    (panel) => [panel, panel.scrollTop, panel.scrollLeft],
+  );
+}
+function restoreScroll() {
+  for (const [panel, top, left] of panelScroll) {
+    panel.scrollTop = top;
+    panel.scrollLeft = left;
+  }
+}
+expand.addEventListener("click", () => {
+  if (dialog.open) {
+    rememberScroll();
+    dialog.close();
+    return;
+  }
+  rememberScroll();
+  dialog.append(inspection);
+  expand.textContent = "Return to viewer";
+  expand.setAttribute("aria-expanded", "true");
+  document.body.classList.add("inspection-expanded");
+  dialog.showModal();
+  inspection
+    .querySelector('[role="tab"][aria-selected="true"]')
+    .focus({ preventScroll: true });
+  restoreScroll();
+});
+dialog.addEventListener("cancel", rememberScroll);
+dialog.addEventListener("close", () => {
+  anchor.after(inspection);
+  expand.textContent = "Expand inspection";
+  expand.setAttribute("aria-expanded", "false");
+  document.body.classList.remove("inspection-expanded");
+  restoreScroll();
+  expand.focus({ preventScroll: true });
+});

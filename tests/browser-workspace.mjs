@@ -91,6 +91,70 @@ try {
     "Desktop scan viewport remains prominent",
   );
   assert.equal(raw.y, result.y, "Desktop maps share a row");
+  const snapshot = await page.evaluate(async () =>
+    (await import("./app.js")).getAnalysisSnapshot(),
+  );
+  await page.locator("#expand-inspection").click();
+  assert.equal(
+    await page.locator("#inspection-dialog").evaluate((node) => node.open),
+    true,
+  );
+  assert.equal(
+    await page.locator("#expand-inspection").getAttribute("aria-expanded"),
+    "true",
+  );
+  assert.equal(
+    await page
+      .locator("#tab-measurements")
+      .evaluate((node) => node === document.activeElement),
+    true,
+  );
+  await page.keyboard.press("End");
+  await visiblePanel("sensitivity");
+  for (let n = 0; n < 25; n++) {
+    await page.keyboard.press("Tab");
+    assert.equal(
+      await page.evaluate(
+        () =>
+          document.activeElement === document.body ||
+          document
+            .getElementById("inspection-dialog")
+            .contains(document.activeElement),
+      ),
+      true,
+      "Tab may reach browser chrome, but cannot reach inert background controls",
+    );
+  }
+  await page.locator("#tab-sensitivity").focus();
+  await page.locator("#file").evaluate((node) => node.focus());
+  assert.equal(
+    await page
+      .locator("#tab-sensitivity")
+      .evaluate((node) => node === document.activeElement),
+    true,
+    "Background source control is inert",
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(
+    () => !document.querySelector("#inspection-dialog").open,
+  );
+  assert.equal(
+    await page
+      .locator("#expand-inspection")
+      .evaluate((node) => node === document.activeElement),
+    true,
+  );
+  assert.equal(
+    await page.locator("#expand-inspection").getAttribute("aria-expanded"),
+    "false",
+  );
+  assert.deepEqual(
+    await page.evaluate(async () =>
+      (await import("./app.js")).getAnalysisSnapshot(),
+    ),
+    snapshot,
+  );
+  await page.locator("#tab-measurements").click();
   await page.locator("#preset").click();
   await page.waitForFunction(
     () => !document.querySelector("#download").disabled,
@@ -106,6 +170,22 @@ try {
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
       "No horizontal overflow at " + width,
+    );
+    await page.locator("#expand-inspection").click();
+    const panelBox = await page.locator("#panel-measurements").boundingBox();
+    assert.ok(
+      panelBox.height > 450,
+      "Expanded panel has usable vertical space at " + width,
+    );
+    assert.ok(
+      await page
+        .locator("#inspection-dialog")
+        .evaluate((node) => node.scrollWidth <= node.clientWidth),
+      "Expanded dialog avoids horizontal overflow",
+    );
+    await page.locator("#expand-inspection").click();
+    await page.waitForFunction(
+      () => !document.querySelector("#inspection-dialog").open,
     );
     for (const id of ["raw", "result"]) {
       const box = await page.locator("#" + id).boundingBox();

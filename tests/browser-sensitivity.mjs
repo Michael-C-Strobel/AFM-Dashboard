@@ -275,6 +275,11 @@ try {
   await page.locator("#sensitivity-calibration-note").fill("Updated note");
   assert.equal(await page.locator("#sensitivity-json").isDisabled(), true);
   await run();
+  const expandedReport = await download(
+    "#sensitivity-json",
+    "before-expand.json",
+  );
+  await page.locator("#expand-inspection").click();
   await page.locator("#sensitivity-plot").scrollIntoViewIfNeeded();
   await page
     .locator("#sensitivity-plot")
@@ -288,6 +293,20 @@ try {
       `Overflow at ${width}`,
     );
   }
+  const plot = await page.locator("#sensitivity-plot").boundingBox();
+  const panel = await page.locator("#panel-sensitivity").boundingBox();
+  await page.locator("#sensitivity-plot").scrollIntoViewIfNeeded();
+  const visiblePlot = await page.locator("#sensitivity-plot").boundingBox();
+  assert.ok(
+    visiblePlot.y >= panel.y &&
+      visiblePlot.y + plot.height <= panel.y + panel.height + 1,
+    "Full scientific plot fits inside expanded panel",
+  );
+  await page.keyboard.press("Escape");
+  assert.deepEqual(
+    await download("#sensitivity-json", "after-expand.json"),
+    expandedReport,
+  );
   await page.locator("#sensitivity-rows").scrollIntoViewIfNeeded();
   await page.screenshot({ path: join(scratch, "sensitivity-mobile.png") });
   assert.deepEqual(errors, []);

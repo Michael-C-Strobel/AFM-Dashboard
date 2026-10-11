@@ -243,6 +243,16 @@
           ></label>
         </section>
         <section class="inspection-dock" aria-label="Analysis inspection">
+          <div class="inspection-actions">
+            <span>INSPECT &amp; EXPORT</span>
+            <button
+              id="expand-inspection"
+              aria-expanded="false"
+              aria-controls="inspection-dialog"
+            >
+              Expand inspection
+            </button>
+          </div>
           <div
             class="inspection-tabs"
             role="tablist"
@@ -1179,5 +1189,9 @@
         </section>
       </main>
     </div>
+    <dialog
+      id="inspection-dialog"
+      aria-label="Expanded analysis inspection"
+    ></dialog>
   </body>
 </html>

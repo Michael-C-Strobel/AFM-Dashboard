@@ -58,6 +58,8 @@ node scripts/register.mjs --fixed-recipe fixed/recipe.json \
 
 Recorded references require `--fixed-reference` or `--moving-reference`. Automatic search requires equal pixel pitches and a bounded candidate workload; manual resampling supports different grids. Only compatible declared units are accepted. Rotations, scaling and local deformation are unsupported. JSON and verified TAR exports retain both recipes, transform, common-valid mask and full numerical rasters. See [registration definitions](docs/registration.md) and [replay/export workflow](docs/registration-workflows.md).
 
+Use **Expand inspection** above the analysis tabs for a full-window view of plots, tables and evidence. **Return to viewer** or Escape restores the viewer and keyboard focus; captured results and processing settings remain unchanged.
+
 ## Review processing and selection sensitivity
 
 In **Sensitivity**, capture a completed baseline, then add current processing/selection or an explicit baseline-plus-mean/plane alternative. Review the complete JSON definitions and assumption notes before selecting **Run reviewed alternatives**. Current processing can be copied only from the same source file, hash and channel; baseline profile, plateau and reference settings remain fixed. Captures stay independent of later viewer edits.
