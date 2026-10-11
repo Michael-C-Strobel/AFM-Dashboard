@@ -67,7 +67,7 @@ try {
     { timeout: 60000 },
   );
   const before = await page
-    .locator("canvas")
+    .locator("#raw, #result")
     .evaluateAll((nodes) => nodes.map((node) => node.toDataURL()));
   const originalRecipe = await download(
     page.locator("#download"),
@@ -218,7 +218,7 @@ try {
   assert.ok(evidence.records.every((r) => /^[0-9a-f]{64}$/.test(r.sha256)));
   assert.deepEqual(
     await page
-      .locator("canvas")
+      .locator("#raw, #result")
       .evaluateAll((nodes) => nodes.map((node) => node.toDataURL())),
     before,
     "Tool plans preserve interactive source maps",

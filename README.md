@@ -18,6 +18,21 @@ The demo's network policy permits local requests only by default. Optional model
 
 The supplied `.gwy` measurements appear in the file selector. Use **Import local files** for native GWYP, supported NanoScope binary images, calibrated Igor v5 image waves, and the supported JPK TIFF image subset. Detection uses file contents, including numbered Bruker extensions such as `.001`. Browser limits are 64 MiB per file and 256 MiB of source bytes per session; reload to clear the session. These byte limits do not estimate total working memory.
 
+## Measure threshold regions
+
+In **Features**, capture the current processed analysis, enter a threshold in the displayed stored Z unit, choose four/eight-neighbor connectivity and boundary/minimum-size rules, then segment. The worker strictly replays the captured recipe before measuring. Regions retain calibrated areas, bounding dimensions, centroids and threshold-relative value differences; rejected candidates remain reviewable. A separate label preview leaves the main maps unchanged. JSON/TSV exports preserve provenance and exclusions. Regions are descriptive components, not material identifications or independent samples.
+
+The same workflow runs locally from a saved recipe:
+
+```sh
+node scripts/segment.mjs --recipe artifacts/automatic/recipe.json \
+  --input data/sample-input.gwy --threshold 1e-8 \
+  --reference data/sample-reference.gwy \
+  --out artifacts/threshold-regions
+```
+
+The threshold above is a command example, not a recommended threshold for this sample. See [measurement definitions and limits](docs/segmentation.md) and [reproducible segmentation exports](docs/segmentation-workflows.md).
+
 ## Reviewed analysis plans
 
 Open **Assistant**, refresh loaded sources, then choose a starter or expand **Ask for a plan**. Local starters require no model. Review the arguments, validate the plan, and select **Run reviewed plan**. Completed steps expose recipes and artifacts; **Verify evidence report** produces linked numeric claims and Markdown/JSON exports, including partial results after a failure or cancellation.

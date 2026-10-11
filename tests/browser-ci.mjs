@@ -263,6 +263,26 @@ try {
     manifest.steps[2].resolved_call.arguments.recipe_artifact,
     manifest.steps[1].result.artifact.id,
   );
+  await page.locator("#tab-features").click();
+  await page.locator("#features-capture").click();
+  await page.locator("#features-threshold").fill("0");
+  await page.locator("#features-run").click();
+  await page.waitForFunction(
+    () =>
+      !document.querySelector("#features-json").disabled ||
+      document.querySelector("#features-status.error"),
+  );
+  assert.equal(
+    await page.locator("#features-status.error").count(),
+    0,
+    await page.locator("#features-status").textContent(),
+  );
+  const segmented = (await download("#features-json", "segmentation.json"))
+    .value;
+  assert.equal(segmented.input_recipe.output.sha256, restored.output.sha256);
+  assert.equal(segmented.report.counts.accepted_pixels, 3);
+  near(segmented.report.regions[0].area, 3e-12);
+  assert.deepEqual(segmented.labels, [0, 0, 0, 1, 1, 1]);
   await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(
     await page.evaluate(
@@ -271,6 +291,11 @@ try {
     "Mobile document overflows horizontally",
   );
   await page.locator("#tab-assistant").focus();
+  await page.keyboard.press("ArrowRight");
+  assert.equal(
+    await page.locator("#tab-features").getAttribute("aria-selected"),
+    "true",
+  );
   await page.keyboard.press("ArrowRight");
   assert.equal(
     await page.locator("#tab-measurements").getAttribute("aria-selected"),
@@ -297,6 +322,7 @@ try {
           "operation",
           "recipe download/upload/replay",
           "Assistant strict replay",
+          "captured processed segmentation",
           "keyboard tabs",
           "mobile overflow",
         ],

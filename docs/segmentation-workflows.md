@@ -52,3 +52,7 @@ node --test tests/segmentation-service.test.mjs
 ```
 
 Tests use synthetic channels and generated GWYP bytes: strict replay rejection, deterministic repeats, ROI/mask retention, independent hash calculations, excluded regions/unknown units, CLI output creation, and refusal to overwrite an existing directory.
+
+## Reviewed agent plans
+
+The registered `segment_surface` tool uses `{file, source_sha256, recipe_artifact, parameters}`; parameters require a finite `threshold` and optionally direction, connectivity, minimum pixels and boundary policy. In a reviewed plan, use a preceding analysis step via `recipe_artifact: "$step:analyze"`. The worker verifies that the recipe artifact belongs to the bound source, strictly replays it and records a compact content-addressed result in the tool journal. Labels are omitted from tool artifacts to limit memory, but their hash and complete region/exclusion tables remain. Features/CLI exports include the full label raster.

@@ -151,7 +151,8 @@ $("run").onclick = async () => {
       }),
     });
     const value = await response.json();
-    if (!response.ok) throw new Error(value.error || "Segmentation failed.");
+    if (!response.ok)
+      throw new Error(value.detail || value.error || "Segmentation failed.");
     result = value;
     selected = null;
     page = 0;

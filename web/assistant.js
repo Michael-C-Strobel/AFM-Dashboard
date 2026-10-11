@@ -51,7 +51,8 @@ async function api(path, body) {
     body === undefined ? {} : { method: "POST", body: JSON.stringify(body) },
   );
   const value = await response.json();
-  if (!response.ok) throw new Error(value.error || "Local request failed.");
+  if (!response.ok)
+    throw new Error(value.detail || value.error || "Local request failed.");
   return value;
 }
 async function tool(call) {

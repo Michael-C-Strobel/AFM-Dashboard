@@ -14,7 +14,13 @@ page.on("console", (message) => {
   if (message.type() === "error") errors.push(message.text());
 });
 async function visiblePanel(name) {
-  for (const other of ["measurements", "acquisition", "batch", "assistant"]) {
+  for (const other of [
+    "measurements",
+    "acquisition",
+    "batch",
+    "assistant",
+    "features",
+  ]) {
     assert.equal(
       await page.locator("#panel-" + other).isVisible(),
       other === name,
@@ -31,7 +37,7 @@ async function visiblePanel(name) {
 }
 async function maps() {
   return page
-    .locator("canvas")
+    .locator("#raw, #result")
     .evaluateAll((nodes) => nodes.map((node) => node.toDataURL()));
 }
 try {
@@ -55,11 +61,11 @@ try {
     true,
   );
   await page.keyboard.press("End");
-  await visiblePanel("assistant");
+  await visiblePanel("features");
   await page.keyboard.press("ArrowRight");
   await visiblePanel("measurements");
   await page.keyboard.press("ArrowLeft");
-  await visiblePanel("assistant");
+  await visiblePanel("features");
   await page.keyboard.press("Home");
   await visiblePanel("measurements");
   assert.deepEqual(
@@ -136,7 +142,7 @@ try {
     JSON.stringify(
       {
         status: "passed",
-        panels: 4,
+        panels: 5,
         keyboard: "arrows, Home, End, Tab",
         widths: [1440, 1024, 768, 390],
         screenshots: [
