@@ -113,7 +113,9 @@ Write analysis outputs outside this package to keep its manifest verifiable. Fix
 
 View calibrated channels, support warnings, original/processed maps and selections; perform explicit leveling, line correction, crop/filter, roughness, profiles and steps. Capture processed surfaces for segmentation, PSD/autocorrelation, translation registration or processing sensitivity. Export results and replay recipes; batch applies compatible choices to new inputs. The chemist-specific preset remains disabled without its exact original input hash.
 
-The local Assistant prepares reviewed typed-tool plans and verifies artifact/journal evidence. Optional provider proposals require explicit AFM_MODEL_ORIGIN configuration, a compatible endpoint and browser CORS. Sources and compact verified claims are sent only as selected; raw arrays remain local. Plans never execute automatically. No model provider is required for the viewer or local analysis.
+The local Assistant prepares typed-tool plans and verifies artifact/journal evidence. Reviewed planning requires explicit validation and Run reviewed plan. Separately, Start goal authorizes automatic planning and execution on selected channels within the chosen round/tool bounds; Pause and Stop act between local tools. Autonomous follow-up requests include verified compact surface claims and quality, segmentation, texture or sensitivity observations from eligible recorded results. Reviewed planning sends surface evidence only after explicit selection. Raw arrays, full recipes, profiles and region tables remain local. Recorded results do not certify scientific goal achievement.
+
+The tool-free Help agent answers interface questions using the built-in guide and pilot SOPs, without selected measurements. Optional model modes require explicit AFM_MODEL_ORIGIN configuration, a compatible endpoint and browser CORS. Keys stay in session memory and are excluded from exported audits. Provider tests use mocks; live-provider behavior is not certified. No model provider is required for the viewer or local analysis.
 
 ## Preview limits
 
@@ -152,7 +154,7 @@ export async function packagePreview(out) {
   });
   entries["README.md"] = Buffer.from(readme(version));
   entries["NOTICE.txt"] = Buffer.from(
-    "Local preview only. Project license selection is pending. This package is not a public licensed release. Measurement content is a generated mathematical demonstration; original laboratory and downloaded instrument files are excluded. No license grant or redistribution approval is inferred.\n",
+    "Local preview only. Project license selection is pending. This package is not a public licensed release. Measurement content is a generated mathematical demonstration; original laboratory and downloaded instrument files are excluded. No license grant or redistribution approval is inferred.\nReviewed plans require explicit execution; Start goal separately authorizes bounded automatic analysis on selected sources. Optional model modes use session-only keys and have mock-provider validation only. Compact selected-source claims/diagnostic observations may be transmitted; raw arrays stay local. The help agent has no analysis tools or selected measurement context.\n",
   );
   const supported = (await sourceBytes("docs/supported-inputs.md"))
     .toString("utf8")
@@ -162,7 +164,7 @@ export async function packagePreview(out) {
     );
   entries["SUPPORTED_INPUTS.md"] = Buffer.from(supported);
   entries["RELEASE_NOTES.md"] = Buffer.from(
-    `# ${version} local preview\n\nBuildless HTML/JavaScript viewer with calibrated image imports, explicit processing, derived measurements, strict replay and portable recipes. Includes reviewed multi-source agent planning and optional selected verified evidence.\n\nThis package adds a generated example, deterministic archive, file/engine manifest and read-only clean-install verification. Application engine source is copied byte-for-byte. No raw laboratory/external measurements, credentials, node_modules or developer caches are included.\n\nPublic release is pending project licensing and hosted CI. Manual assistive-technology review and documented large-image responsiveness limitations remain open. No scientific accuracy or blanket instrument-compatibility certification is implied.\n`,
+    `# ${version} local preview\n\nBuildless HTML/JavaScript viewer with calibrated image imports, explicit processing, derived measurements, strict replay and portable recipes. Includes explicit reviewed multi-source planning, separately authorized bounded autonomous goals, and tool-free interface help. Autonomous next rounds receive verified compact surface claims and quality/segmentation/texture/sensitivity observations; reviewed evidence remains opt-in. Raw arrays, full recipes, profiles and region tables stay local. Provider keys are session-only and omitted from audits; provider tests use mocks, not certified live-provider behavior.\n\nThis package adds a generated example, deterministic archive, file/engine manifest and read-only clean-install verification. Application engine source is copied byte-for-byte. No raw laboratory/external measurements, credentials, node_modules or developer caches are included.\n\nPublic release is pending project licensing and hosted CI. Manual assistive-technology review and documented large-image responsiveness limitations remain open. No scientific accuracy or blanket instrument-compatibility certification is implied.\n`,
   );
   const fixture = createPreviewFixture();
   entries["data/" + PREVIEW_EXAMPLE.file] = fixture;
