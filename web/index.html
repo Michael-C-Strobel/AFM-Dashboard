@@ -35,12 +35,20 @@
       </div>
       <div class="header-actions">
         <button
+          id="tab-guide"
+          type="button"
+          aria-expanded="false"
+          aria-controls="panel-assistant"
+        >
+          Guide
+        </button>
+        <button
           id="tab-assistant"
           type="button"
           aria-controls="panel-assistant"
           aria-expanded="false"
         >
-          Analysis guide
+          Agent
         </button>
         <a
           id="documentation-link"
@@ -1147,16 +1155,12 @@
         <section aria-labelledby="assistant-title" class="assistant-panel">
           <div class="assistant-heading">
             <div>
-              <h2 id="assistant-title">Analysis guide</h2>
-              <p class="hint">
-                Get help, review a plan, or authorize a bounded autonomous run.
+              <h2 id="assistant-title">Agent</h2>
+              <p id="assistant-mode-description" class="hint">
+                Plan and run analyses with visible steps and recorded results.
               </p>
             </div>
-            <button
-              id="assistant-close"
-              type="button"
-              aria-label="Close analysis guide"
-            >
+            <button id="assistant-close" type="button" aria-label="Close Agent">
               Close
             </button>
           </div>

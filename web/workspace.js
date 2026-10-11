@@ -25,16 +25,51 @@ for (const tab of tabs) {
   });
 }
 const assistantToggle = document.getElementById("tab-assistant");
+const guideToggle = document.getElementById("tab-guide");
 const assistantPanel = document.getElementById("panel-assistant");
-function setAssistantOpen(open, restoreFocus = false) {
+let assistantMode = "agent";
+function setAssistantOpen(open, restoreFocus = false, mode = assistantMode) {
+  assistantMode = mode;
+  assistantPanel.dataset.mode = mode;
   assistantPanel.hidden = !open;
-  assistantToggle.setAttribute("aria-expanded", String(open));
+  assistantToggle.setAttribute(
+    "aria-expanded",
+    String(open && mode === "agent"),
+  );
+  guideToggle.setAttribute("aria-expanded", String(open && mode === "guide"));
   document.body.classList.toggle("assistant-open", open);
-  if (restoreFocus) assistantToggle.focus({ preventScroll: true });
+  document.getElementById("assistant-title").textContent =
+    mode === "guide" ? "Guide" : "Agent";
+  document.getElementById("assistant-mode-description").textContent =
+    mode === "guide"
+      ? "Learn the interface and common workflows. Guide answers questions; it cannot run analysis tools."
+      : "Plan and run analyses with visible steps and recorded results.";
+  document
+    .getElementById("assistant-close")
+    .setAttribute(
+      "aria-label",
+      "Close " + (mode === "guide" ? "Guide" : "Agent"),
+    );
+  if (mode === "guide") {
+    const help = document.getElementById("help-agent");
+    if (help) help.open = true;
+  }
+  if (restoreFocus)
+    (mode === "guide" ? guideToggle : assistantToggle).focus({
+      preventScroll: true,
+    });
 }
-assistantToggle.addEventListener("click", () =>
-  setAssistantOpen(assistantPanel.hidden),
-);
+for (const [button, mode] of [
+  [assistantToggle, "agent"],
+  [guideToggle, "guide"],
+])
+  button.addEventListener("click", () =>
+    setAssistantOpen(
+      assistantPanel.hidden || assistantMode !== mode,
+      false,
+      mode,
+    ),
+  );
 document
   .getElementById("assistant-close")
   .addEventListener("click", () => setAssistantOpen(false, true));
@@ -103,8 +138,18 @@ function revealDocumentationTarget() {
   if (!id) return;
   const target = document.getElementById(id);
   if (!target) return;
-  if (assistantPanel.contains(target) || target === assistantToggle)
-    setAssistantOpen(true);
+  if (
+    assistantPanel.contains(target) ||
+    target === assistantToggle ||
+    target === guideToggle
+  )
+    setAssistantOpen(
+      true,
+      false,
+      target === guideToggle || target.closest("#help-agent")
+        ? "guide"
+        : "agent",
+    );
   const panel = target.closest('[role="tabpanel"]');
   const tab = panel
     ? document.getElementById(panel.getAttribute("aria-labelledby"))

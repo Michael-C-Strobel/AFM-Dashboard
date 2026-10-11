@@ -64,6 +64,6 @@ The shared connection now includes [provider presets](provider-compatibility.md)
 
 ## Dashboard guide
 
-Open **Analysis guide** in the header to show the right sidebar alongside the maps and measurements. On smaller screens it appears below the workspace. Connection settings are shared by the help, reviewed-plan and autonomous modes. The required goal field comes before the optional SOP; the advanced JSON settings are optional record-checking inputs.
+Open **Agent** in the header for planning and running analyses beside the maps and measurements. Open **Guide** for interface help and workflow explanations; it cannot execute analysis tools. Switching views preserves both conversations and any running goal. On smaller screens it appears below the workspace. Connection settings are shared by the help, reviewed-plan and autonomous modes. The required goal field comes before the optional SOP; the advanced JSON settings are optional record-checking inputs.
 
 Autonomous activity lists each round, proposed tool, rationale and execution status. Completed surface steps display recorded Sa/Sq and offer **Show on dashboard**. This action strictly replays the chosen recipe locally before displaying it; running a goal does not automatically replace the viewer. Detailed JSON and downloaded audits remain available. Provider compatibility tests use mocked responses, not live-provider certification.

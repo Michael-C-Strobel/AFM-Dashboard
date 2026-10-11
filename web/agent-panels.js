@@ -51,7 +51,7 @@ export function mountAgentModes({
     parent.append(label);
     return input;
   };
-  const help = group("Help agent · interface and workflow guide", "help-agent");
+  const help = group("Ask the guide", "help-agent");
   help.append(
     el(
       "p",
@@ -439,7 +439,8 @@ export function mountAgentModes({
               showing.delete(key);
               show.disabled = false;
               feedback.textContent = displayMessages.get(key);
-              if (snapshot?.started_at === s.started_at) renderActivity(snapshot);
+              if (snapshot?.started_at === s.started_at)
+                renderActivity(snapshot);
             }
           };
           row.append(show, feedback);

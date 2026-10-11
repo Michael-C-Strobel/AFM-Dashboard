@@ -276,3 +276,29 @@
     flex-wrap: wrap;
   }
 }
+
+/* Guide explains; Agent exposes analysis controls. Switching preserves both sessions. */
+#panel-assistant[data-mode="agent"] #help-agent {
+  display: none;
+}
+#panel-assistant[data-mode="guide"]
+  .assistant-panel
+  > :not(.assistant-heading):not(#assistant-model-host),
+#panel-assistant[data-mode="guide"]
+  #assistant-model-host
+  > :not(#help-agent):not(#model-connection-settings) {
+  display: none;
+}
+#tab-guide[aria-expanded="true"] {
+  background: #f2e5c9;
+  color: #584320;
+}
+@media (max-width: 760px) {
+  .header-actions {
+    flex-wrap: wrap;
+  }
+  #tab-guide {
+    font-size: 10px;
+    padding: 6px;
+  }
+}

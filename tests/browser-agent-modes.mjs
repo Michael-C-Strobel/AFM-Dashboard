@@ -206,7 +206,11 @@ try {
   await page.locator("#model-endpoint").fill(origin + "/__mock_model");
   await page.locator("#model-name").fill("mock");
   await page.locator("#model-key").fill(secret);
-  await page.locator("#help-agent > summary").click();
+  await page.locator("#tab-guide").click();
+  assert.equal(await page.locator("#assistant-title").textContent(), "Guide");
+  assert.equal(await page.locator("#autonomous-agent").isVisible(), false);
+  assert.equal(await page.locator("#assistant-refresh").isVisible(), false);
+  assert.equal(await page.locator("#help-question").isVisible(), true);
   assert.equal(await page.locator(".inspection-actions #refresh").count(), 1);
   const initialJournal = (await journal()).records.length;
   async function askHelp() {
@@ -276,6 +280,9 @@ try {
   await page.waitForFunction(
     () => !document.querySelector("#download").disabled,
   );
+  await page.locator("#tab-assistant").click();
+  assert.equal(await page.locator("#assistant-title").textContent(), "Agent");
+  assert.equal(await page.locator("#help-agent").isVisible(), false);
   await page.locator("#assistant-refresh").click();
   await page.waitForFunction(
     () => !document.querySelector("#assistant-measure").disabled,
