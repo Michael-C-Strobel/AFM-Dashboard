@@ -903,6 +903,43 @@ $("download").onclick = () => {
       "afm-recipe.json",
     );
 };
+let portableBusy = false;
+function syncPortableDownload() {
+  $("download-portable").disabled = portableBusy || $("download").disabled;
+}
+new MutationObserver(syncPortableDownload).observe($("download"), {
+  attributes: true,
+  attributeFilter: ["disabled"],
+});
+syncPortableDownload();
+$("download-portable").onclick = async () => {
+  if (portableBusy) return;
+  const snapshot = getAnalysisSnapshot();
+  if (!snapshot) return;
+  const seq = state.sequence;
+  portableBusy = true;
+  syncPortableDownload();
+  status("Verifying captured analysis before saving a portable recipe…");
+  try {
+    const document = await api("/api/recipe-document", {
+      recipe: snapshot.recipe,
+    });
+    save(
+      new Blob([JSON.stringify(document, null, 2)], {
+        type: "application/json",
+      }),
+      "afm-recipe-v2.json",
+    );
+    if (seq === state.sequence)
+      status("Verified portable recipe saved for the captured analysis.");
+  } catch (error) {
+    if (seq === state.sequence)
+      status("Portable recipe export failed: " + error.message, true);
+  } finally {
+    portableBusy = false;
+    syncPortableDownload();
+  }
+};
 $("export").onclick = async () => {
   try {
     status("Preparing reproducible export…");
@@ -927,9 +964,16 @@ $("upload").onchange = async (event) => {
   const seq = ++state.sequence;
   invalidateAcquisition();
   try {
+    $("download").disabled = true;
+    $("export").disabled = true;
     status("Replaying recipe…");
-    const recipe = JSON.parse(await file.text());
-    const result = await api("/api/replay", { recipe });
+    if (file.size > 1024 * 1024)
+      throw new Error(
+        "Recipe files must be at most 1 MiB. No replay was performed.",
+      );
+    const input = JSON.parse(await file.text());
+    const result = await api("/api/replay", { recipe: input });
+    const recipe = result.recipe;
     if (seq !== state.sequence) return;
     const source = result.source.file;
     $("file").value = source;
