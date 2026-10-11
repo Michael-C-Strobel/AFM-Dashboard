@@ -1,3 +1,4 @@
+import { showRecipeInViewer } from "./app.js";
 import { mountModelPanel } from "./model-panel.js";
 import { apiFetch } from "./api.js";
 import { validatePlan, runPlan } from "./tool-plans.js";
@@ -374,7 +375,19 @@ function renderResults() {
         const recipe = element("button", "Download recipe");
         recipe.onclick = () =>
           save(result.recipe, "afm-" + step.id + "-recipe.json");
-        actions.append(recipe);
+        const show = element("button", "Show on dashboard");
+        show.onclick = async () => {
+          show.disabled = true;
+          try {
+            await showRecipeInViewer(result.recipe);
+            status("Result shown on dashboard after strict replay.");
+          } catch {
+            status("Could not replay this result on the dashboard.", true);
+          } finally {
+            show.disabled = false;
+          }
+        };
+        actions.append(recipe, show);
       }
       const detail = element("details"),
         summary = element("summary", "Artifact " + artifact.id),
@@ -607,6 +620,7 @@ modelPanel = mountModelPanel({
     busy = value;
     sync();
   },
+  showRecipe: showRecipeInViewer,
   getContext: () => {
     const channel = inspected?.channels.find(
       (c) => String(c.id) === $("channel").value,

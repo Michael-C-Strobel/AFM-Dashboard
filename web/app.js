@@ -1082,27 +1082,31 @@ $("export").onclick = async () => {
     status(e.message, true);
   }
 };
-$("upload").onchange = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+/** Display an explicitly selected recipe after strict local replay. */
+export async function showRecipeInViewer(input) {
+  if (JSON.stringify(input).length > 1024 * 1024)
+    throw new Error(
+      "Recipe files must be at most 1 MiB. No replay was performed.",
+    );
   const seq = ++state.sequence;
   invalidateAcquisition();
   try {
     $("download").disabled = true;
     $("export").disabled = true;
     status("Replaying recipe…");
-    if (file.size > 1024 * 1024)
-      throw new Error(
-        "Recipe files must be at most 1 MiB. No replay was performed.",
-      );
-    const input = JSON.parse(await file.text());
     const result = await api("/api/replay", { recipe: input });
     const recipe = result.recipe;
-    if (seq !== state.sequence) return;
+    if (seq !== state.sequence)
+      throw new Error(
+        "Dashboard changed while replaying; this result was not applied.",
+      );
     const source = result.source.file;
     $("file").value = source;
     const info = await api("/api/channels?file=" + encodeURIComponent(source));
-    if (seq !== state.sequence) return;
+    if (seq !== state.sequence)
+      throw new Error(
+        "Dashboard changed while replaying; this result was not applied.",
+      );
     state.channels = info.channels;
     state.tracePairs = info.trace_pairs || [];
     state.support = info.support || null;
@@ -1127,7 +1131,10 @@ $("upload").onchange = async (event) => {
     if (recipe.reference) {
       referenceOptions(recipe.reference.file);
       await loadReference(recipe.reference.channel);
-      if (seq !== state.sequence) return;
+      if (seq !== state.sequence)
+        throw new Error(
+          "Dashboard changed while replaying; this result was not applied.",
+        );
     }
     state.response = result;
     state.rasters = {};
@@ -1139,6 +1146,20 @@ $("upload").onchange = async (event) => {
     status("Recipe replay complete.");
   } catch (e) {
     if (seq === state.sequence) status(e.message, true);
+    throw e;
+  }
+}
+$("upload").onchange = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  try {
+    if (file.size > 1024 * 1024)
+      throw new Error(
+        "Recipe files must be at most 1 MiB. No replay was performed.",
+      );
+    await showRecipeInViewer(JSON.parse(await file.text()));
+  } catch (error) {
+    status(error.message, true);
   }
   event.target.value = "";
 };

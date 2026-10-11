@@ -262,7 +262,13 @@ try {
   await page.locator("#tab-batch").focus();
   await page.keyboard.press("ArrowRight");
   assert.equal(
-    await page.locator("#tab-assistant").getAttribute("aria-selected"),
+    await page.locator("#tab-features").getAttribute("aria-selected"),
+    "true",
+  );
+  await page.locator("#tab-assistant").focus();
+  await page.keyboard.press("Enter");
+  assert.equal(
+    await page.locator("#tab-assistant").getAttribute("aria-expanded"),
     "true",
   );
   assert.equal(await page.locator("#panel-assistant").isVisible(), true);
@@ -415,7 +421,7 @@ try {
     ),
     "Mobile document overflows horizontally",
   );
-  await page.locator("#tab-assistant").focus();
+  await page.locator("#tab-batch").focus();
   await page.keyboard.press("ArrowRight");
   assert.equal(
     await page.locator("#tab-features").getAttribute("aria-selected"),
@@ -441,7 +447,9 @@ try {
     await page.locator("#tab-measurements").getAttribute("aria-selected"),
     "true",
   );
+  await page.locator("#assistant-close").click();
   await page.locator("#tab-assistant").click();
+  assert.equal(await page.locator("#panel-assistant").isVisible(), true);
   assert.ok(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

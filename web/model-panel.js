@@ -6,6 +6,7 @@ import { proposePlan } from "./model-planner.js";
 export function mountModelPanel({
   host,
   getContext,
+  showRecipe,
   getEvidenceOptions = () => null,
   getEvidenceBundle = async () => {
     throw new Error("No verified evidence available.");
@@ -23,7 +24,7 @@ export function mountModelPanel({
   };
   const panel = el("details");
   panel.className = "model-panel";
-  panel.append(el("summary", "Ask for a plan · optional model connection"));
+  panel.append(el("summary", "Reviewed analysis · propose then run"));
   const note = el(
     "p",
     "Your messages, explicitly selected source/channel calibration and support warnings are sent to the configured provider. Verified compact surface evidence is sent only when selected below. Raw images, full recipes and journals remain local. Proposed plans never execute automatically.",
@@ -80,23 +81,32 @@ export function mountModelPanel({
     key.value = "";
   };
   settings.append(clearKey);
-  panel.append(settings);
+  const connectionDetails = el("details");
+  connectionDetails.id = "model-connection-settings";
+  connectionDetails.className = "model-connection";
+  connectionDetails.open = true;
+  connectionDetails.append(el("summary", "Connection settings"), settings);
+  host.append(connectionDetails);
   const policy = el("p", "Checking this host’s provider connection policy…");
   policy.className = "hint";
-  panel.append(policy);
+  connectionDetails.append(policy);
   let serverConfig = undefined;
+  const allowedOrigins = () =>
+    serverConfig?.model_origins ??
+    (serverConfig?.model_origin ? [serverConfig.model_origin] : []);
   const configReady = fetch("/__afm_config.json", { cache: "no-store" })
     .then(async (response) => {
       if (response.ok) serverConfig = await response.json();
     })
     .catch(() => {})
     .finally(() => {
-      policy.textContent = serverConfig?.model_origin
+      const origins = allowedOrigins();
+      policy.textContent = origins.length
         ? "This demo permits provider connections to " +
-          serverConfig.model_origin +
+          origins.join(", ") +
           "."
         : serverConfig
-          ? "Model connections are disabled on this demo. Restart with AFM_MODEL_ORIGIN set to your provider’s origin to enable them."
+          ? "Model connections are disabled on this demo. Configure AFM_MODEL_ORIGINS with the provider origins and restart the server."
           : "This static host manages its own connection policy; the provider must allow browser CORS.";
     });
   const contextBox = el("section");
@@ -370,10 +380,10 @@ export function mountModelPanel({
       await configReady;
       if (
         serverConfig !== undefined &&
-        new URL(endpoint.value).origin !== serverConfig?.model_origin
+        !allowedOrigins().includes(new URL(endpoint.value).origin)
       )
         throw new Error(
-          "This demo does not permit that provider origin. Set AFM_MODEL_ORIGIN to the endpoint origin and restart the demo.",
+          "This demo does not permit that provider origin. Add the endpoint origin to AFM_MODEL_ORIGINS and restart the demo.",
         );
       const question = prompt.value.trim();
       tell("Requesting a proposal. No analysis tools are running.");
@@ -483,16 +493,17 @@ export function mountModelPanel({
     });
     if (
       serverConfig !== undefined &&
-      new URL(connection.endpoint).origin !== serverConfig?.model_origin
+      !allowedOrigins().includes(new URL(connection.endpoint).origin)
     )
       throw new Error(
-        "This host does not permit that provider origin. Configure AFM_MODEL_ORIGIN and restart the server.",
+        "This host does not permit that provider origin. Add the endpoint origin to AFM_MODEL_ORIGINS and restart the server.",
       );
     return { ...connection, apiKey: key.value };
   }
   agentModes = mountAgentModes({
     host,
     getConnection,
+    showRecipe,
     getSources: () =>
       selectedSources.length
         ? structuredClone(selectedSources)

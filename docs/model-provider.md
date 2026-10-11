@@ -42,7 +42,7 @@ Tests inject fake fetch implementations only; no API key or network request is n
 
 ## Browser workflow
 
-Start the supplied server with `AFM_MODEL_ORIGIN=https://your-provider.example npm run dev` (HTTP is permitted for localhost/127.0.0.1/::1). Its CSP permits that exact origin, and `GET /__afm_config.json` exposes the non-secret setting. With the variable unset, model requests are disabled. Other static hosts must configure their own CSP; the provider must support browser CORS.
+Start the supplied server with `AFM_MODEL_ORIGIN=https://your-provider.example npm run dev` (HTTP is permitted for localhost/127.0.0.1/::1). Its CSP permits that exact origin, and `GET /__afm_config.json` exposes the non-secret setting. For several providers, use a comma-separated list, for example `AFM_MODEL_ORIGINS=https://api.openai.com,https://api.groq.com npm run dev`. Both variables can be combined; duplicate origins are removed. The configuration also exposes `model_origins`. With both variables unset, model requests are disabled. Other static hosts must configure their own CSP; the provider must support browser CORS.
 
 In Assistant, refresh loaded sources, select a channel, expand **Ask for a plan**, and enter the full endpoint, model and optional key. Sending a message requests a proposal only. Use **Add current channel** to build an explicit source selection; without a list, the current inspected channel is used. After verifying a local evidence report, optionally select up to four result steps. Follow-up messages include bounded prior user messages and validated responses; changing selected sources or evidence resets conversation context. Review the proposed plan below, validate, and explicitly run it. Only explicitly selected verified compact claims can be sent; other numerical results remain local. Download the conversation audit separately from the tool journal; matching `proposal_plan_sha256` and run `plan_sha256` link an unchanged proposal to execution.
 
@@ -61,3 +61,9 @@ The dedicated Chromium context test optionally accepts `AXE_CORE_PATH`. Axe 4.10
 The shared connection now includes [provider presets](provider-compatibility.md) and a custom full completion URL. Session-only keys and the exact host-origin gate apply to reviewed planning, [autonomous analysis](autonomous-agent.md) and the separate [help agent](help-agent.md). The toolbar **Documentation** link opens the guide and pilot SOPs without requiring a provider.
 
 `proposePlan` accepts optional `mode: 'reviewed' | 'autonomous'` (reviewed default). Autonomous instructions reflect the user's bounded execution authorization; schema/source/evidence gates remain identical. Optional `onAudit(snapshot)` receives detached credential-free request provenance before dispatch and the final audit, enabling cancellation records in the goal controller. The adapter itself still executes no tools.
+
+## Dashboard guide
+
+Open **Analysis guide** in the header to show the right sidebar alongside the maps and measurements. On smaller screens it appears below the workspace. Connection settings are shared by the help, reviewed-plan and autonomous modes. The required goal field comes before the optional SOP; the advanced JSON settings are optional record-checking inputs.
+
+Autonomous activity lists each round, proposed tool, rationale and execution status. Completed surface steps display recorded Sa/Sq and offer **Show on dashboard**. This action strictly replays the chosen recipe locally before displaying it; running a goal does not automatically replace the viewer. Detailed JSON and downloaded audits remain available. Provider compatibility tests use mocked responses, not live-provider certification.

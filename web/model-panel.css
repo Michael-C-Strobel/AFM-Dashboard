@@ -116,3 +116,37 @@
   overflow-wrap: anywhere;
   font-size: 11px;
 }
+
+/* Shared connection controls stay available to help and analysis modes. */
+.model-connection {
+  border: 1px solid #bbc9c8;
+  background: #f2f6f5;
+  padding: 10px;
+  margin: 10px 0;
+}
+.model-connection summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+.model-connection .toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.model-connection input,
+.model-connection select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+#autonomous-activity {
+  border-left: 3px solid #33776d;
+  padding-left: 10px;
+}
+#autonomous-activity ol {
+  padding-left: 18px;
+}
+#autonomous-activity li {
+  border-bottom: 1px solid #d5dfdc;
+  padding: 8px 0;
+  overflow-wrap: anywhere;
+}
