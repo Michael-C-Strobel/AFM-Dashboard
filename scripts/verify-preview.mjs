@@ -210,6 +210,27 @@ export async function verifyPreview(root) {
     );
   }
   const source = await io.loadSource(resolve(root, manifest.example.source));
+  const channel = source.channels["0"];
+  requireValue(
+    channel && channel.xy_unit === "m" && channel.z_unit === "m",
+    "Synthetic units differ.",
+  );
+  requireValue(
+    channel.xoff === 0 &&
+      channel.yoff === 0 &&
+      channel.xreal === 8e-6 &&
+      channel.yreal === 8e-6,
+    "Synthetic calibration differs.",
+  );
+  for (let y = 0; y < 16; y++)
+    for (let x = 0; x < 16; x++) {
+      near(
+        channel.data[y * 16 + x],
+        1e-9 * (x + 2 * y + (x >= 8 ? 5 : 0)),
+        1e-22,
+        "pixel at " + x + "," + y,
+      );
+    }
   const original = await service.analyze(
     { file: "synthetic-step.gwy", channel: "0", operations: [] },
     source,

@@ -79,6 +79,10 @@ Open **Assistant**, refresh loaded sources, then choose a starter or expand **As
 
 Optional model planning requires the provider origin configured above plus its full Chat Completions endpoint, model ID and optional API key in the panel. Use **Add current channel** to select up to eight source/channel contexts. Requests transmit your messages and those metadata; optionally select up to four verified surface-result steps to include compact recorded claims. Raw image arrays, recipes and journals stay local. The model may ask a clarification, draft a plan, or select exact evidence claims with artifact links; execution remains a separate explicit action. Credentials stay in memory and are excluded from conversation exports. Provider CORS and JSON-mode support are required; only mocked provider responses have been tested. See [model configuration and audit](docs/model-provider.md), [local plans](docs/assistant-plans.md), and [evidence verification](docs/evidence-reports.md).
 
+## Local preview package
+
+Build a deterministic local evaluation archive with `npm run preview:package -- --out NEW_DIRECTORY` (its parent must exist). It includes the application, runtime CLIs, a generated 16×16 surface, strict replay recipes and a file/engine verifier. No laboratory or external instrument measurements are bundled. See [build, clean-install verification and current release gates](docs/local-preview.md). Public licensing and hosted CI remain outstanding.
+
 ## First analysis
 
 1. Select the raw `sample-input.gwy`, channel **Height_Trace**.

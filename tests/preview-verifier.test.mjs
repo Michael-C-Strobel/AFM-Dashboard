@@ -232,7 +232,9 @@ function syntheticStep() {
       Buffer.concat([
         uint(256),
         ...Array.from({ length: 256 }, (_, i) =>
-          double(i % 16 < 8 ? 0 : 50e-9),
+          double(
+            1e-9 * ((i % 16) + 2 * Math.floor(i / 16) + (i % 16 >= 8 ? 5 : 0)),
+          ),
         ),
       ]),
     ),
@@ -344,4 +346,22 @@ test("rehashing inventory cannot bypass engine identities or strict recipe repla
   await writeFile(path, JSON.stringify(recipe));
   await f.update();
   await assert.rejects(verifyPreview(f.root), /output|identity|match/i);
+});
+
+test("a rehashed pixel permutation preserving mean and extrema still rejects", async (t) => {
+  const f = await actualPreview(t);
+  const path = join(f.root, f.manifest.example.source),
+    bytes = await readFile(path);
+  const marker = Buffer.concat([
+    Buffer.from("data\0D"),
+    Buffer.from([0, 1, 0, 0]),
+  ]);
+  const start = bytes.indexOf(marker) + marker.length;
+  assert.ok(start >= marker.length);
+  const first = Buffer.from(bytes.subarray(start + 8, start + 16));
+  bytes.copy(bytes, start + 8, start + 16, start + 24);
+  first.copy(bytes, start + 16);
+  await writeFile(path, bytes);
+  await f.update();
+  await assert.rejects(verifyPreview(f.root), /Synthetic pixel/);
 });

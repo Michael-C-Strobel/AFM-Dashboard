@@ -27,7 +27,7 @@ Portable recipe save/upload/replay is covered alongside legacy recipes. The entr
 
 ## GitHub Actions
 
-`.github/workflows/test.yml` uses a Chromium/Firefox/WebKit matrix with independent results (`fail-fast: false`). Each job runs `npm test`, installs **Playwright 1.55.0** in the runner's temporary directory, installs its matching engine with `--with-deps`, then runs the same synthetic browser assertions. Application dependency manifests are unchanged.
+`.github/workflows/test.yml` uses a Chromium/Firefox/WebKit matrix with independent results (`fail-fast: false`). Each job runs `npm test`, installs **Playwright 1.55.0** in the runner's temporary directory, installs its matching engine with `--with-deps`, then runs the same synthetic browser assertions. Application runtime dependencies remain unchanged. Each job also runs `tests/browser-preview.mjs`, which builds and extracts the local preview and verifies the packaged viewer and synthetic replay independently of the development checkout.
 
 This checks a small native GWYP workflow across the three browser engines. Vendor fixtures, large datasets and complete accessibility audits remain separate checks. Hosted execution still requires a pushed workflow run.
 
