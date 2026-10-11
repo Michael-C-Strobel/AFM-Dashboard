@@ -136,7 +136,7 @@ try {
     JSON.stringify(
       {
         status: "passed",
-        panels: 3,
+        panels: 4,
         keyboard: "arrows, Home, End, Tab",
         widths: [1440, 1024, 768, 390],
         screenshots: [

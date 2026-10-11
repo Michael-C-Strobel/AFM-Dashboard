@@ -18,6 +18,12 @@ The demo's network policy permits local requests only by default. Optional model
 
 The supplied `.gwy` measurements appear in the file selector. Use **Import local files** for native GWYP, supported NanoScope binary images, calibrated Igor v5 image waves, and the supported JPK TIFF image subset. Detection uses file contents, including numbered Bruker extensions such as `.001`. Browser limits are 64 MiB per file and 256 MiB of source bytes per session; reload to clear the session. These byte limits do not estimate total working memory.
 
+## Reviewed analysis plans
+
+Open **Assistant**, refresh loaded sources, then choose a starter or expand **Ask for a plan**. Local starters require no model. Review the arguments, validate the plan, and select **Run reviewed plan**. Completed steps expose recipes and artifacts; **Verify evidence report** produces linked numeric claims and Markdown/JSON exports, including partial results after a failure or cancellation.
+
+Optional model planning requires the provider origin configured above plus its full Chat Completions endpoint, model ID and optional API key in the panel. Requests transmit your messages and selected source metadata, never raw image arrays or analysis results. The model may ask a clarification or draft a plan; execution remains a separate explicit action. Credentials stay in memory and are excluded from conversation exports. Provider CORS and JSON-mode support are required; only mocked provider responses have been tested. See [model configuration and audit](docs/model-provider.md), [local plans](docs/assistant-plans.md), and [evidence verification](docs/evidence-reports.md).
+
 ## First analysis
 
 1. Select the raw `sample-input.gwy`, channel **Height_Trace**.

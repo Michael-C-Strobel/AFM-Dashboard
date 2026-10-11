@@ -1,8 +1,10 @@
+import { mountModelPanel } from "./model-panel.js";
 import { apiFetch } from "./api.js";
 import { validatePlan, runPlan } from "./tool-plans.js";
 import { createEvidenceReport } from "./evidence-report.js";
 
 const $ = (id) => document.getElementById("assistant-" + id);
+let modelPanel = null;
 let busy = false,
   inspected = null,
   validated = null,
@@ -28,6 +30,7 @@ function status(message, error = false) {
   $("status").classList.toggle("error", error);
 }
 function sync() {
+  modelPanel?.sync();
   for (const id of controls) $(id).disabled = busy;
   for (const id of ["inspect", "measure", "robust", "quality"])
     $(id).disabled = busy || !inspected || !$("channel").value;
@@ -584,4 +587,43 @@ $("report-markdown").onclick = () => {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
 
+modelPanel = mountModelPanel({
+  host: document.getElementById("assistant-model-host"),
+  isBusy: () => busy,
+  setBusy: (value) => {
+    busy = value;
+    sync();
+  },
+  getContext: () => {
+    const channel = inspected?.channels.find(
+      (c) => String(c.id) === $("channel").value,
+    );
+    if (!channel) return null;
+    return {
+      file: inspected.file,
+      source_sha256: inspected.sha256,
+      channel: String(channel.id),
+      title: channel.title,
+      geometry: Object.fromEntries(
+        ["shape", "xreal", "yreal", "xoff", "yoff", "xy_unit", "z_unit"].map(
+          (key) => [key, channel[key]],
+        ),
+      ),
+      units: { xy_unit: channel.xy_unit, z_unit: channel.z_unit },
+      warnings: [
+        ...new Set([
+          inspected.support?.message || "Unverified configuration",
+          ...(inspected.warnings || []),
+          ...(channel.warnings || []),
+        ]),
+      ],
+    };
+  },
+  acceptPlan: (plan) => {
+    $("plan").value = JSON.stringify(plan, null, 2);
+    dirty(
+      "Model proposal ready. Review exact arguments, validate, then explicitly run.",
+    );
+  },
+});
 sync();

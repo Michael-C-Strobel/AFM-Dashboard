@@ -10,6 +10,7 @@
     />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./assistant.css" />
+    <link rel="stylesheet" href="./model-panel.css" />
     <script type="module" src="./app.js"></script>
     <script type="module" src="./assistant.js"></script>
     <script type="module" src="./workspace.js"></script>
@@ -482,7 +483,7 @@
                 <div>
                   <h2 id="assistant-title">Local plan builder</h2>
                   <p class="hint">
-                    Explicit, auditable tool plans. No AI provider is connected.
+                    Explicit, auditable tool plans. Model planning is optional.
                     Nothing runs until you review and run it.
                   </p>
                 </div>
@@ -503,6 +504,7 @@
                 Source inspection reads metadata only. The viewer’s source,
                 maps, selections, and pipeline stay independent.
               </p>
+              <div id="assistant-model-host"></div>
               <div class="assistant-starters" aria-label="Plan starters">
                 <button id="assistant-inspect" disabled>Inspect only</button>
                 <button id="assistant-measure" disabled>

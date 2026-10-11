@@ -21,3 +21,13 @@ node --test tests/model-planner.test.mjs
 ```
 
 Tests inject fake fetch implementations only; no API key or network request is needed.
+
+## Browser workflow
+
+Start the supplied server with `AFM_MODEL_ORIGIN=https://your-provider.example npm run dev` (HTTP is permitted for localhost/127.0.0.1/::1). Its CSP permits that exact origin, and `GET /__afm_config.json` exposes the non-secret setting. With the variable unset, model requests are disabled. Other static hosts must configure their own CSP; the provider must support browser CORS.
+
+In Assistant, refresh loaded sources, select a channel, expand **Ask for a plan**, and enter the full endpoint, model and optional key. Sending a message requests a proposal only. Follow-up messages include bounded prior user messages and validated model proposals; switching source identity resets conversation context. Review the proposed plan below, validate, and explicitly run it. Numerical results are never sent back to the provider by this version. Download the conversation audit separately from the tool journal; matching `proposal_plan_sha256` and run `plan_sha256` link an unchanged proposal to execution.
+
+The UI retains at most 16 request audits, with the current conversation bounded to 12 messages/16,000 characters. Older complete exchanges may drop from model context; full request audits remain downloadable until reload. **New conversation** clears context without erasing audits; **Clear credential** clears the key field. Nothing is saved to localStorage.
+
+`tests/browser-model.mjs` exercises clarification history, explicit execution, proposal/run identity, reflected-key rejection, cancellation and mobile layout using intercepted responses. Start a QA server with `PORT=4176 AFM_MODEL_ORIGIN=https://provider.example node scripts/serve.mjs`; use the existing Playwright environment variables documented for browser tests. No real model/provider has been contacted or certified.

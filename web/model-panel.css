@@ -1,0 +1,42 @@
+.model-panel {
+  border-left: 3px solid #4b69b9;
+  margin: 14px 0;
+  padding: 10px 12px;
+  background: #f0f3f9;
+}
+.model-panel summary {
+  color: #294fa5;
+  font-weight: 600;
+  cursor: pointer;
+}
+.model-panel .toolbar label {
+  flex: 1 1 210px;
+  min-width: 0;
+}
+.model-panel input,
+.model-panel textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+#model-conversation {
+  max-height: 280px;
+  overflow: auto;
+  padding-left: 22px;
+}
+#model-conversation li {
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+#model-conversation p {
+  white-space: pre-wrap;
+  margin: 5px 0;
+}
+#model-status {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+#model-propose {
+  background: #365fe9;
+  border-color: #244bcd;
+  color: white;
+}
