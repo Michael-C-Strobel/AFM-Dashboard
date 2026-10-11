@@ -250,3 +250,36 @@ test("overlap-normalized off-zero ACF may exceed one without clamping", () => {
     /underflow/,
   );
 });
+
+test("nanometre amplitudes preserve independently calculated PSD and ACF at physical scale", () => {
+  const c = channel(5, 3, (x, y) => 2e-9 * (Math.cos(x) + Math.sin(y)), {
+    xreal: 5e-6,
+    yreal: 9e-6,
+  });
+  const closeScaled = (actual, expected, scale) =>
+    assert.ok(
+      Math.abs(actual - expected) <= 2e-12 * scale,
+      `${actual} differs from ${expected} at scale ${scale}`,
+    );
+  for (const window of ["boxcar", "hann"]) {
+    const r = textureSurface(c, { detrend: "none", window });
+    const expected = directDFT(c, r.psd.width, r.psd.height, window);
+    const scale = Math.max(...expected);
+    for (let y = 0; y < r.psd.height; y++)
+      for (let x = 0; x < r.psd.width; x++) {
+        const i =
+          ((y + r.psd.height / 2) % r.psd.height) * r.psd.width +
+          ((x + r.psd.width / 2) % r.psd.width);
+        closeScaled(r.psd.data[y * r.psd.width + x], expected[i], scale);
+      }
+    const zero = directACF(c, 0, 0);
+    for (let y = 0; y < r.acf.height; y++)
+      for (let x = 0; x < r.acf.width; x++)
+        closeScaled(
+          r.acf.data[y * r.acf.width + x],
+          directACF(c, x - c.width + 1, y - c.height + 1),
+          zero,
+        );
+    closeScaled(r.psd.integral, r.psd.expected_mean_square, zero);
+  }
+});

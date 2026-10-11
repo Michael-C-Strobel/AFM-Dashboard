@@ -230,7 +230,13 @@ export function textureSurface(channel, options = {}) {
     throw new Error("Texture integrated scaling underflow.");
   const knownXY = !!channel.xy_unit,
     knownZ = !!channel.z_unit;
-  const warnings = [...detrended.warnings, ...(channel.warnings ?? [])];
+  const warnings = [
+    ...detrended.warnings,
+    ...(channel.warnings ?? []),
+    "Finite scan area and leveling affect PSD and autocorrelation estimates; no fitted correlation length or ISO texture parameter is reported.",
+    "Large ACF lags use fewer overlapping pixel pairs; normalized off-zero estimates can exceed unity.",
+    "Zero padding refines frequency sampling, not physical resolving power.",
+  ];
   if (!knownXY || !knownZ)
     warnings.push(
       "Unknown units: frequency, PSD or ACF units remain unknown where calibration units are missing.",

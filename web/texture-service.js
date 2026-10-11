@@ -249,6 +249,7 @@ export async function textureRecipe(
   const report = {
     schema_version: 1,
     kind: "spatial_texture",
+    algorithm: result.algorithm,
     input_recipe: inputRecipe,
     code,
     parameters: result.parameters,
@@ -258,6 +259,7 @@ export async function textureRecipe(
     detrend_history: result.detrend_history,
     psd: {
       unit: p.unit,
+      definition: p.definition,
       integral: p.integral,
       expected_mean_square: p.expected_mean_square,
       window_energy: p.window_energy,
@@ -266,6 +268,7 @@ export async function textureRecipe(
     },
     acf: {
       unit: a.unit,
+      definition: a.definition,
       zero_lag: a.zero_lag,
       overview: acfOverview,
       normalized_overview:

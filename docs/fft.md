@@ -3,7 +3,7 @@
 `web/fft.js` exports:
 
 ```js
-fft2D(real, width, height, ({ imag = null, inverse = false } = {}));
+fft2D(real, width, height, { imag: null, inverse: false });
 // { real: Float64Array, imag: Float64Array, width, height }
 ```
 
