@@ -23,6 +23,36 @@ try {
     viewport: { width: 1440, height: 1080 },
     acceptDownloads: true,
   });
+  // Hold exactly one real analysis message; numerical work still runs in the worker.
+  await page.addInitScript(() => {
+    const original = Worker.prototype.postMessage;
+    window.__levelRace = {
+      armed: false,
+      held: false,
+      responded: false,
+      analyzeCalls: 0,
+    };
+    Worker.prototype.postMessage = function (message, ...rest) {
+      if (message?.type === "analyze") {
+        window.__levelRace.analyzeCalls++;
+        if (window.__levelRace.armed) {
+          window.__levelRace.armed = false;
+          window.__levelRace.held = true;
+          const worker = this;
+          const listener = (event) => {
+            if (event.data?.id !== message.id) return;
+            window.__levelRace.responded = true;
+            worker.removeEventListener("message", listener);
+          };
+          worker.addEventListener("message", listener);
+          window.__releaseLevelPreview = () =>
+            original.call(worker, message, ...rest);
+          return;
+        }
+      }
+      return original.call(this, message, ...rest);
+    };
+  });
   page.setDefaultTimeout(30000);
   page.on("pageerror", (e) => errors.push(e.message));
   await page.route("**/data/manifest.json", (r) =>
@@ -184,6 +214,40 @@ try {
     original,
     "cancel restores exact committed analysis",
   );
+  // Editing while a real worker preview is in flight must invalidate its response.
+  await page.locator("#three-point-start").click();
+  await coordinates(points);
+  const callCount = await page.evaluate(() => {
+    window.__levelRace.armed = true;
+    return window.__levelRace.analyzeCalls;
+  });
+  await page.locator("#level-preview").click();
+  await page.waitForFunction(() => window.__levelRace.held);
+  await page.locator("#level-x-0").fill(String(points[0][0] + 1e-8));
+  await page.evaluate(() => window.__releaseLevelPreview());
+  await page.waitForFunction(() => window.__levelRace.responded);
+  await page.evaluate(
+    () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      ),
+  );
+  assert.equal(
+    await page.evaluate(() => window.__levelRace.analyzeCalls),
+    callCount + 1,
+    "editing does not analyze",
+  );
+  assert.equal(await page.locator("#level-apply").isDisabled(), true);
+  assert.notEqual(
+    await page.locator("#result-badge").textContent(),
+    "DRAFT PREVIEW",
+  );
+  assert.deepEqual(
+    await snapshot(),
+    original,
+    "stale preview cannot replace committed analysis",
+  );
+  await page.locator("#level-cancel").click();
   await page.locator("#three-point-start").click();
   await coordinates(points);
   await preview();
@@ -337,6 +401,37 @@ try {
     cropped,
     "cropped committed result unchanged by preview/cancel",
   );
+  // A distinct generated source/channel must discard both draft and active preview.
+  await page.locator("#three-point-start").click();
+  await coordinates(centers(cropped.channel));
+  await preview();
+  const secondBytes = Buffer.from(createPreviewFixture());
+  for (
+    let offset = secondBytes.indexOf("/0/");
+    offset !== -1;
+    offset = secondBytes.indexOf("/0/", offset + 3)
+  )
+    secondBytes[offset + 1] = "1".charCodeAt(0);
+  const secondFile = join(scratch, "three-point-second.gwy");
+  await writeFile(secondFile, secondBytes);
+  await page.locator("#import").setInputFiles(secondFile);
+  await ready();
+  const switched = await snapshot();
+  assert.equal(switched.recipe.source.file, "three-point-second.gwy");
+  assert.equal(switched.recipe.source.channel, "1");
+  assert.notEqual(switched.recipe.source.sha256, original.recipe.source.sha256);
+  assert.deepEqual(switched.recipe.operations, []);
+  assert.equal(await page.locator("#level-apply").isDisabled(), true);
+  assert.notEqual(
+    await page.locator("#result-badge").textContent(),
+    "DRAFT PREVIEW",
+  );
+  for (let i = 0; i < 3; i++)
+    for (const axis of ["x", "y"]) {
+      const input = page.locator(`#level-${axis}-${i}`);
+      assert.equal(await input.inputValue(), "");
+      assert.equal(await input.evaluate((e) => e.readOnly), true);
+    }
   await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(
     await page.evaluate(
@@ -357,6 +452,8 @@ try {
         "invalid points/ROI",
         "crop/offset/non-square/pan/zoom",
         "mobile",
+        "stale worker preview",
+        "source/channel switch",
       ],
     }),
   );
