@@ -161,6 +161,81 @@ test("worker batch routes gate calibration, retain provenance and verify exporte
     call("batch-export", { file: "b.gwy", recipe: mislabeled }),
     /title or ID/,
   );
+  const catalog = await call("tools", {});
+  assert.equal(catalog.version, "1.0.0");
+  assert.equal(catalog.tools.length, 6);
+  const inspected = await call("tool", {
+    name: "inspect_source",
+    arguments: { file: "a.gwy" },
+  });
+  assert.equal(inspected.record.status, "succeeded");
+  const toolSource = inspected.artifact.content.result;
+  assert.equal(toolSource.sha256, template.source.sha256);
+  const analyzed = await call("tool", {
+    name: "analyze_surface",
+    arguments: {
+      file: "a.gwy",
+      source_sha256: toolSource.sha256,
+      channel: "0",
+      operations: template.operations,
+    },
+  });
+  assert.equal(
+    analyzed.record.status,
+    "succeeded",
+    JSON.stringify(analyzed.record),
+  );
+  assert.equal(
+    analyzed.artifact.content.result.recipe.output.sha256,
+    template.output.sha256,
+  );
+  assert.equal(analyzed.artifact.content.result.data, undefined);
+  const verified = await call("tool", {
+    name: "replay_recipe",
+    arguments: {
+      file: "a.gwy",
+      source_sha256: toolSource.sha256,
+      recipe_artifact: analyzed.artifact.id,
+    },
+  });
+  assert.equal(
+    verified.record.status,
+    "succeeded",
+    JSON.stringify(verified.record),
+  );
+  assert.equal(verified.artifact.content.result.replay_verified, true);
+  const diagnostics = await call("tool", {
+    name: "check_quality",
+    arguments: {
+      file: "a.gwy",
+      source_sha256: toolSource.sha256,
+      channel: "0",
+    },
+  });
+  assert.equal(
+    diagnostics.record.status,
+    "succeeded",
+    JSON.stringify(diagnostics.record),
+  );
+  assert.equal(diagnostics.artifact.content.result.report.counts.total, 6);
+  const stale = await call("tool", {
+    name: "analyze_surface",
+    arguments: {
+      file: "a.gwy",
+      source_sha256: "0".repeat(64),
+      channel: "0",
+      operations: [],
+    },
+  });
+  assert.equal(stale.record.status, "failed");
+  assert.match(stale.record.error, /SHA-256 mismatch/);
+  const journal = await call("tool-journal", {});
+  assert.equal(journal.records.length, 5);
+  assert.equal(journal.records[4].previous_sha256, journal.records[3].sha256);
+  assert.deepEqual(
+    await call("tool-artifact", { artifact_id: analyzed.artifact.id }),
+    analyzed.artifact,
+  );
   const altered = structuredClone(result.recipe);
   altered.output.sha256 = "0".repeat(64);
   await assert.rejects(

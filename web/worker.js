@@ -4,6 +4,8 @@ import { sha256, operationRegistry } from "./engine.js";
 import { analyze, replay } from "./service.js";
 import { exportBundle } from "./archive.js";
 import { makeBatchRequest } from "./batch.js";
+import { toolCatalog } from "./tool-contracts.js";
+import { createToolSession } from "./tool-session.js";
 import { qualityReport, findTracePairs } from "./quality.js";
 const sources = new Map();
 let total = 0;
@@ -51,7 +53,91 @@ const get = (name) => {
   if (!source) throw new Error(`Input not loaded: ${name}`);
   return source;
 };
+function boundSource(file, expectedHash) {
+  const source = get(file);
+  if (source.sha256 !== expectedHash)
+    throw new Error(
+      "Tool source SHA-256 mismatch. Inspect the loaded source before planning analysis.",
+    );
+  return source;
+}
+function compactAnalysis(result) {
+  return {
+    recipe: result.recipe,
+    channel: result.channel,
+    statistics: result.statistics,
+    history: result.history,
+    quality: result.quality,
+    step: result.step,
+    profile: result.profile,
+    warnings: result.warnings,
+    comparison: result.comparison
+      ? Object.fromEntries(
+          Object.entries(result.comparison).filter(
+            ([key]) => !["data", "target"].includes(key),
+          ),
+        )
+      : null,
+    replay_verified: result.replay_verified ?? false,
+  };
+}
+const toolSession = createToolSession({
+  invoke: async (name, args) => {
+    if (name === "list_sources")
+      return {
+        sources: [...sources].map(([file, source]) => ({
+          file,
+          sha256: source.sha256,
+          format: source.format,
+          support: source.support,
+          channels: Object.values(source.channels).map((channel) => ({
+            id: String(channel.id),
+            title: channel.title,
+          })),
+          warnings: source.warnings,
+        })),
+      };
+    if (name === "inspect_source") {
+      const source = get(args.file);
+      return {
+        ...(await dispatch("channels", { file: args.file })),
+        sha256: source.sha256,
+        format: source.format,
+        reader_engine_sha256: await identityFor(source.format),
+      };
+    }
+    boundSource(args.file, args.source_sha256);
+    if (name === "analyze_surface") {
+      if (args.reference)
+        boundSource(args.reference.file, args.reference.source_sha256);
+      const { source_sha256, ...request } = args;
+      request.reference = args.reference
+        ? { file: args.reference.file, channel: args.reference.channel }
+        : null;
+      return compactAnalysis(await dispatch("analyze", request));
+    }
+    if (name === "check_quality") {
+      const { source_sha256, ...request } = args;
+      return dispatch("quality", request);
+    }
+    if (name === "replay_recipe") {
+      const saved = toolSession.artifact(args.recipe_artifact);
+      const recipe = saved.content.result?.recipe;
+      if (!recipe)
+        throw new Error("Artifact does not contain an analysis recipe.");
+      return compactAnalysis(
+        await dispatch("replay", { file: args.file, recipe }),
+      );
+    }
+    throw new Error("Unsupported analysis tool.");
+  },
+});
 async function dispatch(type, payload) {
+  if (type === "tools") return toolCatalog();
+  if (type === "tool") return toolSession.execute(payload);
+  if (type === "tool-journal") return toolSession.journal();
+  if (type === "tool-artifact")
+    return toolSession.artifact(payload.artifact_id);
   if (type === "import") {
     const { name, buffer } = payload;
     if (buffer.byteLength > 64 * 1024 * 1024)

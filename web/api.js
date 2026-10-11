@@ -86,6 +86,16 @@ export async function apiFetch(path, options = {}) {
       return Response.json({ files });
     }
     body = options.body ? JSON.parse(options.body) : {};
+    if (route === "/api/tools") return Response.json(await call("tools", {}));
+    if (route === "/api/tool") return Response.json(await call("tool", body));
+    if (route === "/api/tool-journal")
+      return Response.json(await call("tool-journal", {}));
+    if (route === "/api/tool-artifact")
+      return Response.json(
+        await call("tool-artifact", {
+          artifact_id: url.searchParams.get("id"),
+        }),
+      );
     if (route === "/api/files")
       return Response.json({ files, reference_pair: pair });
     if (route === "/api/channels") {

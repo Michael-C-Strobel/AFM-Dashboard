@@ -147,12 +147,12 @@ export function createToolSession({
         call.name === "get_artifact"
           ? artifact(call.arguments.artifact_id)
           : await invoke(call.name, clone(call.arguments));
-      // Normalize to detached plain JSON only after rejecting lossy/coercive values.
-      const resultText = canonicalJSON(result);
+      // Validate canonically for hashing, but preserve recipe key order for legacy replay.
+      canonicalJSON(result);
       const content = {
         tool_version: TOOL_VERSION,
         call: clone(call),
-        result: JSON.parse(resultText),
+        result: clone(result),
       };
       const text = canonicalJSON(content, new Set(), 0, 128),
         bytes = encoder.encode(text),
