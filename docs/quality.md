@@ -19,3 +19,7 @@ node --test tests/quality.test.mjs
 ```
 
 The CLI uses the default full-image selection and threshold, records input SHA-256, format/support classification, channel IDs and titles, import warnings, normalized parameters, the format-specific reader/engine identity and hashes of `quality.js` and `engine.js`. Source and reference calibration warnings remain visible; missing units receive an explicit warning without an assumed height unit. Output must be a new file; existing paths are never overwritten. Unit declarations and geometric agreement are not certification of acquisition accuracy.
+
+## Browser workflow
+
+Use **Check acquisition** below the viewer. It checks the original source channel using the current ROI/polygon selection, independently of processing and crop previews. Choose an optional same-file reference explicitly; a matching trace/retrace name is only a suggestion. The panel shows the first 20 candidates per axis and exports all candidates in **Export quality JSON**. Source/channel/selection and diagnostic-setting changes invalidate stale reports. This separate report does not add a processing operation or modify the analysis recipe.
