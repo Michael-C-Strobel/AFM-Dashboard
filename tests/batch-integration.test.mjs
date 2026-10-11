@@ -155,6 +155,12 @@ test("worker batch routes gate calibration, retain provenance and verify exporte
     call("batch-export", { file: "a.gwy", recipe: result.recipe }),
     /Source SHA-256 mismatch/,
   );
+  const mislabeled = structuredClone(result.recipe);
+  mislabeled.source.title = "Different signal";
+  await assert.rejects(
+    call("batch-export", { file: "b.gwy", recipe: mislabeled }),
+    /title or ID/,
+  );
   const altered = structuredClone(result.recipe);
   altered.output.sha256 = "0".repeat(64);
   await assert.rejects(

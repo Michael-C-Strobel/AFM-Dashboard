@@ -126,6 +126,7 @@ async function dispatch(type, payload) {
     };
   }
   if (type === "batch-export") {
+    makeBatchRequest(payload.recipe, source, engine, payload.file);
     if (payload.recipe?.reference)
       throw new Error("Batch exports cannot include reference comparisons.");
     const result = await replay(
