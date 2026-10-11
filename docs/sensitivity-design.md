@@ -1,0 +1,27 @@
+# Explicit analysis sensitivity contract
+
+R03 compares a captured baseline with named, user-reviewed alternatives applied to the same original source/channel. Variants specify complete operation lists and selections; they never modify raw samples or silently inherit edited viewer state. Profile, plateau and reference settings remain those recorded in the baseline recipe. Existing numerical engines and recipe identities remain unchanged.
+
+## Request and execution
+
+A request has exactly `{baseline_recipe, variants, assumptions}`. Each of 1–16 variants has exactly `{id, label, operations, selection}`. IDs match `[a-z][a-z0-9_-]{0,31}`, are unique and cannot equal `baseline`; labels are nonempty up to 120 characters. Operations use the existing registry (at most 32); selections use the existing ROI/polygon contract. Assumptions have exactly `{calibration_note, model_note}`, each a string up to 2000 characters, possibly empty. No source, channel, reference, profile, plateau or arbitrary operation override is accepted inside a variant. Finite plain JSON only; maximum request encoding is 256 KiB.
+
+Strictly replay the baseline first, including source channel/title and any reference. Fail the entire request if this cannot be verified. Execute variants sequentially from the original source with normalized operations/selections, retaining their own actual generated recipe timestamps and environments. A variant error becomes a visible failed result, without losing successful variants or stopping later variants. No silent variant omission. Successful reports retain recipe, channel, statistics, profile, plateau result, scalar reference comparison, operation history and warnings; omit image matrices. Failed records retain their normalized definition and error. Baseline compact evidence retains the original captured recipe.
+
+Limit inputs to 4,194,304 pixels. Preflight a conservative count of planned pixel passes: source pixels times the sum of `max(1, operation_count)` for baseline and each variant, at most 134,217,728. Record this estimate; it is a work gate, not a wall-clock guarantee or a complete model of iterative operations. Runs do not imply scientific equivalence across different masks, crops or fitted populations.
+
+## Summaries and interpretation
+
+Summarize Sa, Sq, mean, minimum, maximum, peak-to-valley, area, valid count and excluded count. Include plateau height and reference RMSE when present in the baseline. Every metric carries its unit (or null), baseline value, per-variant value and signed delta. Relative delta is `(variant - baseline) / abs(baseline)`; it is unavailable when baseline is zero or arithmetic is unrepresentable. Missing/failed measurements remain explicit with reasons. The range includes the baseline and all available successful variants, with its membership and count recorded. Do not compute a confidence interval, standard error, p-value or independent-replicate count from these alternatives.
+
+Selection/processing sensitivity, within-surface descriptive spread and calibration uncertainty are different quantities. Report `calibration_uncertainty: {status: 'not_evaluated', note}` and the supplied model note without treating free text as verified numerical calibration. These deterministic alternatives are not repeated independent observations. A later uncertainty budget needs measured input uncertainties, a declared measurement model and covariance assumptions, rather than relabeling variant spread.
+
+The [NIST uncertainty classification](https://www.nist.gov/pml/nist-technical-note-1297/nist-tn-1297-2-classification-components-uncertainty) distinguishes evaluation methods for uncertainty components. Its [propagation guidance](https://www.nist.gov/pml/nist-technical-note-1297/nist-tn-1297-appendix-law-propagation-uncertainty) requires a measurement model with input uncertainties and covariances. This feature reports an explicit sensitivity experiment and does not claim such an uncertainty budget.
+
+## Integrity and replay
+
+Reports retain the normalized request, original baseline recipe, all successful variant recipes, failures, summaries, assumptions, code identity and SHA-256. Recipe timestamps are real creation records, not replaced with the baseline time to force determinism. Re-export verifies the saved report: strictly replay every successful saved recipe, check that its operations/selection and fixed settings match its requested definition, and re-evaluate recorded failures. Rebuild compact evidence using the original saved recipes so timestamp/environment fields remain intact; reject any report hash/content mismatch. Runtime integrity checks are not signatures.
+
+JSON, TSV and TAR exports share one service; archives contain the report, normalized request, baseline recipe, successful variant recipes, summary tables and reproduction instructions. No source bytes are included. A CLI can execute a request or verify/re-export an existing report against exact source/reference bytes. Browser execution is explicit, captures the baseline independently, invalidates reports when definitions change, and shows all success/failure outcomes.
+
+Acceptance requires known processing/ROI sensitivities, zero-baseline relative deltas, changed populations, missing measurements, isolated failures, immutable inputs, strict tamper rejection, unchanged baseline/reference settings, per-variant recipe replay, export hashes and browser behavior on synthetic calibrated surfaces.
