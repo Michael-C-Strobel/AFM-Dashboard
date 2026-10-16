@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { analyze, replay } from "../web/service.js";
+import { analyze, replay, CHEMIST_PRESET } from "../web/service.js";
 import { tar, exportBundle } from "../web/archive.js";
 import { sha256 } from "../web/engine.js";
 const channel = {
@@ -190,5 +190,18 @@ test("replay verifies profile measurements and output geometry, not just surface
   await assert.rejects(
     replay(wrongGeometry, source, null, "engine-test"),
     /output differs/,
+  );
+});
+
+// Removed laboratory settings must never turn into a silently accepted no-op.
+test("private preset cannot process an imported source without reviewed fit points", async () => {
+  await assert.rejects(
+    analyze(
+      { file: "synthetic.gwy", channel: 0, operations: CHEMIST_PRESET },
+      source,
+      null,
+      "engine-test",
+    ),
+    /point/i,
   );
 });

@@ -45,7 +45,7 @@ export const workflowSops = Object.freeze([
     status: "pilot",
     title: "Reproduce the supplied chemist reference processing",
     prerequisites: [
-      "This case is specific to sample-input.gwy and sample-reference.gwy, Height_Trace channel 0. Check both source hashes against docs/reference_pair.json.",
+      "Select your own original and processed reference files and explicitly record their source hashes and height channels. No laboratory reference data is distributed.",
       "Inspect both channel calibrations, units, masks, geometry and import warnings. Require explicit user-reviewed fit points and all leveling parameters; if unavailable, ask rather than choose points autonomously.",
     ],
     procedure: [

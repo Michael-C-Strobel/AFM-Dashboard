@@ -55,17 +55,7 @@ test("prompts are deterministic, bounded and preserve every guidance item with p
     assert.throws(() => sopPrompt(id), /Unknown workflow SOP/);
 });
 test("chemist SOP follows documented sequence and requires explicit points without claiming universality", async () => {
-  const reference = JSON.parse(
-    await readFile(
-      new URL("../docs/reference_pair.json", import.meta.url),
-      "utf8",
-    ),
-  );
   const text = sopPrompt("chemist-reference");
-  assert.ok(text.includes(reference.raw));
-  assert.ok(text.includes(reference.worked));
-  assert.match(reference.channels[0].worked_log[0], /GwyToolLevel3/);
-  assert.match(reference.channels[0].worked_log[1], /fix_zero/);
   assert.match(text, /three-point leveling, then minimum-zero/);
   assert.match(text, /explicit user-reviewed fit points/);
   assert.match(text, /not universal scientific ground truth/);
