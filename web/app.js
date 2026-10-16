@@ -1,6 +1,6 @@
 import { mountThreePointEditor } from "./three-point-ui.js";
 import { apiFetch } from "./api.js";
-import { createMapPNG } from "./image-export.js";
+import { createMapPNG, createPlotSVG } from "./image-export.js";
 import { runBatch } from "./batch.js";
 import {
   createHistogramReadout,
@@ -903,6 +903,16 @@ function syncImageDownloads() {
     imageExportBusy || $("download").disabled || !state.response;
   $("save-raw-png").disabled = unavailable || !state.response?.original?.length;
   $("save-result-png").disabled = unavailable || !rightData()?.length;
+  for (const id of ["histogram", "profile"]) {
+    const hasValues =
+      id === "profile"
+        ? state.response?.profile?.height?.some(finite)
+        : state.response?.statistics?.histogram?.counts?.some(
+            (count) => count > 0,
+          );
+    $("save-" + id + "-svg").disabled =
+      unavailable || !hasValues || !$(id).querySelector("svg");
+  }
 }
 async function saveMapImage(id) {
   syncImageDownloads();
@@ -935,6 +945,20 @@ async function saveMapImage(id) {
 }
 $("save-raw-png").onclick = () => saveMapImage("raw");
 $("save-result-png").onclick = () => saveMapImage("result");
+for (const [id, title] of [
+  ["histogram", "Height distribution"],
+  ["profile", "Line profile"],
+])
+  $("save-" + id + "-svg").onclick = () => {
+    syncImageDownloads();
+    if ($("save-" + id + "-svg").disabled) return;
+    try {
+      save(createPlotSVG($(id).querySelector("svg"), title), `afm-${id}.svg`);
+      status("Plot SVG downloaded with recorded values and axis labels.");
+    } catch (error) {
+      status("Plot export failed: " + error.message, true);
+    }
+  };
 new MutationObserver(syncImageDownloads).observe($("download"), {
   attributes: true,
   attributeFilter: ["disabled"],

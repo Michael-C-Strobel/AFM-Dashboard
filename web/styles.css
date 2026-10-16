@@ -540,11 +540,21 @@ aside button {
   background: #dce3ef;
   border-top: 3px solid #3964ef;
 }
-.map-heading button {
+.map-heading button,
+.plot-heading button {
   width: auto;
   margin: 0;
   flex-shrink: 0;
   padding: 6px 9px;
+}
+.plot-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.plot-heading h2 {
+  margin: 0;
 }
 .map-card:nth-child(2) .map-heading {
   background: #ece4d4;

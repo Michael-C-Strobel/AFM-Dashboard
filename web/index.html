@@ -453,7 +453,17 @@
             </p>
             <section class="lower">
               <article>
-                <h2>Height distribution</h2>
+                <div class="plot-heading">
+                  <h2>Height distribution</h2>
+                  <button
+                    id="save-histogram-svg"
+                    type="button"
+                    disabled
+                    aria-label="Save height distribution as SVG"
+                  >
+                    Save SVG
+                  </button>
+                </div>
                 <div id="histogram">
                   <p class="hint">Recalculate to view selected heights.</p>
                 </div>
@@ -473,7 +483,17 @@
             </section>
             <section class="lower">
               <article>
-                <h2>Line profile</h2>
+                <div class="plot-heading">
+                  <h2>Line profile</h2>
+                  <button
+                    id="save-profile-svg"
+                    type="button"
+                    disabled
+                    aria-label="Save line profile as SVG"
+                  >
+                    Save SVG
+                  </button>
+                </div>
                 <div id="profile">
                   <p class="hint">
                     Choose Line profile and drag across a surface.

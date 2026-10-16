@@ -16,6 +16,8 @@ Use Left/Right and Home/End to navigate inspection tabs. **Expand inspection** o
 
 **Save PNG** above each surface map downloads its current viewport, including the selected palette, selections, physical scale bar and color legend. The right-hand button follows Processed, Reference or Processed − reference. Recalculate after changing the analysis before exporting. PNG is a display image at the current viewport resolution; it does not replace numerical arrays or the saved recipe.
 
+**Save SVG** beside Height distribution or Line profile downloads a standalone vector figure with recorded plot values, axis labels and units. Interaction cursors are omitted. Recalculate after changing selections or processing, and keep the matching recipe and numerical archive with the figure.
+
 **Save recipe** retains the legacy format; **Save portable recipe** verifies a captured analysis and adds reorder-safe checksums. **Load recipe** accepts either format and requires the matching inputs and code for strict replay. **Export analysis TAR** contains results and provenance, not the original measurement bytes. Keep the raw files separately and download work before reloading: imports and unfinished work are session-only. See [recipe guidance](recipe-interchange.md).
 
 ### Inspect plotted values

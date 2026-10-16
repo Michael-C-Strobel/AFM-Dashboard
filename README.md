@@ -26,7 +26,7 @@ The supplied `.gwy` measurements appear in the file selector. Use **Import local
 
 In **Measurements**, hover or drag over the histogram for bin bounds/counts, or over a line profile for recorded distance, height and source X/Y. Focus a plot and use arrows/Home/End for keyboard inspection. **Recalculate** sits in the inspection toolbar and remains available in expanded mode; cursor inspection does not recompute or change results.
 
-Save images directly with **Save PNG** above either surface map. Images include the displayed palette, selections, physical scale bar and color legend; the right-hand download follows Processed, Reference or Processed − reference. PNG uses the current viewport resolution. Use **Export analysis TAR** for numerical results and recipe provenance.
+Save images directly with **Save PNG** above either surface map. Images include the displayed palette, selections, physical scale bar and color legend; the right-hand download follows Processed, Reference or Processed − reference. PNG uses the current viewport resolution. **Save SVG** beside Height distribution and Line profile provides standalone vector plots with labels and units. Use **Export analysis TAR** for numerical results and recipe provenance.
 
 ## Interactive three-point leveling
 

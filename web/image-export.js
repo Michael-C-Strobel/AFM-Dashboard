@@ -72,3 +72,80 @@ export async function createMapPNG(
     ),
   );
 }
+
+/** Standalone vector copy of an application-rendered numerical plot. */
+export function createPlotSVG(source, title) {
+  if (!source || source.namespaceURI !== "http://www.w3.org/2000/svg")
+    throw new Error("Recalculate a valid plot before exporting.");
+  const ns = "http://www.w3.org/2000/svg",
+    doc = source.ownerDocument,
+    figure = doc.createElementNS(ns, "svg"),
+    plot = source.cloneNode(true),
+    box = source.viewBox.baseVal,
+    width = box.width + 32,
+    height = box.height + 68;
+  if (!(box.width > 0 && box.height > 0))
+    throw new Error("The plot has no valid drawing dimensions.");
+  figure.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  figure.setAttribute("width", width);
+  figure.setAttribute("height", height);
+  figure.setAttribute("role", "img");
+  figure.setAttribute("aria-labelledby", "figure-title");
+  function element(tag, attributes, text) {
+    const node = doc.createElementNS(ns, tag);
+    for (const [key, value] of Object.entries(attributes))
+      node.setAttribute(key, value);
+    if (text !== undefined) node.textContent = text;
+    figure.append(node);
+    return node;
+  }
+  element("title", { id: "figure-title" }, title);
+  element(
+    "desc",
+    {},
+    "Recorded processed-surface plot for the current analysis selection. Keep the matching recipe and numerical archive for processing and provenance.",
+  );
+  element("rect", { width, height, fill: "white" });
+  element(
+    "text",
+    {
+      x: 16,
+      y: 26,
+      fill: "#214b42",
+      "font-family": "sans-serif",
+      "font-size": 16,
+      "font-weight": 600,
+    },
+    title,
+  );
+  // Persist the text styling otherwise supplied by the application's CSS.
+  const originalText = source.querySelectorAll("text");
+  plot.querySelectorAll("text").forEach((node, index) => {
+    const style = doc.defaultView.getComputedStyle(originalText[index]);
+    for (const property of ["font-family", "font-size", "font-weight", "fill"])
+      node.setAttribute(property, style.getPropertyValue(property));
+  });
+  plot
+    .querySelectorAll('.measurement-cursor, circle[aria-hidden="true"]')
+    .forEach((node) => node.remove());
+  for (const name of [
+    "class",
+    "style",
+    "tabindex",
+    "aria-describedby",
+    "aria-keyshortcuts",
+    "aria-label",
+    "data-readout-index",
+  ])
+    plot.removeAttribute(name);
+  plot.setAttribute("role", "img");
+  plot.setAttribute("aria-label", title);
+  plot.setAttribute("x", "16");
+  plot.setAttribute("y", "48");
+  plot.setAttribute("width", box.width);
+  plot.setAttribute("height", box.height);
+  figure.append(plot);
+  return new Blob([new XMLSerializer().serializeToString(figure)], {
+    type: "image/svg+xml;charset=utf-8",
+  });
+}

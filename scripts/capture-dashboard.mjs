@@ -80,13 +80,11 @@ try {
   await page.waitForFunction(() =>
     document.querySelector("#status").textContent.includes("Import a local"),
   );
-  await page
-    .locator("#import")
-    .setInputFiles({
-      name: "Synthetic surface demo.gwy",
-      mimeType: "application/octet-stream",
-      buffer: bytes,
-    });
+  await page.locator("#import").setInputFiles({
+    name: "Synthetic surface demo.gwy",
+    mimeType: "application/octet-stream",
+    buffer: bytes,
+  });
   const ready = () =>
     page.waitForFunction(() => !document.querySelector("#download").disabled);
   await ready();

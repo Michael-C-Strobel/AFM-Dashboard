@@ -1,4 +1,4 @@
-/** Real PNG downloads from generated data; no laboratory files or uploads. */
+/** Real PNG/SVG downloads from generated data; no laboratory files or uploads. */
 import assert from "node:assert/strict";
 import { mkdtemp, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -47,6 +47,8 @@ try {
   );
   assert.equal(await page.locator("#save-raw-png").isDisabled(), true);
   assert.equal(await page.locator("#save-result-png").isDisabled(), true);
+  assert.equal(await page.locator("#save-histogram-svg").isDisabled(), true);
+  assert.equal(await page.locator("#save-profile-svg").isDisabled(), true);
   const bytes = createPreviewFixture();
   await page.locator("#import").setInputFiles([
     {
@@ -152,6 +154,74 @@ try {
     );
     return pixels;
   }
+  async function downloadPlot(id) {
+    const before = await snapshot();
+    const pending = page.waitForEvent("download");
+    await page.locator("#save-" + id + "-svg").click();
+    const downloaded = await pending;
+    assert.equal(downloaded.suggestedFilename(), `afm-${id}.svg`);
+    const path = join(scratch, `afm-${id}.svg`);
+    await downloaded.saveAs(path);
+    const text = await readFile(path, "utf8");
+    const result = await page.evaluate(
+      ({ id, text }) => {
+        const document = new DOMParser().parseFromString(text, "image/svg+xml");
+        const source = window.document.querySelector("#" + id + " svg");
+        const plot = document.documentElement.querySelector("svg");
+        function shapes(svg) {
+          return [...svg.querySelectorAll("path, rect, text")]
+            .filter((node) => !node.classList.contains("measurement-cursor"))
+            .map((node) => ({
+              tag: node.tagName,
+              attributes: Object.fromEntries(
+                [
+                  "d",
+                  "x",
+                  "y",
+                  "x1",
+                  "x2",
+                  "y1",
+                  "y2",
+                  "width",
+                  "height",
+                  "text-anchor",
+                ].map((key) => [key, node.getAttribute(key)]),
+              ),
+              text: node.textContent,
+            }));
+        }
+        return {
+          parseErrors: document.querySelectorAll("parsererror").length,
+          source: shapes(source),
+          exported: shapes(plot),
+          viewBox: plot.getAttribute("viewBox"),
+          expectedViewBox: source.getAttribute("viewBox"),
+          cursors: document.querySelectorAll(
+            '.measurement-cursor, circle[aria-hidden="true"]',
+          ).length,
+          rasterImages: document.querySelectorAll("image").length,
+          styled: [...plot.querySelectorAll("text")].every(
+            (node) =>
+              node.hasAttribute("font-size") && node.hasAttribute("fill"),
+          ),
+        };
+      },
+      { id, text },
+    );
+    assert.equal(result.parseErrors, 0);
+    assert.deepEqual(
+      result.exported,
+      result.source,
+      "retain exact plotted geometry and labels",
+    );
+    assert.equal(result.viewBox, result.expectedViewBox);
+    assert.equal(result.cursors, 0);
+    assert.equal(result.rasterImages, 0);
+    assert.equal(result.styled, true);
+    assert.deepEqual(await snapshot(), before);
+  }
+  assert.equal(await page.locator("#save-profile-svg").isDisabled(), true);
+  await downloadPlot("histogram");
   await downloadMap("raw", "afm-original.png");
   const viridis = await downloadMap("result", "afm-processed.png");
   await page.locator("#palette").selectOption("inferno");
@@ -180,13 +250,58 @@ try {
   await page.mouse.up();
   assert.equal(await page.locator("#save-raw-png").isDisabled(), true);
   assert.equal(await page.locator("#save-result-png").isDisabled(), true);
+  assert.equal(await page.locator("#save-histogram-svg").isDisabled(), true);
   await page.locator("#refresh").click();
   await ready();
+  await page.locator(".coordinate-panel > summary").click();
+  for (const [id, value] of Object.entries({
+    "coord-x0": "0.25e-6",
+    "coord-y0": "4e-6",
+    "coord-x1": "7.75e-6",
+    "coord-y1": "4e-6",
+  }))
+    await page.locator("#" + id).fill(value);
+  await page.locator("#coordinate-profile").click();
+  assert.equal(await page.locator("#save-histogram-svg").isDisabled(), true);
+  assert.equal(await page.locator("#save-profile-svg").isDisabled(), true);
+  await page.locator("#refresh").click();
+  await ready();
+  await page.locator("#profile svg").focus();
+  await page.keyboard.press("ArrowRight");
+  const untouched = await page.evaluate(async () => {
+    const { createPlotSVG } = await import("./image-export.js");
+    const source = document.querySelector("#profile svg");
+    const before = source.outerHTML;
+    createPlotSVG(source, "Line profile");
+    return before === source.outerHTML;
+  });
+  assert.equal(
+    untouched,
+    true,
+    "SVG export must not alter the source plot or cursor",
+  );
+  await downloadPlot("profile");
+  await downloadPlot("histogram");
   await downloadMap("result", "afm-processed.png");
+  // A profile completely outside the analysis ROI has no measured values.
+  for (const id of ["coord-y0", "coord-y1"])
+    await page.locator("#" + id).fill("0.25e-6");
+  await page.locator("#coordinate-profile").click();
+  await page.locator("#refresh").click();
+  await ready();
+  assert.equal(await page.locator("#save-profile-svg").isDisabled(), true);
+  assert.equal(await page.locator("#save-histogram-svg").isDisabled(), false);
+  for (const id of ["coord-y0", "coord-y1"])
+    await page.locator("#" + id).fill("4e-6");
+  await page.locator("#coordinate-profile").click();
+  await page.locator("#refresh").click();
+  await ready();
+  await page.locator(".coordinate-panel > summary").click();
   await page.screenshot({ path: join(scratch, "desktop.png") });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator("#save-result-png").scrollIntoViewIfNeeded();
   await downloadMap("result", "afm-processed.png");
+  await downloadPlot("profile");
   assert.ok(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
