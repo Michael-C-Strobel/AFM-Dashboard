@@ -201,11 +201,7 @@ async function loadFile() {
   }
 }
 function syncChemist() {
-  $("chemist").disabled =
-    $("file").value !== "sample-input.gwy" ||
-    $("channel").value !== "0" ||
-    state.response?.source?.sha256 !==
-      "ea0287a8afbed275d2d780f31508f89bd937796ab357f5a7d9389152e27abaab";
+  $("chemist").disabled = true;
 }
 function syncReference() {
   syncChemist();
@@ -965,22 +961,7 @@ $("preset").onclick = () => {
   analyze();
 };
 $("chemist").onclick = () => {
-  if ($("chemist").disabled) return;
-  state.operations = [
-    {
-      name: "three_point",
-      params: {
-        points: [],
-        radius: 1,
-      },
-    },
-    { name: "zero_min", params: {} },
-  ];
-  state.operations = state.operations.map((operation) => ({
-    ...operation,
-    selection: structuredClone(state.selection),
-  }));
-  analyze();
+  throw new Error("The private reference preset is unavailable. Enter reviewed fit points in the three-point tool.");
 };
 $("finish-polygon").onclick = () => {
   if (state.polygon.length < 3) {

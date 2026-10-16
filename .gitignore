@@ -11,3 +11,24 @@ node_modules/
 # Measurement binaries remain local; track provenance manifests, not measurements.
 data/*.gwy
 data/external/reference-only/
+
+# Private measurements, local analysis outputs, and development notes
+/data/
+/recipes/chemist-reference.json
+/docs/inventory.json
+/docs/reference_pair.json
+/docs/benchmark.json
+/docs/benchmark.md
+/docs/three-point-validation.json
+/docs/browser-validation.md
+/docs/workspace-design.md
+/docs/workflow-benchmark-results.json
+/docs/workflow-benchmark-browser-results.json
+/docs/assistant-plans.md
+/tests/browser-three-point-reference.mjs
+AGENTS.md
+KANBAN.md
+CLAUDE.md
+.agents/
+.codex/
+.claude/

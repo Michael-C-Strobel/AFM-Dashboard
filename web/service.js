@@ -16,13 +16,7 @@ export const AUTOMATIC_PRESET = [
   { name: "zero_min", params: {} },
 ];
 export const CHEMIST_PRESET = [
-  {
-    name: "three_point",
-    params: {
-      points: [],
-      radius: 1,
-    },
-  },
+  { name: "three_point", params: { points: [], radius: 1 } },
   { name: "zero_min", params: {} },
 ];
 function matrix(data, width, mask = null) {
