@@ -534,10 +534,17 @@ aside button {
 }
 .map-heading {
   margin: 0;
+  gap: 8px;
   padding: 9px 11px;
   border-bottom: 1px solid #bcc5d3;
   background: #dce3ef;
   border-top: 3px solid #3964ef;
+}
+.map-heading button {
+  width: auto;
+  margin: 0;
+  flex-shrink: 0;
+  padding: 6px 9px;
 }
 .map-card:nth-child(2) .map-heading {
   background: #ece4d4;

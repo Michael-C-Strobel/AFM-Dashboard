@@ -477,6 +477,7 @@ try {
     );
   });
   for (const file of [
+    "./browser-image-export.mjs",
     "./browser-agent-modes.mjs",
     "./browser-measurement-readout.mjs",
     "./browser-three-point.mjs",
@@ -524,6 +525,7 @@ try {
           "calibrated statistics",
           "operation",
           "recipe download/upload/replay",
+          "direct PNG map downloads with legends and unchanged scientific data",
           "portable recipe save/upload/strict replay",
           "mocked multi-source planning and opt-in verified evidence",
           "autonomous adaptive rounds, help agent, provider presets and pilot SOPs",

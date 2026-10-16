@@ -1,5 +1,6 @@
 import { mountThreePointEditor } from "./three-point-ui.js";
 import { apiFetch } from "./api.js";
+import { createMapPNG } from "./image-export.js";
 import { runBatch } from "./batch.js";
 import {
   createHistogramReadout,
@@ -482,6 +483,7 @@ function render() {
         : $("view").value === "reference"
           ? "BENCHMARK"
           : "RESIDUAL";
+  syncImageDownloads();
 }
 function draw(id, data, g, limits) {
   const canvas = $(id),
@@ -895,6 +897,49 @@ function save(blob, name) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+let imageExportBusy = false;
+function syncImageDownloads() {
+  const unavailable =
+    imageExportBusy || $("download").disabled || !state.response;
+  $("save-raw-png").disabled = unavailable || !state.response?.original?.length;
+  $("save-result-png").disabled = unavailable || !rightData()?.length;
+}
+async function saveMapImage(id) {
+  syncImageDownloads();
+  const button = $(id === "raw" ? "save-raw-png" : "save-result-png");
+  if (button.disabled) return;
+  imageExportBusy = true;
+  syncImageDownloads();
+  try {
+    // Capture synchronously before PNG encoding, so later edits cannot change
+    // the downloaded pixels or labels. No analysis request is made.
+    const legend = $(id + "-scale"),
+      view = id === "raw" ? "original" : $("view").value,
+      blob = await createMapPNG($(id), {
+        title: id === "raw" ? "Original" : $("result-title").textContent,
+        subtitle: `${$("palette").selectedOptions[0].textContent} · Current viewport and selections`,
+        low: legend.firstElementChild.textContent,
+        high: legend.lastElementChild.textContent,
+        colors: palettes[$("palette").value],
+      });
+    save(blob, `afm-${view}.png`);
+    status(
+      "Map PNG downloaded with the current view, scale bar and color legend.",
+    );
+  } catch (error) {
+    status("Image export failed: " + error.message, true);
+  } finally {
+    imageExportBusy = false;
+    syncImageDownloads();
+  }
+}
+$("save-raw-png").onclick = () => saveMapImage("raw");
+$("save-result-png").onclick = () => saveMapImage("result");
+new MutationObserver(syncImageDownloads).observe($("download"), {
+  attributes: true,
+  attributeFilter: ["disabled"],
+});
+syncImageDownloads();
 $("file").onchange = loadFile;
 $("channel").onchange = () => {
   configureAcquisition();
@@ -961,7 +1006,9 @@ $("preset").onclick = () => {
   analyze();
 };
 $("chemist").onclick = () => {
-  throw new Error("The private reference preset is unavailable. Enter reviewed fit points in the three-point tool.");
+  throw new Error(
+    "The private reference preset is unavailable. Enter reviewed fit points in the three-point tool.",
+  );
 };
 $("finish-polygon").onclick = () => {
   if (state.polygon.length < 3) {

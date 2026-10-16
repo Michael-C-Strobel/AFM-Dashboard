@@ -113,7 +113,7 @@ export const helpTopics = Object.freeze(
       id: "recipes-export",
       title: "Save, load and verify recipes",
       target: "download-portable",
-      text: "Save recipe downloads the legacy recipe; Save portable recipe strictly verifies the captured analysis and adds canonical checksums that survive object-key reordering. Load recipe accepts either format up to 1 MiB and strictly checks source/calibration/output identities. Dirty or pending analyses cannot be saved as portable recipes. Export analysis TAR retains processed results and provenance, not original source bytes. Keep exact input files and matching application code for replay; hashes are not signatures.",
+      text: "Save recipe downloads the legacy recipe; Save portable recipe strictly verifies the captured analysis and adds canonical checksums that survive object-key reordering. Load recipe accepts either format up to 1 MiB and strictly checks source/calibration/output identities. Dirty or pending analyses cannot be saved as portable recipes. Save PNG above each surface map downloads the current viewport with its palette, selection overlays, physical scale bar and color legend. The right-hand image follows Processed, Reference or Processed − reference. Recalculate stale results first. PNG is a display image at viewport resolution. Export analysis TAR retains processed results and provenance, not original source bytes. Keep exact input files and matching application code for replay; hashes are not signatures.",
     },
     {
       id: "assistant",

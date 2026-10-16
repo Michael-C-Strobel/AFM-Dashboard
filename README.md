@@ -4,6 +4,10 @@ A local AFM viewer and reproducible surface-analysis workbench built with plain 
 
 The main toolbar’s **Documentation** link opens the [in-app guide and pilot SOPs](web/help.html), also available as [repository help](docs/help.md).
 
+![AFM Workbench dashboard showing original and processed surfaces, calibrated color scales, and image export controls](docs/images/dashboard.png)
+
+*Live dashboard with a generated mathematical demo surface; no private measurement data is shown.*
+
 ## Run
 
 With Node.js 20 or later:
@@ -21,6 +25,8 @@ The demo's network policy permits local requests only by default. Optional model
 The supplied `.gwy` measurements appear in the file selector. Use **Import local files** for native GWYP, supported NanoScope binary images, calibrated Igor v5 image waves, and the supported JPK TIFF image subset. Detection uses file contents, including numbered Bruker extensions such as `.001`. Browser limits are 64 MiB per file and 256 MiB of source bytes per session; reload to clear the session. These byte limits do not estimate total working memory.
 
 In **Measurements**, hover or drag over the histogram for bin bounds/counts, or over a line profile for recorded distance, height and source X/Y. Focus a plot and use arrows/Home/End for keyboard inspection. **Recalculate** sits in the inspection toolbar and remains available in expanded mode; cursor inspection does not recompute or change results.
+
+Save images directly with **Save PNG** above either surface map. Images include the displayed palette, selections, physical scale bar and color legend; the right-hand download follows Processed, Reference or Processed − reference. PNG uses the current viewport resolution. Use **Export analysis TAR** for numerical results and recipe provenance.
 
 ## Interactive three-point leveling
 

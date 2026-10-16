@@ -108,3 +108,5 @@ AFM_TEST_PORT=4177 node tests/browser-ci.mjs
 ```
 
 This bypasses only the incompatible host-cache heuristic, not application or numerical checks. WebKit reported version **26.0** and passed import, calibrated measurements, strict replay/export, all scientific panels, expanded inspection/Escape, keyboard tabs and mobile overflow. No browser bundle files were edited. The hosted matrix continues to use normal `--with-deps` installation and does not require this local workaround.
+
+The synthetic workflow also runs `tests/browser-image-export.mjs`. It checks original/processed/reference/difference PNG downloads, decoded image dimensions and map pixels, palette-dependent legends, stale/missing-result gates, mobile layout, and unchanged scientific snapshots and worker analysis counts. The standalone script uses `AFM_BASE_URL` (default `http://127.0.0.1:4173/web/`) and the same Playwright environment variables.

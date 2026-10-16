@@ -229,14 +229,26 @@
           <p class="hint">
             Each map is autoscaled independently unless Shared color scale is
             enabled. Color limits use base units; they never change data. Scroll
-            to zoom; drag with Navigate to pan.
+            to zoom; drag with Navigate to pan. Save PNG downloads the current
+            map view with its selections, scale bar and color legend. Use Export
+            analysis TAR for numerical data and replay provenance.
           </p>
         </details>
         <section class="maps">
           <article class="map-card">
             <div class="map-heading">
-              <h2>Original</h2>
-              <span>IMMUTABLE SOURCE</span>
+              <div>
+                <h2>Original</h2>
+                <span>IMMUTABLE SOURCE</span>
+              </div>
+              <button
+                id="save-raw-png"
+                type="button"
+                disabled
+                aria-label="Save original map as PNG"
+              >
+                Save PNG
+              </button>
             </div>
             <div class="canvas-wrap">
               <canvas
@@ -248,8 +260,18 @@
           </article>
           <article class="map-card">
             <div class="map-heading">
-              <h2 id="result-title">Processed</h2>
-              <span id="result-badge">RECIPE OUTPUT</span>
+              <div>
+                <h2 id="result-title">Processed</h2>
+                <span id="result-badge">RECIPE OUTPUT</span>
+              </div>
+              <button
+                id="save-result-png"
+                type="button"
+                disabled
+                aria-label="Save right-hand map as PNG"
+              >
+                Save PNG
+              </button>
             </div>
             <div class="canvas-wrap">
               <canvas
